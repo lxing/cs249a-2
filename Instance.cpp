@@ -86,7 +86,18 @@ public:
 class BoatTerminalRep : public LocationRep {
 public:
 
-    TruckTerminalRep(const string& name, ManagerImpl *manager) :
+    BoatTerminalRep(const string& name, ManagerImpl *manager) :
+        LocationRep(name, manager)
+    {
+        // Nothing else to do.
+    }
+
+};
+
+class PlaneTerminalRep : public LocationRep {
+public:
+
+    PlaneTerminalRep(const string& name, ManagerImpl *manager) :
         LocationRep(name, manager)
     {
         // Nothing else to do.

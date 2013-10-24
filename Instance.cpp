@@ -51,7 +51,27 @@ private:
     int segmentNumber(const string& name);
 
 };
-                                                                                                  
+         
+class CustomerRep : public LocationRep {
+public:
+
+  CustomerRep(const string& name, ManagerImpl *manager) :
+    LocationRep(name, manager)
+  {
+    // TODO
+  }
+};
+
+class PortRep : public LocationRep {
+public:
+
+  PortRep(const string& name, ManagerImpl *manager) :
+    LocationRep(name, manager)
+  {
+    // TODO
+  }
+};
+
 class TruckTerminalRep : public LocationRep {
 public:
 
@@ -63,15 +83,55 @@ public:
 
 };
 
+class BoatTerminalRep : public LocationRep {
+public:
+
+    TruckTerminalRep(const string& name, ManagerImpl *manager) :
+        LocationRep(name, manager)
+    {
+        // Nothing else to do.
+    }
+
+};
 
 ManagerImpl::ManagerImpl() {
 }
 
 Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
+    if (type == "Customer") {
+        // TODO
+    }
+    if (type == "Port") {
+        // TODO
+    }
     if (type == "Truck terminal") {
         Ptr<TruckTerminalRep> t = new TruckTerminalRep(name, this);
         instance_[name] = t;
         return t;
+    }
+    if (type == "Boat terminal") {
+        // TODO
+    }
+    if (type == "Plane terminal") {
+        // TODOW
+    }
+    if (type == "Truck segment") {
+        // TODO
+    }
+    if (type == "Boat segment") {
+        // TODO
+    }
+    if (type == "Plane segment") {
+        // TODO
+    }
+    if (type == "Stats") {
+        // TODO
+    }
+    if (type == "Conn") {
+        // TODO
+    }
+    if (type == "Fleet") {
+        // TODO
     }
 
     return NULL;

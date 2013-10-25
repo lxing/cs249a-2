@@ -51,7 +51,6 @@ protected:
 
 private:
     string name_;
-
 };
 
 ///

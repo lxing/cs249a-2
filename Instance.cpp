@@ -46,20 +46,29 @@ public:
     void attributeIs(const string& name, const string& v);
 
 private:
-    Ptr<ManagerImpl> manager_;
+    Ptr<Manager> manager_;
 
     int segmentNumber(const string& name);
 
 };
-         
+
+class SegmentRep : public Instance {
+public:
+  SegmentRep(const string& name, ManagerImpl* manager) :
+    Instance(name), manager_(manager) {
+  }
+private:
+    Ptr<Manager> manager_;
+};
+
 class CustomerRep : public LocationRep {
 public:
-
   CustomerRep(const string& name, ManagerImpl *manager) :
     LocationRep(name, manager)
   {
     // TODO
   }
+
 };
 
 class PortRep : public LocationRep {
@@ -124,7 +133,7 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
         // TODO
     }
     if (type == "Plane terminal") {
-        // TODOW
+        // TODO
     }
     if (type == "Truck segment") {
         // TODO

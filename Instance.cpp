@@ -9,152 +9,112 @@ namespace Shipping {
 
 using namespace std;
 
-//
-// Rep layer classes
-//
+/************************/
+/* Internal Rep Classes */
+/************************/
 
 class ManagerImpl : public Instance::Manager {
 public:
-    ManagerImpl();
+  ManagerImpl();
 
-    // Manager method
-    Ptr<Instance> instanceNew(const string& name, const string& type);
+  Ptr<Instance> instanceNew(const string& name, const string& type);
+  Ptr<Instance> instance(const string& name);
+  void instanceDel(const string& name);
+  Ptr<EngineManager> engine() { return engine_; };
 
-    // Manager method
-    Ptr<Instance> instance(const string& name);
-
-    // Manager method
-    void instanceDel(const string& name);
 
 private:
-    map<string,Ptr<Instance> > instance_;
+  map<string,Ptr<Instance> > instance_;
+  Ptr<EngineManager> engine_;
 };
 
+/* Locations */
 class LocationRep : public Instance {
 public:
+  LocationRep(const string& name, ManagerImpl* manager) :
+      Instance(name), manager_(manager) {};
 
-    LocationRep(const string& name, ManagerImpl* manager) :
-        Instance(name), manager_(manager)
-    {
-        // Nothing else to do.
-    }
-
-    // Instance method
-    string attribute(const string& name);
-
-    // Instance method
-    void attributeIs(const string& name, const string& v);
+  string attribute(const string& name);
+  void attributeIs(const string& name, const string& v);
 
 private:
-    Ptr<Manager> manager_;
+  Ptr<Location> location_;
+  Ptr<Manager> manager_;
+  int segmentNumber(const string& name);
 
-    int segmentNumber(const string& name);
-
-};
-
-class SegmentRep : public Instance {
-public:
-  SegmentRep(const string& name, ManagerImpl* manager) :
-    Instance(name), manager_(manager) {
-  }
-private:
-    Ptr<Manager> manager_;
 };
 
 class CustomerRep : public LocationRep {
 public:
   CustomerRep(const string& name, ManagerImpl *manager) :
-    LocationRep(name, manager)
-  {
-    // TODO
-  }
-
+    LocationRep(name, manager) {};
 };
 
 class PortRep : public LocationRep {
 public:
-
   PortRep(const string& name, ManagerImpl *manager) :
-    LocationRep(name, manager)
-  {
-    // TODO
-  }
+    LocationRep(name, manager) {};
 };
 
 class TruckTerminalRep : public LocationRep {
 public:
-
-    TruckTerminalRep(const string& name, ManagerImpl *manager) :
-        LocationRep(name, manager)
-    {
-        // Nothing else to do.
-    }
-
+  TruckTerminalRep(const string& name, ManagerImpl *manager) :
+    LocationRep(name, manager) {};
 };
 
 class BoatTerminalRep : public LocationRep {
 public:
-
-    BoatTerminalRep(const string& name, ManagerImpl *manager) :
-        LocationRep(name, manager)
-    {
-        // Nothing else to do.
-    }
+  BoatTerminalRep(const string& name, ManagerImpl *manager) :
+    LocationRep(name, manager) {};
 
 };
 
 class PlaneTerminalRep : public LocationRep {
 public:
-
-    PlaneTerminalRep(const string& name, ManagerImpl *manager) :
-        LocationRep(name, manager)
-    {
-        // Nothing else to do.
-    }
-
+  PlaneTerminalRep(const string& name, ManagerImpl *manager) :
+    LocationRep(name, manager) {};
 };
 
+
+/* Segments */
+class SegmentRep : public Instance {
+public:
+  SegmentRep(const string& name, ManagerImpl* manager) :
+    Instance(name), manager_(manager) {};
+private:
+    Ptr<Manager> manager_;
+};
+
+/******************/
+/* Implementation */
+/******************/
+
+/* Locations */
 ManagerImpl::ManagerImpl() {
+    Ptr<EngineManager> engine_ = new EngineManager();
 }
 
 Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
-    if (type == "Customer") {
-        // TODO
-    }
-    if (type == "Port") {
-        // TODO
-    }
-    if (type == "Truck terminal") {
-        Ptr<TruckTerminalRep> t = new TruckTerminalRep(name, this);
-        instance_[name] = t;
-        return t;
-    }
-    if (type == "Boat terminal") {
-        // TODO
-    }
-    if (type == "Plane terminal") {
-        // TODO
-    }
-    if (type == "Truck segment") {
-        // TODO
-    }
-    if (type == "Boat segment") {
-        // TODO
-    }
-    if (type == "Plane segment") {
-        // TODO
-    }
-    if (type == "Stats") {
-        // TODO
-    }
-    if (type == "Conn") {
-        // TODO
-    }
-    if (type == "Fleet") {
-        // TODO
-    }
+  Ptr<Instance> instance = NULL;
+  if (type == "Customer") {
+    instance = new CustomerRep(name, this);
+  } else if (type == "Port") {
+    instance = new PortRep(name, this);
+  } else if (type == "Truck terminal") {
+    instance = new TruckTerminalRep(name, this);
+  } else if (type == "Boat terminal") {
+    instance = new BoatTerminalRep(name, this);
+  } else if (type == "Plane terminal") {
+    instance = new PlaneTerminalRep(name, this);
+  } else if (type == "Truck segment") {
+  } else if (type == "Boat segment") {
+  } else if (type == "Plane segment") {
+  } else if (type == "Stats") {
+  } else if (type == "Conn") {
+  } else if (type == "Fleet") {
+  }
 
-    return NULL;
+  return instance;
 }
 
 Ptr<Instance> ManagerImpl::instance(const string& name) {
@@ -168,31 +128,30 @@ void ManagerImpl::instanceDel(const string& name) {
 
 
 string LocationRep::attribute(const string& name) {
-    int i = segmentNumber(name);
-    if (i != 0) {
-        cout << "Tried to read interface " << i;
-    }
-    return "";
+  int i = segmentNumber(name);
+  if (i != 0) {
+      cout << "Tried to read interface " << i;
+  }
+  return "";
 }
 
 
 void LocationRep::attributeIs(const string& name, const string& v) {
-    //nothing to do
+  // LocationReps are read-only
 }
 
 static const string segmentStr = "segment";
 static const int segmentStrlen = segmentStr.length();
 
 int LocationRep::segmentNumber(const string& name) {
-    if (name.substr(0, segmentStrlen) == segmentStr) {
-        const char* t = name.c_str() + segmentStrlen;
-        return atoi(t);
-    }
-    return 0;
+  if (name.substr(0, segmentStrlen) == segmentStr) {
+      const char* t = name.c_str() + segmentStrlen;
+      return atoi(t);
+  }
+  return 0;
 }
 
-
-}
+} /* End namespace Shipping */
 
 /*
  * This is the entry point for your library.

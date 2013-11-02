@@ -95,7 +95,7 @@ protected:
   BoatFleet(const string& name) : Fleet(name) { }
 };
 
-class PlaneFleet : public Fleet { 
+class PlaneFleet : public Fleet {
 public:
   static Fwk::Ptr<PlaneFleet> PlaneFleetNew(const string& name) {
     Fwk::Ptr<PlaneFleet> m = new PlaneFleet(name);
@@ -264,7 +264,7 @@ protected:
 
   void sourceIsImpl(Ptr<Location> _loc) {
     source_ = _loc;
-  } 
+  }
 
 private:
   string name_;
@@ -297,7 +297,7 @@ public:
   }
   void sourceIs(Ptr<TruckTerminal> _loc);
 
-protected: 
+protected:
   TruckSegment(const string& name) : Segment(name) {};
   ~TruckSegment() {};
 };
@@ -314,7 +314,7 @@ protected:
   PlaneSegment(const string& name) : Segment(name) {};
   ~PlaneSegment() {};
 };
- 
+
 class Stats;
 
 // TODO(rhau) make the enginemanager a notifier

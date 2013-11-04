@@ -53,6 +53,7 @@ public:
 
 class Fleet : public Entity {
 public:
+
   virtual void milesPerHourIs(Mile _milesPerHour) {
     milesPerHour_ = _milesPerHour;
   }
@@ -68,7 +69,7 @@ public:
   virtual void costPerMileIs(Dollar _costPerMile) {
     costPerMile_ = _costPerMile;
   }
-  virtual void costPerMile() {
+  virtual Dollar costPerMile() {
     return costPerMile_;
   }
 
@@ -128,12 +129,14 @@ private:
 // Create your rep/engine interface here.
 class Location : public Entity {
 public:
-  virtual Segment segment(int _i) {
-    return segments[_i];
+  // TODO(rhau) onSegment, which adds a segment as a callback from SegmentNew
+
+  virtual Ptr<Segment> segment(int _i) {
+    return segments_[_i];
   }
 
   virtual void segmentIs(Fwk::Ptr<Segment> s) {
-    segments.push_back(s);
+    segments_.push_back(s);
   }
 
   Path path(Location _start, Location _end);
@@ -300,23 +303,23 @@ protected:
 class Stats : public Entity {
 public:
   uint32_t customerCount() { return customerCount_; }
-  uint32_t customerCountInc() { customerCount_++; }
+  void customerCountInc() { customerCount_++; }
   uint32_t portCount() { return portCount_; }
-  uint32_t portCountInc() { portCount_++; }
+  void portCountInc() { portCount_++; }
 
   uint32_t boatTerminalCount() { return boatTerminalCount_; }
-  uint32_t boatTerminalCountInc() { boatTerminalCount_++; }
+  void boatTerminalCountInc() { boatTerminalCount_++; }
   uint32_t truckTerminalCount() { return truckTerminalCount_; }
-  uint32_t truckTerminalCountInc() { truckTerminalCount_++; }
+  void truckTerminalCountInc() { truckTerminalCount_++; }
   uint32_t planeTerminalCount() { return planeTerminalCount_; }
-  uint32_t planeTerminalCountInc() { planeTerminalCount_++; }
+  void planeTerminalCountInc() { planeTerminalCount_++; }
 
   uint32_t boatSegmentCount() { return boatSegmentCount_; }
-  uint32_t boatSegmentCountInc() { boatTerminalCount_++; }
+  void boatSegmentCountInc() { boatTerminalCount_++; }
   uint32_t truckSegmentCount() {return truckSegmentCount_; }
-  uint32_t truckSegmentCountInc() { truckSegmentCount_++; }
+  void truckSegmentCountInc() { truckSegmentCount_++; }
   uint32_t planeSegmentCount() { return planeSegmentCount_; }
-  uint32_t planeSegmentCountInc() { planeSegmentCount_++; }
+  void planeSegmentCountInc() { planeSegmentCount_++; }
 
   float expeditedPercentage() {
     return (float)expeditedSegmentCount_ /

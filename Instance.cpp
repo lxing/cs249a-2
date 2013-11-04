@@ -85,7 +85,7 @@ public:
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
 private:
-  Ptr<Segment> segment_;
+  Ptr<Segment> segment_; // Associated engine object
   Ptr<Manager> manager_;
 };
 
@@ -110,7 +110,6 @@ public:
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
 private:
-  Ptr<Conn> conn_;
   Ptr<Manager> manager_;
 };
 
@@ -122,14 +121,19 @@ private:
 
 /* Manager */
 ManagerImpl::ManagerImpl() {
-  Ptr<EngineManager> engine_ = new EngineManager();
+  // TODO Ptr<EngineManager> engine_ = new EngineManager();
 }
 
 Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
-  // TODO: Check for existing instance
+  Ptr<Instance> instance = instance(name);
+  if (instance != NULL) {
+    cerr << "Attempt to instantiate existing instance";
+    instance = NULL;
+    return instance;
+  }
 
-  Ptr<Instance> instance = NULL;
   if (type == "Customer") {
+    // TODO: static constructors
     instance = new CustomerRep(name, this);
   } else if (type == "Port") {
     instance = new PortRep(name, this);
@@ -145,9 +149,13 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
   } else if (type == "Stats") {
   } else if (type == "Conn") {
   } else if (type == "Fleet") {
+  } else {
+    cerr << "Invalid instance type instantiation";
+    instance = NULL;
+    return instance;
   }
 
-  if (instance != NULL) instanceMap_[name] = instance;
+  instanceMap_[name] = instance;
   return instance;
 }
 
@@ -206,19 +214,24 @@ string SegmentRep::attribute(const string& name) {
     ss << difficulty.value();
     return ss.str();
   } else if (name == "expedite support") {
-    Segment::ExpeditedSupport support = segment_->expediteSupport();
+    return ""; // TODO
+    /*Segment::ExpeditedSupport support = segment_->expediteSupport();
     if (support == Segment::yes_) {
       return "yes";
     } else {
       return "no";
-    }
+    }*/
+  } else {
+    cerr << "Invalid attribute for segment";
+    return "";
   }
 }
 
 void SegmentRep::attributeIs(const string& name, const string& v) {
-  // TODO
+  if (name == "length")
   return;
 }
+
 
 
 /* Stats */
@@ -226,10 +239,23 @@ string StatsRep::attribute(const string& name) {
   stringstream ss;
 
   if (name == "expedite percentage") {
-    ss << stats_->expeditePercentage();
-  } else {
-    ss << stats_->count(name);
-    // TODO: error if invalid entity type (bubble up)
+    ss << stats_->expeditedPercentage();
+  } else if (name == "Customer") {
+    ss << stats_->customerCount();
+  } else if (name == "Port") {
+    ss << stats_->portCount();
+  } else if (name == "Truck Terminal") {
+    ss << stats_->truckTerminalCount();
+  } else if (name == "Boat Terminal") {
+    ss << stats_->boatTerminalCount();
+  } else if (name == "Plane Terminal") {
+    ss << stats_->planeTerminalCount();
+  } else if (name == "Truck Segment") {
+    ss << stats_->truckSegmentCount();
+  } else if (name == "Boat Segment") {
+    ss << stats_->boatSegmentCount();
+  } else if (name == "Plane Segment") {
+    ss << stats_->planeSegmentCount();
   }
 
   return ss.str();
@@ -246,15 +272,13 @@ string ConnRep::attribute(const string& name) {
   stringstream ss(name);
   string item;
   vector<string> elems;
-  while (getline(ss, item, " ")) {
-    elems.push_back(item);
-  }
-
-  if (elems.empty )
-
+  //while (std::getline(ss, item, " ")) {
+  //  elems.push_back(item);
+  //}
+  return "";
 };
 
-void ConnRep::attributeIs(const string& name, string& v) {
+void ConnRep::attributeIs(const string& name, const string& v) {
 
 };
 

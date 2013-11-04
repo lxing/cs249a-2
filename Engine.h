@@ -222,19 +222,31 @@ protected:
 class Segment : public Entity {
 public:
   // returns the global name of the source location
-  string source() {
+  Ptr<Location> source() {
     return source_;
   }
-  virtual void sourceIs(string _name, Ptr<Location> _loc);
 
-  Mile length();
-  void lengthIs(Mile _length);
+  Mile length() {
+    return length_;
+  }
+  void lengthIs(Mile _length) {
+    length_ = _length;
+  }
 
-  Segment returnSegment();
-  void returnSegmentIs(string _name);
+  Ptr<Segment> returnSegment() {
+    return returnSegment_;
+  }
 
-  Difficulty difficulty();
-  void difficultyIs(Difficulty _difficulty);
+  void returnSegmentIs(Ptr<Segment> returnSegment) {
+    returnSegment_ = returnSegment;
+  }
+
+  Difficulty difficulty() {
+    return difficulty_;
+  }
+  void difficultyIs(Difficulty _difficulty) {
+    difficulty_ = _difficulty;
+  }
 
   enum ExpeditedSupport {
     yes_ = 0,
@@ -249,15 +261,18 @@ protected:
       difficulty_(0), expeditedSupport_(no_) { }
   virtual ~Segment();
 
+  void sourceIsImpl(Ptr<Location> _loc) {
+    source_ = _loc;
+  } 
+
 private:
   string name_;
-  string source_;
+  Ptr<Location> source_;
   Mile length_;
-  string returnSegment_;
+  Ptr<Segment> returnSegment_;
   Difficulty difficulty_;
   ExpeditedSupport expeditedSupport_;
 };
-
 
 // Segments
 class BoatSegment : public Segment {
@@ -266,7 +281,7 @@ public:
     Fwk::Ptr<BoatSegment> m = new BoatSegment(name);
     return m;
   }
-  void sourceIs(string _name, Ptr<Location> _loc);
+  void sourceIs(Ptr<BoatTerminal> _loc);
 
 protected:
   BoatSegment(const string& name) : Segment(name) {};
@@ -279,7 +294,7 @@ public:
     Fwk::Ptr<TruckSegment> m = new TruckSegment(name);
     return m;
   }
-  void sourceIs(string _name, Ptr<Location> _loc);
+  void sourceIs(Ptr<TruckTerminal> _loc);
 
 protected: 
   TruckSegment(const string& name) : Segment(name) {};
@@ -292,7 +307,7 @@ public:
     Fwk::Ptr<PlaneSegment> m = new PlaneSegment(name);
     return m;
   }
-  void sourceIs(string , Ptr<Location> _loc);
+  void sourceIs(Ptr<PlaneTerminal> _loc);
 
 protected:
   PlaneSegment(const string& name) : Segment(name) {};

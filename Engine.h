@@ -28,9 +28,7 @@ protected:
 
 class Mile : public Nominal<Mile, unsigned int> {
 public:
-  Mile(unsigned int num) : Nominal<Mile, unsigned int>(num) {
-
-  }
+  Mile(unsigned int num) : Nominal<Mile, unsigned int>(num) { }
 };
 
 class Difficulty : public Nominal<Difficulty, float> {
@@ -361,12 +359,24 @@ public:
   EngineManager();
   ~EngineManager();
 
-  void boatFleetIs();
-  Fwk::Ptr<BoatFleet> boatFleet(string _name);
-  void planeFleetIs();
-  Fwk::Ptr<PlaneFleet> planeFleet(string _name);
-  void truckFleetIs();
-  Fwk::Ptr<TruckFleet> truckFleet(string _name);
+  void boatFleetIs(Fwk::Ptr<BoatFleet> _boatFleet) {
+    boatFleet_ = _boatFleet;
+  }
+  Fwk::Ptr<BoatFleet> boatFleet(string _name) {
+    return boatFleet_;
+  }
+  void planeFleetIs(Fwk::Ptr<PlaneFleet> _planeFleet) {
+    planeFleet_ = _planeFleet;
+  }
+  Fwk::Ptr<PlaneFleet> planeFleet(string _name) {
+    return planeFleet_;
+  }
+  void truckFleetIs(Fwk::Ptr<TruckFleet> _truckFleet) {
+    truckFleet_ = _truckFleet;
+  }
+  Fwk::Ptr<TruckFleet> truckFleet(string _name) {
+    return truckFleet_;
+  }
 
   void customerLocationIs();
   Fwk::Ptr<Customer> customerLocation(string _name);
@@ -387,10 +397,11 @@ public:
   Fwk::Ptr<PlaneSegment> planeSegment(string _name);
 
 private:
-  Fwk::Ptr<BoatFleet> boatFleetMap_;
-  Fwk::Ptr<PlaneFleet> planeFleetMap_;
-  Fwk::Ptr<TruckFleet> truckFleetMap_;
+  Fwk::Ptr<BoatFleet> boatFleet_;
+  Fwk::Ptr<PlaneFleet> planeFleet_;
+  Fwk::Ptr<TruckFleet> truckFleet_;
 
+  // hash maps which back the terminal locations
   std::map<string, Customer> customerLocationMap_;
   std::map<string, Port> portLocationMap_;
   std::map<string, BoatTerminal> boatTerminalLocationMap_;

@@ -1,38 +1,14 @@
 
 
-void Shipping::Location::path() {
+Path Shipping::Location::path(Location start, Location end) {
   // TODO(rhau)
+  return NULL;
 }
 
 std::vector<Path> Shipping::Location::connectivity(
   Location _root, Mile _distance, Dollar _cost) {
   // TODO(rhau)
 }
-
-void EngineManager::boatFleetIs() {
-
-}
-
-BoatFleet EngineManager::boatFleet(string _name) {
-
-}
-
-void EngineManager::planeFleetIs() {
-
-}
-
-PlaneFleet EngineManager::planeFleet(string _name) {
-
-}
-
-void EngineManager::truckFleetIs() {
-
-}
-
-TruckFleet EngineManager::truckFleet(string _name) {
-
-}
-
 
 void EngineManager::customerLocationIs();
 Fwk::Ptr<Customer> EngineManager::customerLocation(string _name) {

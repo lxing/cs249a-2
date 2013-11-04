@@ -9,6 +9,7 @@
   #include <stdint.h>
 #endif
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -16,8 +17,10 @@
 #include "NamedInterface.h"
 #include "Nominal.h"
 #include "Ptr.h"
+#include "PtrInterface.h"
 
 using Fwk::NamedInterface;
+using Fwk::PtrInterface;
 
 namespace Shipping {
 
@@ -116,9 +119,9 @@ protected:
 
 class Segment;
 
-class Path : public NamedInterface {
+class Path : public PtrInterface<Path> {
 public:
-  string tostring(); 
+  string tostring();
 
 private:
   std::vector<Entity> path_;
@@ -359,6 +362,8 @@ public:
   EngineManager();
   ~EngineManager();
 
+  Fwk::Ptr<Entity> entity(string _name);
+
   void boatFleetIs(Fwk::Ptr<BoatFleet> _boatFleet) {
     boatFleet_ = _boatFleet;
   }
@@ -397,20 +402,25 @@ public:
   Fwk::Ptr<PlaneSegment> planeSegment(string _name);
 
 private:
+  Stats stats_;
+
+  // set which contains the used names of engine objects
+  std::map<string, Fwk::Ptr<Entity> > entityMap_;
+
   Fwk::Ptr<BoatFleet> boatFleet_;
   Fwk::Ptr<PlaneFleet> planeFleet_;
   Fwk::Ptr<TruckFleet> truckFleet_;
 
   // hash maps which back the terminal locations
-  std::map<string, Customer> customerLocationMap_;
-  std::map<string, Port> portLocationMap_;
-  std::map<string, BoatTerminal> boatTerminalLocationMap_;
-  std::map<string, TruckTerminal> truckTerminalLocationMap_;
-  std::map<string, PlaneTerminal> planeTerminalLocationMap_;
+  std::map<string, Fwk::Ptr<Customer> > customerLocationMap_;
+  std::map<string, Fwk::Ptr<Port> > portLocationMap_;
+  std::map<string, Fwk::Ptr<BoatTerminal> > boatTerminalLocationMap_;
+  std::map<string, Fwk::Ptr<TruckTerminal> > truckTerminalLocationMap_;
+  std::map<string, Fwk::Ptr<PlaneTerminal> > planeTerminalLocationMap_;
 
-  std::map<string, BoatSegment> boatSegmentMap_;
-  std::map<string, TruckSegment> truckSegmentMap_;
-  std::map<string, PlaneSegment> planeSegmentMap_;
+  std::map<string, Fwk::Ptr<BoatSegment> > boatSegmentMap_;
+  std::map<string, Fwk::Ptr<TruckSegment> > truckSegmentMap_;
+  std::map<string, Fwk::Ptr<PlaneSegment> > planeSegmentMap_;
 };
 
 } /* end namespace */

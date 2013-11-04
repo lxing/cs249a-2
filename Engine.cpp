@@ -15,6 +15,14 @@ std::vector<Path> Shipping::Location::connectivity(
   return paths;
 }
 
+EngineManager::EngineManager() {
+  // stats_ = new Shipping::Stats();
+}
+
+EngineManager::~EngineManager() {
+  
+}
+
 Fwk::Ptr<Entity> EngineManager::entity(string _name) {
   std::map<string, Fwk::Ptr<Entity> >::iterator entityIter;
   entityIter = entityMap_.find(_name);

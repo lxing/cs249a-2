@@ -314,49 +314,10 @@ protected:
   PlaneSegment(const string& name) : Segment(name) {};
   ~PlaneSegment() {};
 };
-
-// TODO: Change this to a notifiee
-class Stats : public Entity  {
-public:
-  uint32_t customerCount() { return customerCount_; }
-  void customerCountInc() { customerCount_++; }
-  uint32_t portCount() { return portCount_; }
-  void portCountInc() { portCount_++; }
-
-  uint32_t boatTerminalCount() { return boatTerminalCount_; }
-  void boatTerminalCountInc() { boatTerminalCount_++; }
-  uint32_t truckTerminalCount() { return truckTerminalCount_; }
-  void truckTerminalCountInc() { truckTerminalCount_++; }
-  uint32_t planeTerminalCount() { return planeTerminalCount_; }
-  void planeTerminalCountInc() { planeTerminalCount_++; }
-
-  uint32_t boatSegmentCount() { return boatSegmentCount_; }
-  void boatSegmentCountInc() { boatTerminalCount_++; }
-  uint32_t truckSegmentCount() {return truckSegmentCount_; }
-  void truckSegmentCountInc() { truckSegmentCount_++; }
-  uint32_t planeSegmentCount() { return planeSegmentCount_; }
-  void planeSegmentCountInc() { planeSegmentCount_++; }
-
-  float expeditedPercentage() {
-    return (float)expeditedSegmentCount_ /
-        (boatTerminalCount_ + truckSegmentCount_ + planeSegmentCount_) * 100.0;
-  }
-
-private:
-  uint32_t customerCount_;
-  uint32_t portCount_;
-
-  uint32_t boatTerminalCount_;
-  uint32_t truckTerminalCount_;
-  uint32_t planeTerminalCount_;
-
-  uint32_t expeditedSegmentCount_;
-  uint32_t boatSegmentCount_;
-  uint32_t truckSegmentCount_;
-  uint32_t planeSegmentCount_;
-};
  
- // TODO(rhau) make the enginemanager a notifier
+class Stats;
+
+// TODO(rhau) make the enginemanager a notifier
 class EngineManager : public Fwk::PtrInterface<EngineManager> {
 public:
   EngineManager();
@@ -411,10 +372,19 @@ public:
     virtual void onBoatSegmentIs() = 0;
     virtual void onTruckSegmentIs() = 0;
     virtual void onPlaneSegmentIs() = 0;
+
+    virtual void onCustomerDel() = 0;
+    virtual void onPortDel() = 0;
+    virtual void onBoatTerminalDel() = 0;
+    virtual void onTruckTerminalDel() = 0;
+    virtual void onPlaneTerminalDel() = 0;
+    virtual void onBoatSegmentDel() = 0;
+    virtual void onTruckSegmentDel() = 0;
+    virtual void onPlaneSegmentDel() = 0;
   };
 
 private:
-  Stats stats_;
+  Fwk::Ptr<Stats> stats_;
 
   // set which contains the used names of engine objects
   std::map<string, Fwk::Ptr<Entity> > entityMap_;
@@ -433,6 +403,47 @@ private:
   std::map<string, Fwk::Ptr<BoatSegment> > boatSegmentMap_;
   std::map<string, Fwk::Ptr<TruckSegment> > truckSegmentMap_;
   std::map<string, Fwk::Ptr<PlaneSegment> > planeSegmentMap_;
+};
+
+// TODO: Change this to a notifiee
+class Stats : public Entity, public EngineManager::Notifiee {
+public:
+  uint32_t customerCount() { return customerCount_; }
+  void customerCountInc() { customerCount_++; }
+  uint32_t portCount() { return portCount_; }
+  void portCountInc() { portCount_++; }
+
+  uint32_t boatTerminalCount() { return boatTerminalCount_; }
+  void boatTerminalCountInc() { boatTerminalCount_++; }
+  uint32_t truckTerminalCount() { return truckTerminalCount_; }
+  void truckTerminalCountInc() { truckTerminalCount_++; }
+  uint32_t planeTerminalCount() { return planeTerminalCount_; }
+  void planeTerminalCountInc() { planeTerminalCount_++; }
+
+  uint32_t boatSegmentCount() { return boatSegmentCount_; }
+  void boatSegmentCountInc() { boatTerminalCount_++; }
+  uint32_t truckSegmentCount() {return truckSegmentCount_; }
+  void truckSegmentCountInc() { truckSegmentCount_++; }
+  uint32_t planeSegmentCount() { return planeSegmentCount_; }
+  void planeSegmentCountInc() { planeSegmentCount_++; }
+
+  float expeditedPercentage() {
+    return (float)expeditedSegmentCount_ /
+        (boatTerminalCount_ + truckSegmentCount_ + planeSegmentCount_) * 100.0;
+  }
+
+private:
+  uint32_t customerCount_;
+  uint32_t portCount_;
+
+  uint32_t boatTerminalCount_;
+  uint32_t truckTerminalCount_;
+  uint32_t planeTerminalCount_;
+
+  uint32_t expeditedSegmentCount_;
+  uint32_t boatSegmentCount_;
+  uint32_t truckSegmentCount_;
+  uint32_t planeSegmentCount_;
 };
 
 } /* end namespace */

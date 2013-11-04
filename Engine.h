@@ -316,7 +316,7 @@ protected:
 };
 
 // TODO: Change this to a notifiee
-class Stats : public Entity {
+class Stats : public Entity  {
 public:
   uint32_t customerCount() { return customerCount_; }
   void customerCountInc() { customerCount_++; }
@@ -383,23 +383,35 @@ public:
     return truckFleet_;
   }
 
-  void customerLocationIs();
-  Fwk::Ptr<Customer> customerLocation(string _name);
-  void portLocationIs();
-  Fwk::Ptr<Port> portLocation(string _name);
-  void boatTerminalLocationIs();
-  Fwk::Ptr<BoatTerminal> boatTerminalLocation(string _name);
-  void truckTerminalLocationIs();
-  Fwk::Ptr<TruckTerminal> truckTerminalLocation(string _name);
-  void planeTerminalLocationIs();
-  Fwk::Ptr<PlaneTerminal> planeTerminalLocation(string _name);
+  void customerIs(Fwk::Ptr<Customer> _customer);
+  Fwk::Ptr<Customer> customer(string _name);
+  void portIs(Fwk::Ptr<Port>);
+  Fwk::Ptr<Port> port(string _name);
+  void boatTerminalIs(Fwk::Ptr<BoatTerminal> _boatTerminal);
+  Fwk::Ptr<BoatTerminal> boatTerminal(string _name);
+  void truckTerminalIs(Fwk::Ptr<TruckTerminal> _truckTerminal);
+  Fwk::Ptr<TruckTerminal> truckTerminal(string _name);
+  void planeTerminalIs(Fwk::Ptr<PlaneTerminal> _planeTerminal);
+  Fwk::Ptr<PlaneTerminal> planeTerminal(string _name);
 
-  void boatSegmentIs();
+  void boatSegmentIs(Fwk::Ptr<BoatSegment> _boatSegment);
   Fwk::Ptr<BoatSegment> boatSegment(string _name);
-  void truckSegmentIs();
+  void truckSegmentIs(Fwk::Ptr<TruckSegment> _truckSegment);
   Fwk::Ptr<TruckSegment> truckSegment(string _name);
-  void planeSegmentIs();
+  void planeSegmentIs(Fwk::Ptr<PlaneSegment> _planeSegment);
   Fwk::Ptr<PlaneSegment> planeSegment(string _name);
+
+  class Notifiee : public Fwk::NamedInterface::Notifiee{
+  public:
+    virtual void onCustomerIs() = 0;
+    virtual void onPortIs() = 0;
+    virtual void onBoatTerminalIs() = 0;
+    virtual void onTruckTerminalIs() = 0;
+    virtual void onPlaneTerminalIs() = 0;
+    virtual void onBoatSegmentIs() = 0;
+    virtual void onTruckSegmentIs() = 0;
+    virtual void onPlaneSegmentIs() = 0;
+  };
 
 private:
   Stats stats_;
@@ -412,11 +424,11 @@ private:
   Fwk::Ptr<TruckFleet> truckFleet_;
 
   // hash maps which back the terminal locations
-  std::map<string, Fwk::Ptr<Customer> > customerLocationMap_;
-  std::map<string, Fwk::Ptr<Port> > portLocationMap_;
-  std::map<string, Fwk::Ptr<BoatTerminal> > boatTerminalLocationMap_;
-  std::map<string, Fwk::Ptr<TruckTerminal> > truckTerminalLocationMap_;
-  std::map<string, Fwk::Ptr<PlaneTerminal> > planeTerminalLocationMap_;
+  std::map<string, Fwk::Ptr<Customer> > customerMap_;
+  std::map<string, Fwk::Ptr<Port> > portMap_;
+  std::map<string, Fwk::Ptr<BoatTerminal> > boatTerminalMap_;
+  std::map<string, Fwk::Ptr<TruckTerminal> > truckTerminalMap_;
+  std::map<string, Fwk::Ptr<PlaneTerminal> > planeTerminalMap_;
 
   std::map<string, Fwk::Ptr<BoatSegment> > boatSegmentMap_;
   std::map<string, Fwk::Ptr<TruckSegment> > truckSegmentMap_;

@@ -28,15 +28,15 @@ Fwk::Ptr<Entity> EngineManager::entity(string _name) {
   }
 }
 
-void EngineManager::customerLocationIs() {
+void EngineManager::customerIs(Fwk::Ptr<Customer> _customer) {
 
 }
 
-Fwk::Ptr<Customer> EngineManager::customerLocation(string _name) {
+Fwk::Ptr<Customer> EngineManager::customer(string _name) {
   std::map<string, Fwk::Ptr<Customer> >::iterator customerIter;
-  customerIter = customerLocationMap_.find(_name);
+  customerIter = customerMap_.find(_name);
 
-  if (customerIter == customerLocationMap_.end()) {
+  if (customerIter == customerMap_.end()) {
     Fwk::Ptr<Customer> ptr = NULL;
     return ptr;
   } else {
@@ -45,15 +45,15 @@ Fwk::Ptr<Customer> EngineManager::customerLocation(string _name) {
 }
 
 
-void EngineManager::portLocationIs() {
+void EngineManager::portIs(Fwk::Ptr<Port>) {
 
 }
 
-Fwk::Ptr<Port> EngineManager::portLocation(string _name) {
+Fwk::Ptr<Port> EngineManager::port(string _name) {
   std::map<string, Fwk::Ptr<Port> >::iterator portIter;
-  portIter = portLocationMap_.find(_name);
+  portIter = portMap_.find(_name);
 
-  if (portIter == portLocationMap_.end()) {
+  if (portIter == portMap_.end()) {
     Fwk::Ptr<Port> ptr = NULL;
     return ptr;
   } else {
@@ -61,15 +61,15 @@ Fwk::Ptr<Port> EngineManager::portLocation(string _name) {
   }
 }
 
-void EngineManager::boatTerminalLocationIs() {
+void EngineManager::boatTerminalIs(Fwk::Ptr<BoatTerminal> _boatTerminal) {
 
 }
 
-Fwk::Ptr<BoatTerminal> EngineManager::boatTerminalLocation(string _name) {
+Fwk::Ptr<BoatTerminal> EngineManager::boatTerminal(string _name) {
   std::map<string, Fwk::Ptr<BoatTerminal> >::iterator boatTerminalIter;
-  boatTerminalIter = boatTerminalLocationMap_.find(_name);
+  boatTerminalIter = boatTerminalMap_.find(_name);
 
-  if (boatTerminalIter == boatTerminalLocationMap_.end()) {
+  if (boatTerminalIter == boatTerminalMap_.end()) {
     Fwk::Ptr<BoatTerminal> ptr = NULL;
     return ptr;
   } else {
@@ -77,15 +77,15 @@ Fwk::Ptr<BoatTerminal> EngineManager::boatTerminalLocation(string _name) {
   }
 }
 
-void EngineManager::truckTerminalLocationIs() {
+void EngineManager::truckTerminalIs(Fwk::Ptr<TruckTerminal> _truckTerminal) {
 
 }
 
-Fwk::Ptr<TruckTerminal> EngineManager::truckTerminalLocation(string _name) {
+Fwk::Ptr<TruckTerminal> EngineManager::truckTerminal(string _name) {
   std::map<string, Fwk::Ptr<TruckTerminal> >::iterator truckTerminalIter;
-  truckTerminalIter = truckTerminalLocationMap_.find(_name);
+  truckTerminalIter = truckTerminalMap_.find(_name);
 
-  if (truckTerminalIter == truckTerminalLocationMap_.end()) {
+  if (truckTerminalIter == truckTerminalMap_.end()) {
     Fwk::Ptr<TruckTerminal> ptr = NULL;
     return ptr;
   } else {
@@ -93,15 +93,15 @@ Fwk::Ptr<TruckTerminal> EngineManager::truckTerminalLocation(string _name) {
   }
 }
 
-void EngineManager::planeTerminalLocationIs() {
+void EngineManager::planeTerminalIs(Fwk::Ptr<PlaneTerminal> _planeTerminal) {
 
 }
 
-Fwk::Ptr<PlaneTerminal> EngineManager::planeTerminalLocation(string _name) {
+Fwk::Ptr<PlaneTerminal> EngineManager::planeTerminal(string _name) {
   std::map<string, Fwk::Ptr<PlaneTerminal> >::iterator planeTerminalIter;
-  planeTerminalIter = planeTerminalLocationMap_.find(_name);
+  planeTerminalIter = planeTerminalMap_.find(_name);
 
-  if (planeTerminalIter == planeTerminalLocationMap_.end()) {
+  if (planeTerminalIter == planeTerminalMap_.end()) {
     Fwk::Ptr<PlaneTerminal> ptr = NULL;
     return ptr;
   } else {
@@ -110,7 +110,7 @@ Fwk::Ptr<PlaneTerminal> EngineManager::planeTerminalLocation(string _name) {
 }
 
 
-void EngineManager::boatSegmentIs() {
+void EngineManager::boatSegmentIs(Fwk::Ptr<BoatSegment> _boatSegment) {
 
 }
 
@@ -126,7 +126,7 @@ Fwk::Ptr<BoatSegment> EngineManager::boatSegment(string _name) {
   }
 }
 
-void EngineManager::truckSegmentIs() {
+void EngineManager::truckSegmentIs(Fwk::Ptr<TruckSegment> _truckSegment) {
 
 }
 
@@ -142,7 +142,7 @@ Fwk::Ptr<TruckSegment> EngineManager::truckSegment(string _name) {
   }
 }
 
-void EngineManager::planeSegmentIs() {
+void EngineManager::planeSegmentIs(Fwk::Ptr<PlaneSegment> _planeSegment) {
 
 }
 

@@ -6,12 +6,15 @@
 
 #include "PtrInterface.h"
 
+
 namespace Fwk {
 
 class NamedInterface : public PtrInterface<NamedInterface>
 {
 public:
   string name() const { return name_; }
+
+  class Notifiee { };
 
 protected:
   NamedInterface(const string& name) : name_(name) { }

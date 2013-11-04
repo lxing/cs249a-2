@@ -397,7 +397,7 @@ public:
   void boatSegmentIs();
   Fwk::Ptr<BoatSegment> boatSegment(string _name);
   void truckSegmentIs();
-  Fwk::Ptr<TruckSegment> truckegment(string _name);
+  Fwk::Ptr<TruckSegment> truckSegment(string _name);
   void planeSegmentIs();
   Fwk::Ptr<PlaneSegment> planeSegment(string _name);
 

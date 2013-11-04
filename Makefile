@@ -1,16 +1,13 @@
 CXXFLAGS = -Wall -g
 
-OBJECTS = Instance.o
+OBJECTS = Instance.o Engine.o
 
-default:	test1 example engine
+default:	test1 example
 
 test1:	test1.o $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 example:	example.o $(OBJECTS)
-	$(CXX) $(CXXFLAGS) -o $@ $^
-
-engine:	Engine.o $(OBJECTS)
 	$(CXX) $(CXXFLAGS) -o $@ $^
 
 clean:

@@ -254,8 +254,10 @@ public:
     no_ = 1
   };
 
-  ExpeditedSupport expediteSupport();
-  void expediteSupportIs(ExpeditedSupport _expedited_support);
+  ExpeditedSupport expeditedSupport() {
+    return expeditedSupport_;
+  };
+  void expeditedSupportIs(ExpeditedSupport _expedited_support);
 
 protected:
   Segment(const string& name) : Entity(name), name_(name), length_(0),

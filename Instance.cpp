@@ -18,14 +18,11 @@ using namespace std;
 class ManagerImpl : public Instance::Manager {
 public:
   ManagerImpl();
-
   Ptr<Instance> instanceNew(const string& name, const string& type);
   Ptr<Instance> instance(const string& name);
   void instanceDel(const string& name);
   Ptr<EngineManager> engine() { return engine_; };
-
-
-private:
+protected:
   map<string,Ptr<Instance> > instanceMap_;
   Ptr<EngineManager> engine_;
 };
@@ -37,10 +34,9 @@ public:
       Instance(name), manager_(manager) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
-
-private:
+protected:
   Ptr<Location> location_; // Associated engine object
-  Ptr<Manager> manager_;
+  Ptr<ManagerImpl> manager_;
   int segmentNumber(const string& name);
 
 };
@@ -84,9 +80,45 @@ public:
     Instance(name), manager_(manager) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
-private:
-  Ptr<Segment> segment_; // Associated engine object
-  Ptr<Manager> manager_;
+protected:
+  virtual Ptr<Segment> segment() = 0;
+  void sourceIs(const string& v);
+  void returnSegmentIs(const string& v);
+  Ptr<ManagerImpl> manager_;
+};
+
+
+class TruckSegmentRep : public SegmentRep {
+public:
+  TruckSegmentRep(const string& name, ManagerImpl *manager) :
+    SegmentRep(name, manager) {};
+protected:
+  Ptr<Segment> segment() {return segment_;};
+  void sourceIs(const string& v);
+  void returnSegmentIs(const string& v);
+  Ptr<TruckSegment> segment_;
+};
+
+class BoatSegmentRep : public SegmentRep {
+public:
+  BoatSegmentRep(const string& name, ManagerImpl *manager) :
+    SegmentRep(name, manager) {};
+protected:
+  Ptr<Segment> segment() {return segment_;};
+  void sourceIs(const string& v);
+  void returnSegmentIs(const string& v);
+  Ptr<BoatSegment> segment_;
+};
+
+class PlaneSegmentRep : public SegmentRep {
+public:
+  PlaneSegmentRep(const string& name, ManagerImpl *manager) :
+    SegmentRep(name, manager) {};
+protected:
+  Ptr<Segment> segment() {return segment_;};
+  void sourceIs(const string& v);
+  void returnSegmentIs(const string& v);
+  Ptr<PlaneSegment> segment_;
 };
 
 
@@ -97,10 +129,11 @@ public:
     Instance(name), manager_(manager) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
-private:
+protected:
   Ptr<Stats> stats_;
-  Ptr<Manager> manager_;
+  Ptr<ManagerImpl> manager_;
 };
+
 
 /* Connectivity */
 class ConnRep : public Instance {
@@ -109,11 +142,15 @@ public:
     Instance(name), manager_(manager) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
-private:
-  Ptr<Manager> manager_;
+protected:
+  Ptr<ManagerImpl> manager_;
 };
 
 /* Fleet */
+
+
+
+
 
 /******************/
 /* Implementation */
@@ -125,7 +162,7 @@ ManagerImpl::ManagerImpl() {
 }
 
 Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
-  Ptr<Instance> instance = instance(name);
+  Ptr<Instance> instance = ManagerImpl::instance(name);
   if (instance != NULL) {
     cerr << "Attempt to instantiate existing instance";
     instance = NULL;
@@ -133,7 +170,7 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
   }
 
   if (type == "Customer") {
-    // TODO: static constructors
+    // TODO: add to engine
     instance = new CustomerRep(name, this);
   } else if (type == "Port") {
     instance = new PortRep(name, this);
@@ -144,9 +181,13 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
   } else if (type == "Plane terminal") {
     instance = new PlaneTerminalRep(name, this);
   } else if (type == "Truck segment") {
+    instance = new TruckSegmentRep(name, this);
   } else if (type == "Boat segment") {
+    instance = new BoatSegmentRep(name, this);
   } else if (type == "Plane segment") {
+    instance = new PlaneSegmentRep(name, this);
   } else if (type == "Stats") {
+    instance = new StatsRep(name, this);
   } else if (type == "Conn") {
   } else if (type == "Fleet") {
   } else {
@@ -198,29 +239,28 @@ string SegmentRep::attribute(const string& name) {
   stringstream ss;
 
   if (name == "source") {
-    Ptr<Location> source = segment_->source();
+    Ptr<Location> source = segment()->source();
     if (source == NULL) return "";
     return source->name();
   } else if (name == "length") {
-    Mile length = segment_->length();
+    Mile length = segment()->length();
     ss << length.value();
     return ss.str();
   } else if (name == "return segment") {
-    Ptr<Segment> returnSegment = segment_->returnSegment();
+    Ptr<Segment> returnSegment = segment()->returnSegment();
     if (returnSegment == NULL) return "";
     return returnSegment->name();
   } else if (name == "difficulty") {
-    Difficulty difficulty = segment_->difficulty();
+    Difficulty difficulty = segment()->difficulty();
     ss << difficulty.value();
     return ss.str();
   } else if (name == "expedite support") {
-    return ""; // TODO
-    /*Segment::ExpeditedSupport support = segment_->expediteSupport();
+    Segment::ExpeditedSupport support = segment()->expeditedSupport();
     if (support == Segment::yes_) {
       return "yes";
     } else {
       return "no";
-    }*/
+    }
   } else {
     cerr << "Invalid attribute for segment";
     return "";
@@ -228,8 +268,53 @@ string SegmentRep::attribute(const string& name) {
 }
 
 void SegmentRep::attributeIs(const string& name, const string& v) {
-  if (name == "length")
-  return;
+  if (name == "source") {
+    //sourceIs(v);
+  } else if (name == "length") {
+    Mile length = atoi(v.c_str());
+    segment()->lengthIs(length);
+  } else if (name == "difficulty") {
+    Difficulty difficulty = atoi(v.c_str());
+    segment()->difficultyIs(difficulty);
+  } else if (name == "return segment") {
+    //returnSegmentIs(v);
+  } else if (name == "expedite support") {
+    Segment::ExpeditedSupport support;
+    if (v == "yes") {
+      support = Segment::yes_;
+    } else if (v == "no") {
+      support = Segment::no_;
+    } else {
+      cerr << "Invalid value for expedited support";
+    }
+  } else {
+    cerr << "Invalid attribute for segment";
+  }
+}
+
+void TruckSegmentRep::sourceIs(const string& v) {
+  Ptr<TruckTerminal> source = manager_->engine()->truckTerminalLocation(v);
+  if (source) segment_->sourceIs(source);
+}
+
+void TruckSegmentRep::returnSegmentIs(const string& v) {
+
+}
+
+void BoatSegmentRep::sourceIs(const string& v) {
+
+}
+
+void BoatSegmentRep::returnSegmentIs(const string& v) {
+
+}
+
+void PlaneSegmentRep::sourceIs(const string& v) {
+
+}
+
+void PlaneSegmentRep::returnSegmentIs(const string& v) {
+
 }
 
 
@@ -256,6 +341,9 @@ string StatsRep::attribute(const string& name) {
     ss << stats_->boatSegmentCount();
   } else if (name == "Plane Segment") {
     ss << stats_->planeSegmentCount();
+  } else {
+    cerr << "Invlaid attribute for stats";
+    return "";
   }
 
   return ss.str();
@@ -286,6 +374,8 @@ void ConnRep::attributeIs(const string& name, const string& v) {
 
 
 } /* End namespace Shipping */
+
+
 
 /*
  * This is the entry point for your library.

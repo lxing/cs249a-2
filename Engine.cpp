@@ -37,7 +37,17 @@ Fwk::Ptr<Entity> EngineManager::entity(string _name) {
 }
 
 void EngineManager::customerIs(Fwk::Ptr<Customer> _customer) {
+  std::map<string, Fwk::Ptr<Customer> >::iterator customerIter;
+  customerIter = customerMap_.find(_customer->name());
 
+  if (_customer == NULL) return;
+  if (customerIter != customerMap_.end()) return;
+
+  customerMap_[_customer->name()] = _customer;
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onCustomerIs();
+  }
 }
 
 Fwk::Ptr<Customer> EngineManager::customer(string _name) {
@@ -52,9 +62,18 @@ Fwk::Ptr<Customer> EngineManager::customer(string _name) {
   }
 }
 
+void EngineManager::portIs(Fwk::Ptr<Port> _port) {
+  std::map<string, Fwk::Ptr<Port> >::iterator portIter;
+  portIter = portMap_.find(_port->name());
 
-void EngineManager::portIs(Fwk::Ptr<Port>) {
+  if (_port == NULL) return;
+  if (portIter != portMap_.end()) return;
 
+  portMap_[_port->name()] = _port;
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onPortIs();
+  }
 }
 
 Fwk::Ptr<Port> EngineManager::port(string _name) {
@@ -70,7 +89,17 @@ Fwk::Ptr<Port> EngineManager::port(string _name) {
 }
 
 void EngineManager::boatTerminalIs(Fwk::Ptr<BoatTerminal> _boatTerminal) {
+  std::map<string, Fwk::Ptr<BoatTerminal> >::iterator boatTerminalIter;
+  boatTerminalIter = boatTerminalMap_.find(_boatTerminal->name());
 
+  if (_boatTerminal == NULL) return;
+  if (boatTerminalIter != boatTerminalMap_.end()) return;
+
+  boatTerminalMap_[_boatTerminal->name()] = _boatTerminal;
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onBoatTerminalIs();
+  }
 }
 
 Fwk::Ptr<BoatTerminal> EngineManager::boatTerminal(string _name) {
@@ -86,7 +115,17 @@ Fwk::Ptr<BoatTerminal> EngineManager::boatTerminal(string _name) {
 }
 
 void EngineManager::truckTerminalIs(Fwk::Ptr<TruckTerminal> _truckTerminal) {
+  std::map<string, Fwk::Ptr<TruckTerminal> >::iterator truckTerminalIter;
+  truckTerminalIter = truckTerminalMap_.find(_truckTerminal->name());
 
+  if (_truckTerminal == NULL) return;
+  if (truckTerminalIter != truckTerminalMap_.end()) return;
+
+  truckTerminalMap_[_truckTerminal->name()] = _truckTerminal;
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onTruckTerminalIs();
+  }
 }
 
 Fwk::Ptr<TruckTerminal> EngineManager::truckTerminal(string _name) {
@@ -102,7 +141,17 @@ Fwk::Ptr<TruckTerminal> EngineManager::truckTerminal(string _name) {
 }
 
 void EngineManager::planeTerminalIs(Fwk::Ptr<PlaneTerminal> _planeTerminal) {
+  std::map<string, Fwk::Ptr<PlaneTerminal> >::iterator planeTerminalIter;
+  planeTerminalIter = planeTerminalMap_.find(_planeTerminal->name());
 
+  if (_planeTerminal == NULL) return;
+  if (planeTerminalIter != planeTerminalMap_.end()) return;
+
+  planeTerminalMap_[_planeTerminal->name()] = _planeTerminal;
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onPlaneTerminalIs();
+  }
 }
 
 Fwk::Ptr<PlaneTerminal> EngineManager::planeTerminal(string _name) {
@@ -119,7 +168,17 @@ Fwk::Ptr<PlaneTerminal> EngineManager::planeTerminal(string _name) {
 
 
 void EngineManager::boatSegmentIs(Fwk::Ptr<BoatSegment> _boatSegment) {
+  std::map<string, Fwk::Ptr<BoatSegment> >::iterator boatSegmentIter;
+  boatSegmentIter = boatSegmentMap_.find(_boatSegment->name());
 
+  if (_boatSegment == NULL) return;
+  if (boatSegmentIter != boatSegmentMap_.end()) return;
+
+  boatSegmentMap_[_boatSegment->name()] = _boatSegment;
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onBoatSegmentIs();
+  }
 }
 
 Fwk::Ptr<BoatSegment> EngineManager::boatSegment(string _name) {
@@ -135,7 +194,17 @@ Fwk::Ptr<BoatSegment> EngineManager::boatSegment(string _name) {
 }
 
 void EngineManager::truckSegmentIs(Fwk::Ptr<TruckSegment> _truckSegment) {
+  std::map<string, Fwk::Ptr<TruckSegment> >::iterator truckSegmentIter;
+  truckSegmentIter = truckSegmentMap_.find(_truckSegment->name());
 
+  if (_truckSegment == NULL) return;
+  if (truckSegmentIter != truckSegmentMap_.end()) return;
+
+  truckSegmentMap_[_truckSegment->name()] = _truckSegment;
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onTruckSegmentIs();
+  }
 }
 
 Fwk::Ptr<TruckSegment> EngineManager::truckSegment(string _name) {
@@ -151,7 +220,17 @@ Fwk::Ptr<TruckSegment> EngineManager::truckSegment(string _name) {
 }
 
 void EngineManager::planeSegmentIs(Fwk::Ptr<PlaneSegment> _planeSegment) {
+  std::map<string, Fwk::Ptr<PlaneSegment> >::iterator planeSegmentIter;
+  planeSegmentIter = planeSegmentMap_.find(_planeSegment->name());
 
+  if (_planeSegment == NULL) return;
+  if (planeSegmentIter != planeSegmentMap_.end()) return;
+
+  planeSegmentMap_[_planeSegment->name()] = _planeSegment;
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onPlaneSegmentIs();
+  }
 }
 
 Fwk::Ptr<PlaneSegment> EngineManager::planeSegment(string _name) {
@@ -166,7 +245,7 @@ Fwk::Ptr<PlaneSegment> EngineManager::planeSegment(string _name) {
   }
 }
 
-Stats::Stats(const string& name) : Entity(name),
+Stats::Stats(const string& name) :
     customerCount_(0), portCount_(0), boatTerminalCount_(0), 
     truckTerminalCount_(0), planeTerminalCount_(0), expeditedSegmentCount_(0),
     boatSegmentCount_(0), truckSegmentCount_(0), planeSegmentCount_(0)
@@ -174,71 +253,36 @@ Stats::Stats(const string& name) : Entity(name),
 
 }
 
-Stats::~Stats() {
+Stats::~Stats() { }
 
-}
+void Stats::onCustomerIs() { customerCountInc(1); }
 
-void Stats::onCustomerIs() {
+void Stats::onPortIs() { portCountInc(1); }
 
-}
+void Stats::onBoatTerminalIs() { boatTerminalCountInc(1); }
 
-void Stats::onPortIs() {
+void Stats::onTruckTerminalIs() { truckSegmentCountInc(1); }
 
-}
+void Stats::onPlaneTerminalIs() { planeTerminalCountInc(1); }
 
-void Stats::onBoatTerminalIs() {
+void Stats::onBoatSegmentIs() { boatSegmentCountInc(1); }
 
-}
+void Stats::onTruckSegmentIs() { truckSegmentCountInc(1); }
 
-void Stats::onTruckTerminalIs() {
+void Stats::onPlaneSegmentIs() { planeSegmentCountInc(1); }
 
-}
+void Stats::onCustomerDel() { customerCountInc(-1); }
 
-void Stats::onPlaneTerminalIs() {
+void Stats::onPortDel() { portCountInc(-1); }
 
-}
+void Stats::onBoatTerminalDel() { boatTerminalCountInc(-1); }
 
-void Stats::onBoatSegmentIs() {
+void Stats::onTruckTerminalDel() { truckTerminalCountInc(-1); }
 
-}
+void Stats::onPlaneTerminalDel() { planeTerminalCountInc(-1); }
 
-void Stats::onTruckSegmentIs() {
+void Stats::onBoatSegmentDel() { boatSegmentCountInc(-1); }
 
-}
+void Stats::onTruckSegmentDel() { truckSegmentCountInc(-1); }
 
-void Stats::onPlaneSegmentIs() {
-
-}
-
-
-void Stats::onCustomerDel() {
-
-}
-
-void Stats::onPortDel() {
-
-}
-
-void Stats::onBoatTerminalDel() {
-
-}
-
-void Stats::onTruckTerminalDel() {
-
-}
-
-void Stats::onPlaneTerminalDel() {
-
-}
-
-void Stats::onBoatSegmentDel() {
-
-}
-
-void Stats::onTruckSegmentDel() {
-
-}
-
-void Stats::onPlaneSegmentDel() {
-
-}
+void Stats::onPlaneSegmentDel() { planeSegmentCountInc(-1); }

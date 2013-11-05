@@ -337,7 +337,7 @@ public:
 
   void customerIs(Fwk::Ptr<Customer> _customer);
   Fwk::Ptr<Customer> customer(string _name);
-  void portIs(Fwk::Ptr<Port>);
+  void portIs(Fwk::Ptr<Port> port);
   Fwk::Ptr<Port> port(string _name);
   void boatTerminalIs(Fwk::Ptr<BoatTerminal> _boatTerminal);
   Fwk::Ptr<BoatTerminal> boatTerminal(string _name);
@@ -376,6 +376,7 @@ public:
 
 private:
   Fwk::Ptr<Stats> stats_;
+  std::vector<Fwk::Ptr<Notifiee> > notifiee_;
 
   // set which contains the used names of engine objects
   std::map<string, Fwk::Ptr<Entity> > entityMap_;
@@ -397,7 +398,7 @@ private:
 };
 
 // TODO: Change this to a notifiee
-class Stats : public Entity, public EngineManager::Notifiee {
+class Stats : public EngineManager::Notifiee {
 public:
   Stats(const string& name);
   ~Stats();
@@ -421,23 +422,23 @@ public:
   void onPlaneSegmentDel();
 
   uint32_t customerCount() { return customerCount_; }
-  void customerCountInc() { customerCount_++; }
+  void customerCountInc(int delta) { customerCount_ += delta; }
   uint32_t portCount() { return portCount_; }
-  void portCountInc() { portCount_++; }
+  void portCountInc(int delta) { portCount_ += delta; }
 
   uint32_t boatTerminalCount() { return boatTerminalCount_; }
-  void boatTerminalCountInc() { boatTerminalCount_++; }
+  void boatTerminalCountInc(int delta) { boatTerminalCount_ += delta; }
   uint32_t truckTerminalCount() { return truckTerminalCount_; }
-  void truckTerminalCountInc() { truckTerminalCount_++; }
+  void truckTerminalCountInc(int delta) { truckTerminalCount_ += delta; }
   uint32_t planeTerminalCount() { return planeTerminalCount_; }
-  void planeTerminalCountInc() { planeTerminalCount_++; }
+  void planeTerminalCountInc(int delta) { planeTerminalCount_ += delta; }
 
   uint32_t boatSegmentCount() { return boatSegmentCount_; }
-  void boatSegmentCountInc() { boatTerminalCount_++; }
+  void boatSegmentCountInc(int delta) { boatTerminalCount_ += delta; }
   uint32_t truckSegmentCount() {return truckSegmentCount_; }
-  void truckSegmentCountInc() { truckSegmentCount_++; }
+  void truckSegmentCountInc(int delta) { truckSegmentCount_ += delta; }
   uint32_t planeSegmentCount() { return planeSegmentCount_; }
-  void planeSegmentCountInc() { planeSegmentCount_++; }
+  void planeSegmentCountInc(int delta) { planeSegmentCount_ += delta; }
 
   float expeditedPercentage() {
     return (float)expeditedSegmentCount_ /

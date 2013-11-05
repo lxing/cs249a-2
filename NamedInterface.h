@@ -14,7 +14,7 @@ class NamedInterface : public PtrInterface<NamedInterface>
 public:
   string name() const { return name_; }
 
-  class Notifiee { };
+  class Notifiee : public PtrInterface<Notifiee> { };
 
 protected:
   NamedInterface(const string& name) : name_(name) { }

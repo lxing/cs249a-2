@@ -82,8 +82,8 @@ public:
   void attributeIs(const string& name, const string& v);
 protected:
   virtual Ptr<Segment> segment() = 0;
-  void sourceIs(const string& v);
-  void returnSegmentIs(const string& v);
+  virtual void sourceIs(const string& v) = 0;
+  virtual void returnSegmentIs(const string& v) = 0;
   Ptr<ManagerImpl> manager_;
 };
 
@@ -269,7 +269,7 @@ string SegmentRep::attribute(const string& name) {
 
 void SegmentRep::attributeIs(const string& name, const string& v) {
   if (name == "source") {
-    //sourceIs(v);
+    sourceIs(v);
   } else if (name == "length") {
     Mile length = atoi(v.c_str());
     segment()->lengthIs(length);
@@ -277,7 +277,7 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
     Difficulty difficulty = atoi(v.c_str());
     segment()->difficultyIs(difficulty);
   } else if (name == "return segment") {
-    //returnSegmentIs(v);
+    returnSegmentIs(v);
   } else if (name == "expedite support") {
     Segment::ExpeditedSupport support;
     if (v == "yes") {
@@ -293,28 +293,60 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
 }
 
 void TruckSegmentRep::sourceIs(const string& v) {
-  Ptr<TruckTerminal> source = manager_->engine()->truckTerminalLocation(v);
-  if (source) segment_->sourceIs(source);
+  Ptr<EngineManager> engine = manager_->engine();
+  Ptr<TruckTerminal> terminal = engine->truckTerminal(v);
+  if (terminal) { segment_->sourceIs(terminal); return; }
+  Ptr<Customer> customer = engine->customer(v);
+  if (customer) { segment_->sourceIs(customer); return; }
+  Ptr<Port> port = engine->port(v);
+  if (port) { segment_->sourceIs(port); return; }
+  cerr << "Source does not exist";
 }
 
 void TruckSegmentRep::returnSegmentIs(const string& v) {
-
+  Ptr<TruckSegment> returnSegment = manager_->engine()->truckSegment(v);
+  if (returnSegment)
+    segment_->returnSegmentIs(returnSegment);
+  else
+    cerr << "Return segment does not exist";
 }
 
 void BoatSegmentRep::sourceIs(const string& v) {
-
+  Ptr<EngineManager> engine = manager_->engine();
+  Ptr<BoatTerminal> terminal = engine->boatTerminal(v);
+  if (terminal) { segment_->sourceIs(terminal); return; }
+  Ptr<Customer> customer = engine->customer(v);
+  if (customer) { segment_->sourceIs(customer); return; }
+  Ptr<Port> port = engine->port(v);
+  if (port) { segment_->sourceIs(port); return; }
+  cerr << "Source does not exist";
 }
 
 void BoatSegmentRep::returnSegmentIs(const string& v) {
-
+  Ptr<BoatSegment> returnSegment = manager_->engine()->boatSegment(v);
+  if (returnSegment)
+    segment_->returnSegmentIs(returnSegment);
+  else
+    cerr << "Return segment does not exist";
 }
 
 void PlaneSegmentRep::sourceIs(const string& v) {
-
+  Ptr<EngineManager> engine = manager_->engine();
+  Ptr<PlaneTerminal> terminal = engine->planeTerminal(v);
+  if (terminal) { segment_->sourceIs(terminal); return; }
+  Ptr<Customer> customer = engine->customer(v);
+  if (customer) { segment_->sourceIs(customer); return; }
+  Ptr<Port> port = engine->port(v);
+  if (port) { segment_->sourceIs(port); return; }
+  cerr << "Source does not exist";
 }
 
 void PlaneSegmentRep::returnSegmentIs(const string& v) {
-
+  Ptr<PlaneSegment> returnSegment = manager_->engine()->planeSegment(v);
+  if (returnSegment)
+    segment_->returnSegmentIs(returnSegment);
+  else
+    cerr << "Return segment does not exist";
 }
 
 

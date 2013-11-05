@@ -127,7 +127,7 @@ private:
   std::vector<Entity> path_;
 };
 
-// Create your rep/engine interface here.
+// Locations
 class Location : public Entity {
 public:
   // TODO(rhau) onSegment, which adds a segment as a callback from SegmentNew
@@ -151,31 +151,6 @@ private:
   std::vector<Ptr<Segment> > segments_;
 };
 
-
-// Locations
-class Customer : public Location {
-public:
-  static Fwk::Ptr<Customer> CustomerNew(const string& name) {
-    Fwk::Ptr<Customer> m = new Customer(name);
-    return m;
-  }
-
-protected:
-  Customer(const string& name) : Location(name) {}
-  ~Customer() {}
-};
-
-class Port : public Location {
-public:
-  static Fwk::Ptr<Port> PortNew(const string& name) {
-    Fwk::Ptr<Port> m = new Port(name);
-    return m;
-  }
-
-protected:
-  Port(const string& name) : Location(name) {}
-  ~Port() {}
-};
 
 class Terminal : public Location {
 protected:
@@ -220,53 +195,62 @@ protected:
   ~PlaneTerminal() {}
 };
 
+class Customer : public Location {
+public:
+  static Fwk::Ptr<Customer> CustomerNew(const string& name) {
+    Fwk::Ptr<Customer> m = new Customer(name);
+    return m;
+  }
+
+protected:
+  Customer(const string& name) : Location(name) {}
+  ~Customer() {}
+};
+
+class Port : public Location {
+public:
+  static Fwk::Ptr<Port> PortNew(const string& name) {
+    Fwk::Ptr<Port> m = new Port(name);
+    return m;
+  }
+
+protected:
+  Port(const string& name) : Location(name) {}
+  ~Port() {}
+};
+
+
+// Segments
 class Segment : public Entity {
 public:
   // returns the global name of the source location
-  Ptr<Location> source() {
-    return source_;
-  }
+  Ptr<Location> source() { return source_; }
 
-  Mile length() {
-    return length_;
-  }
-  void lengthIs(Mile _length) {
-    length_ = _length;
-  }
+  Mile length() { return length_; }
+  void lengthIs(Mile _length) { length_ = _length; }
 
-  Ptr<Segment> returnSegment() {
-    return returnSegment_;
-  }
+  Ptr<Segment> returnSegment() { return returnSegment_; }
+  void returnSegmentIs(Ptr<Segment> returnSegment) { returnSegment_ = returnSegment; }
 
-  void returnSegmentIs(Ptr<Segment> returnSegment) {
-    returnSegment_ = returnSegment;
-  }
-
-  Difficulty difficulty() {
-    return difficulty_;
-  }
-  void difficultyIs(Difficulty _difficulty) {
-    difficulty_ = _difficulty;
-  }
+  Difficulty difficulty() { return difficulty_; }
+  void difficultyIs(Difficulty _difficulty) { difficulty_ = _difficulty; }
 
   enum ExpeditedSupport {
     yes_ = 0,
     no_ = 1
   };
 
-  ExpeditedSupport expeditedSupport() {
-    return expeditedSupport_;
-  };
-  void expeditedSupportIs(ExpeditedSupport _expedited_support);
+  ExpeditedSupport expeditedSupport() { return expeditedSupport_; };
+  void expeditedSupportIs(ExpeditedSupport _expeditedSupport) {
+    expeditedSupport_ = _expeditedSupport;
+  }
 
 protected:
   Segment(const string& name) : Entity(name), name_(name), length_(0),
       difficulty_(0), expeditedSupport_(no_) { }
   virtual ~Segment();
 
-  void sourceIsImpl(Ptr<Location> _loc) {
-    source_ = _loc;
-  }
+  void sourceIsImpl(Ptr<Location> _loc) { source_ = _loc; }
 
 private:
   string name_;
@@ -277,14 +261,15 @@ private:
   ExpeditedSupport expeditedSupport_;
 };
 
-// Segments
 class BoatSegment : public Segment {
 public:
   static Fwk::Ptr<BoatSegment> BoatSegmentNew(const string& name) {
     Fwk::Ptr<BoatSegment> m = new BoatSegment(name);
     return m;
   }
-  void sourceIs(Ptr<BoatTerminal> _loc);
+  void sourceIs(Ptr<BoatTerminal> _loc) { sourceIsImpl(_loc); }
+  void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
+  void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
 protected:
   BoatSegment(const string& name) : Segment(name) {};
@@ -297,7 +282,9 @@ public:
     Fwk::Ptr<TruckSegment> m = new TruckSegment(name);
     return m;
   }
-  void sourceIs(Ptr<TruckTerminal> _loc);
+  void sourceIs(Ptr<TruckTerminal> _loc) { sourceIsImpl(_loc); }
+  void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
+  void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
 protected:
   TruckSegment(const string& name) : Segment(name) {};
@@ -310,7 +297,9 @@ public:
     Fwk::Ptr<PlaneSegment> m = new PlaneSegment(name);
     return m;
   }
-  void sourceIs(Ptr<PlaneTerminal> _loc);
+  void sourceIs(Ptr<PlaneTerminal> _loc) { sourceIsImpl(_loc); }
+  void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
+  void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
 protected:
   PlaneSegment(const string& name) : Segment(name) {};

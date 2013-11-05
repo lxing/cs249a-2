@@ -16,7 +16,7 @@ std::vector<Path> Shipping::Location::connectivity(
 }
 
 EngineManager::EngineManager() {
-  // stats_ = new Shipping::Stats();
+  stats_ = new Shipping::Stats("stats");
 }
 
 EngineManager::~EngineManager() {
@@ -164,4 +164,81 @@ Fwk::Ptr<PlaneSegment> EngineManager::planeSegment(string _name) {
   } else {
     return planeSegmentIter->second;
   }
+}
+
+Stats::Stats(const string& name) : Entity(name),
+    customerCount_(0), portCount_(0), boatTerminalCount_(0), 
+    truckTerminalCount_(0), planeTerminalCount_(0), expeditedSegmentCount_(0),
+    boatSegmentCount_(0), truckSegmentCount_(0), planeSegmentCount_(0)
+{
+
+}
+
+Stats::~Stats() {
+
+}
+
+void Stats::onCustomerIs() {
+
+}
+
+void Stats::onPortIs() {
+
+}
+
+void Stats::onBoatTerminalIs() {
+
+}
+
+void Stats::onTruckTerminalIs() {
+
+}
+
+void Stats::onPlaneTerminalIs() {
+
+}
+
+void Stats::onBoatSegmentIs() {
+
+}
+
+void Stats::onTruckSegmentIs() {
+
+}
+
+void Stats::onPlaneSegmentIs() {
+
+}
+
+
+void Stats::onCustomerDel() {
+
+}
+
+void Stats::onPortDel() {
+
+}
+
+void Stats::onBoatTerminalDel() {
+
+}
+
+void Stats::onTruckTerminalDel() {
+
+}
+
+void Stats::onPlaneTerminalDel() {
+
+}
+
+void Stats::onBoatSegmentDel() {
+
+}
+
+void Stats::onTruckSegmentDel() {
+
+}
+
+void Stats::onPlaneSegmentDel() {
+
 }

@@ -399,6 +399,27 @@ private:
 // TODO: Change this to a notifiee
 class Stats : public Entity, public EngineManager::Notifiee {
 public:
+  Stats(const string& name);
+  ~Stats();
+
+  void onCustomerIs();
+  void onPortIs();
+  void onBoatTerminalIs();
+  void onTruckTerminalIs();
+  void onPlaneTerminalIs();
+  void onBoatSegmentIs();
+  void onTruckSegmentIs();
+  void onPlaneSegmentIs();
+
+  void onCustomerDel();
+  void onPortDel();
+  void onBoatTerminalDel();
+  void onTruckTerminalDel();
+  void onPlaneTerminalDel();
+  void onBoatSegmentDel();
+  void onTruckSegmentDel();
+  void onPlaneSegmentDel();
+
   uint32_t customerCount() { return customerCount_; }
   void customerCountInc() { customerCount_++; }
   uint32_t portCount() { return portCount_; }

@@ -133,6 +133,7 @@ public:
     Instance(name), manager_(manager) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
+  void engineObjIs(const Ptr<Stats> _stats) { stats_ = _stats; };
 protected:
   Ptr<Stats> stats_;
   Ptr<ManagerImpl> manager_;
@@ -157,10 +158,24 @@ public:
     Instance(name), manager_(manager) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
+
+  enum FleetType {
+    truck_ = 0,
+    boat_ = 1,
+    plane_ = 2
+  };
+
+  enum FleetMode {
+    milesPerHour_ = 0,
+    cpacity_ = 1,
+    costPerMile_ = 2
+  };
+
   void truckFleetIs(const Ptr<TruckFleet> _truckFleet) { truckFleet_ = _truckFleet; };
   void boatFleetIs(const Ptr<BoatFleet> _boatFleet) { boatFleet_ = _boatFleet; };
   void planeFleetIs(const Ptr<PlaneFleet> _planeFleet) { planeFleet_ = _planeFleet; };
 protected:
+  void parsedInput(const string& name, FleetType& type, FleetMode& mode);
   Ptr<TruckFleet> truckFleet_;
   Ptr<BoatFleet> boatFleet_;
   Ptr<PlaneFleet> planeFleet_;
@@ -235,8 +250,10 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
     rep->engineObjIs(segment);
     instance = rep;
   } else if (type == "Stats") {
-    instance = new StatsRep(name, this);
-
+    Ptr<StatsRep> rep = new StatsRep(name, this);
+    Ptr<Stats> stats = engine_->stats();
+    rep->engineObjIs(stats);
+    instance = rep;
   } else if (type == "Conn") {
     instance = new ConnRep(name, this);
     // No need to register with the engine layer; connectivity
@@ -273,6 +290,7 @@ Ptr<Instance> ManagerImpl::instance(const string& name) {
 }
 
 void ManagerImpl::instanceDel(const string& name) {
+  // Semantics?
 }
 
 
@@ -457,10 +475,10 @@ void StatsRep::attributeIs(const string& name, const string& v) {
 /* Connectivity */
 string ConnRep::attribute(const string& name) {
   stringstream ss(name);
-  string item;
+  string token;
   vector<string> elems;
-  //while (std::getline(ss, item, " ")) {
-  //  elems.push_back(item);
+  //while (std::getline(ss, token, " ")) {
+  //  elems.push_back(token);
   //}
   return "";
 };
@@ -473,11 +491,22 @@ void ConnRep::attributeIs(const string& name, const string& v) {
 
 /* Fleet */
 string FleetRep::attribute(const string& name) {
+  FleetType type;
+  FleetMode mode;
+  type = boat_;
+  mode = milesPerHour_;
   return "yolo";
 };
 
 void FleetRep::attributeIs(const string& name, const string& v) {
 
+};
+
+void FleetRep::parsedInput(const string& name, FleetType& type, FleetMode& mode) {
+  istringstream iss(name);
+  string token;
+
+  //std::getline(iss, token, ", ");
 };
 
 } /* End namespace Shipping */

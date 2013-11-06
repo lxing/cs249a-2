@@ -55,24 +55,12 @@ public:
 class Fleet : public Entity {
 public:
 
-  virtual void milesPerHourIs(Mile _milesPerHour) {
-    milesPerHour_ = _milesPerHour;
-  }
-  virtual Mile milesPerHour() {
-    return milesPerHour_;
-  }
-  virtual void capacityIs(uint32_t _capacity) {
-    capacity_ = _capacity;
-  }
-  virtual uint32_t capacity() {
-    return capacity_;
-  }
-  virtual void costPerMileIs(Dollar _costPerMile) {
-    costPerMile_ = _costPerMile;
-  }
-  virtual Dollar costPerMile() {
-    return costPerMile_;
-  }
+  virtual void milesPerHourIs(Mile _milesPerHour) { milesPerHour_ = _milesPerHour; }
+  virtual Mile milesPerHour() { return milesPerHour_; }
+  virtual void capacityIs(uint32_t _capacity) { capacity_ = _capacity; }
+  virtual uint32_t capacity() { return capacity_; }
+  virtual void costPerMileIs(Dollar _costPerMile) { costPerMile_ = _costPerMile; }
+  virtual Dollar costPerMile() { return costPerMile_; }
 
 protected:
   Fleet(const string& name) : Entity(name), milesPerHour_(0),
@@ -316,7 +304,7 @@ public:
 
   Ptr<Entity> entity(string _name);
 
-  Ptr<Stats> stats(string _name) { return stats_; }
+  Ptr<Stats> stats() { return stats_; }
 
   void boatFleetIs(Ptr<BoatFleet> _boatFleet) {
     boatFleet_ = _boatFleet;

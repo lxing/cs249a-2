@@ -86,8 +86,8 @@ private:
 
 class BoatFleet : public Fleet {
 public:
-  static Fwk::Ptr<BoatFleet> BoatFleetNew(const string& name) {
-    Fwk::Ptr<BoatFleet> m = new BoatFleet(name);
+  static Ptr<BoatFleet> BoatFleetNew(const string& name) {
+    Ptr<BoatFleet> m = new BoatFleet(name);
     return m;
   }
 
@@ -97,8 +97,8 @@ protected:
 
 class PlaneFleet : public Fleet {
 public:
-  static Fwk::Ptr<PlaneFleet> PlaneFleetNew(const string& name) {
-    Fwk::Ptr<PlaneFleet> m = new PlaneFleet(name);
+  static Ptr<PlaneFleet> PlaneFleetNew(const string& name) {
+    Ptr<PlaneFleet> m = new PlaneFleet(name);
     return m;
   }
 
@@ -108,8 +108,8 @@ protected:
 
 class TruckFleet : public Fleet {
 public:
-  static Fwk::Ptr<TruckFleet> TruckFleetNew(const string& name) {
-    Fwk::Ptr<TruckFleet> m = new TruckFleet(name);
+  static Ptr<TruckFleet> TruckFleetNew(const string& name) {
+    Ptr<TruckFleet> m = new TruckFleet(name);
     return m;
   }
 
@@ -136,7 +136,7 @@ public:
     return segments_[_i];
   }
 
-  virtual void segmentIs(Fwk::Ptr<Segment> s) {
+  virtual void segmentIs(Ptr<Segment> s) {
     segments_.push_back(s);
   }
 
@@ -161,8 +161,8 @@ protected:
 // Terminals
 class BoatTerminal : public Terminal {
 public:
-  static Fwk::Ptr<BoatTerminal> BoatTerminalNew(const string& name) {
-    Fwk::Ptr<BoatTerminal> m = new BoatTerminal(name);
+  static Ptr<BoatTerminal> BoatTerminalNew(const string& name) {
+    Ptr<BoatTerminal> m = new BoatTerminal(name);
     return m;
   }
 
@@ -173,8 +173,8 @@ protected:
 
 class TruckTerminal : public Terminal {
 public:
-  static Fwk::Ptr<TruckTerminal> TruckTerminalNew(const string& name) {
-    Fwk::Ptr<TruckTerminal> m = new TruckTerminal(name);
+  static Ptr<TruckTerminal> TruckTerminalNew(const string& name) {
+    Ptr<TruckTerminal> m = new TruckTerminal(name);
     return m;
   }
 
@@ -185,8 +185,8 @@ protected:
 
 class PlaneTerminal : public Terminal {
 public:
-  static Fwk::Ptr<PlaneTerminal> PlaneTerminalNew(const string& name) {
-    Fwk::Ptr<PlaneTerminal> m = new PlaneTerminal(name);
+  static Ptr<PlaneTerminal> PlaneTerminalNew(const string& name) {
+    Ptr<PlaneTerminal> m = new PlaneTerminal(name);
     return m;
   }
 
@@ -197,8 +197,8 @@ protected:
 
 class Customer : public Location {
 public:
-  static Fwk::Ptr<Customer> CustomerNew(const string& name) {
-    Fwk::Ptr<Customer> m = new Customer(name);
+  static Ptr<Customer> CustomerNew(const string& name) {
+    Ptr<Customer> m = new Customer(name);
     return m;
   }
 
@@ -209,8 +209,8 @@ protected:
 
 class Port : public Location {
 public:
-  static Fwk::Ptr<Port> PortNew(const string& name) {
-    Fwk::Ptr<Port> m = new Port(name);
+  static Ptr<Port> PortNew(const string& name) {
+    Ptr<Port> m = new Port(name);
     return m;
   }
 
@@ -263,8 +263,8 @@ private:
 
 class BoatSegment : public Segment {
 public:
-  static Fwk::Ptr<BoatSegment> BoatSegmentNew(const string& name) {
-    Fwk::Ptr<BoatSegment> m = new BoatSegment(name);
+  static Ptr<BoatSegment> BoatSegmentNew(const string& name) {
+    Ptr<BoatSegment> m = new BoatSegment(name);
     return m;
   }
   void sourceIs(Ptr<BoatTerminal> _loc) { sourceIsImpl(_loc); }
@@ -278,8 +278,8 @@ protected:
 
 class TruckSegment : public Segment {
 public:
-  static Fwk::Ptr<TruckSegment> TruckSegmentNew(const string& name) {
-    Fwk::Ptr<TruckSegment> m = new TruckSegment(name);
+  static Ptr<TruckSegment> TruckSegmentNew(const string& name) {
+    Ptr<TruckSegment> m = new TruckSegment(name);
     return m;
   }
   void sourceIs(Ptr<TruckTerminal> _loc) { sourceIsImpl(_loc); }
@@ -293,8 +293,8 @@ protected:
 
 class PlaneSegment : public Segment {
 public:
-  static Fwk::Ptr<PlaneSegment> PlaneSegmentNew(const string& name) {
-    Fwk::Ptr<PlaneSegment> m = new PlaneSegment(name);
+  static Ptr<PlaneSegment> PlaneSegmentNew(const string& name) {
+    Ptr<PlaneSegment> m = new PlaneSegment(name);
     return m;
   }
   void sourceIs(Ptr<PlaneTerminal> _loc) { sourceIsImpl(_loc); }
@@ -314,44 +314,40 @@ public:
   EngineManager();
   ~EngineManager();
 
-  Fwk::Ptr<Entity> entity(string _name);
+  Ptr<Entity> entity(string _name);
 
-  void boatFleetIs(Fwk::Ptr<BoatFleet> _boatFleet) {
+  Ptr<Stats> stats(string _name) { return stats_; }
+
+  void boatFleetIs(Ptr<BoatFleet> _boatFleet) {
     boatFleet_ = _boatFleet;
   }
-  Fwk::Ptr<BoatFleet> boatFleet(string _name) {
-    return boatFleet_;
-  }
-  void planeFleetIs(Fwk::Ptr<PlaneFleet> _planeFleet) {
+  Ptr<BoatFleet> boatFleet(string _name) { return boatFleet_; }
+  void planeFleetIs(Ptr<PlaneFleet> _planeFleet) {
     planeFleet_ = _planeFleet;
   }
-  Fwk::Ptr<PlaneFleet> planeFleet(string _name) {
-    return planeFleet_;
-  }
-  void truckFleetIs(Fwk::Ptr<TruckFleet> _truckFleet) {
+  Ptr<PlaneFleet> planeFleet(string _name) { return planeFleet_; }
+  void truckFleetIs(Ptr<TruckFleet> _truckFleet) {
     truckFleet_ = _truckFleet;
   }
-  Fwk::Ptr<TruckFleet> truckFleet(string _name) {
-    return truckFleet_;
-  }
+  Ptr<TruckFleet> truckFleet(string _name) { return truckFleet_; }
 
-  void customerIs(Fwk::Ptr<Customer> _customer);
-  Fwk::Ptr<Customer> customer(string _name);
-  void portIs(Fwk::Ptr<Port> port);
-  Fwk::Ptr<Port> port(string _name);
-  void boatTerminalIs(Fwk::Ptr<BoatTerminal> _boatTerminal);
-  Fwk::Ptr<BoatTerminal> boatTerminal(string _name);
-  void truckTerminalIs(Fwk::Ptr<TruckTerminal> _truckTerminal);
-  Fwk::Ptr<TruckTerminal> truckTerminal(string _name);
-  void planeTerminalIs(Fwk::Ptr<PlaneTerminal> _planeTerminal);
-  Fwk::Ptr<PlaneTerminal> planeTerminal(string _name);
+  void customerIs(Ptr<Customer> _customer);
+  Ptr<Customer> customer(string _name);
+  void portIs(Ptr<Port> port);
+  Ptr<Port> port(string _name);
+  void boatTerminalIs(Ptr<BoatTerminal> _boatTerminal);
+  Ptr<BoatTerminal> boatTerminal(string _name);
+  void truckTerminalIs(Ptr<TruckTerminal> _truckTerminal);
+  Ptr<TruckTerminal> truckTerminal(string _name);
+  void planeTerminalIs(Ptr<PlaneTerminal> _planeTerminal);
+  Ptr<PlaneTerminal> planeTerminal(string _name);
 
-  void boatSegmentIs(Fwk::Ptr<BoatSegment> _boatSegment);
-  Fwk::Ptr<BoatSegment> boatSegment(string _name);
-  void truckSegmentIs(Fwk::Ptr<TruckSegment> _truckSegment);
-  Fwk::Ptr<TruckSegment> truckSegment(string _name);
-  void planeSegmentIs(Fwk::Ptr<PlaneSegment> _planeSegment);
-  Fwk::Ptr<PlaneSegment> planeSegment(string _name);
+  void boatSegmentIs(Ptr<BoatSegment> _boatSegment);
+  Ptr<BoatSegment> boatSegment(string _name);
+  void truckSegmentIs(Ptr<TruckSegment> _truckSegment);
+  Ptr<TruckSegment> truckSegment(string _name);
+  void planeSegmentIs(Ptr<PlaneSegment> _planeSegment);
+  Ptr<PlaneSegment> planeSegment(string _name);
 
   class Notifiee : public Fwk::NamedInterface::Notifiee{
   public:
@@ -375,26 +371,26 @@ public:
   };
 
 private:
-  Fwk::Ptr<Stats> stats_;
-  std::vector<Fwk::Ptr<Notifiee> > notifiee_;
+  Ptr<Stats> stats_;
+  std::vector<Ptr<Notifiee> > notifiee_;
 
   // set which contains the used names of engine objects
-  std::map<string, Fwk::Ptr<Entity> > entityMap_;
+  std::map<string, Ptr<Entity> > entityMap_;
 
-  Fwk::Ptr<BoatFleet> boatFleet_;
-  Fwk::Ptr<PlaneFleet> planeFleet_;
-  Fwk::Ptr<TruckFleet> truckFleet_;
+  Ptr<BoatFleet> boatFleet_;
+  Ptr<PlaneFleet> planeFleet_;
+  Ptr<TruckFleet> truckFleet_;
 
   // hash maps which back the terminal locations
-  std::map<string, Fwk::Ptr<Customer> > customerMap_;
-  std::map<string, Fwk::Ptr<Port> > portMap_;
-  std::map<string, Fwk::Ptr<BoatTerminal> > boatTerminalMap_;
-  std::map<string, Fwk::Ptr<TruckTerminal> > truckTerminalMap_;
-  std::map<string, Fwk::Ptr<PlaneTerminal> > planeTerminalMap_;
+  std::map<string, Ptr<Customer> > customerMap_;
+  std::map<string, Ptr<Port> > portMap_;
+  std::map<string, Ptr<BoatTerminal> > boatTerminalMap_;
+  std::map<string, Ptr<TruckTerminal> > truckTerminalMap_;
+  std::map<string, Ptr<PlaneTerminal> > planeTerminalMap_;
 
-  std::map<string, Fwk::Ptr<BoatSegment> > boatSegmentMap_;
-  std::map<string, Fwk::Ptr<TruckSegment> > truckSegmentMap_;
-  std::map<string, Fwk::Ptr<PlaneSegment> > planeSegmentMap_;
+  std::map<string, Ptr<BoatSegment> > boatSegmentMap_;
+  std::map<string, Ptr<TruckSegment> > truckSegmentMap_;
+  std::map<string, Ptr<PlaneSegment> > planeSegmentMap_;
 };
 
 // TODO: Change this to a notifiee

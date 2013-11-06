@@ -38,7 +38,6 @@ protected:
   Ptr<Location> location_; // Associated engine object
   Ptr<ManagerImpl> manager_;
   int segmentNumber(const string& name);
-
 };
 
 class CustomerRep : public LocationRep {
@@ -147,7 +146,15 @@ protected:
 };
 
 /* Fleet */
-
+class FleetRep : public Instance {
+public:
+  FleetRep(const string& name, ManagerImpl* manager) :
+    Instance(name), manager_(manager) {};
+  string attribute(const string& name);
+  void attributeIs(const string& name, const string& v);
+protected:
+  Ptr<ManagerImpl> manager_;
+};
 
 
 
@@ -170,8 +177,8 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
   }
 
   if (type == "Customer") {
-    // TODO: add to engine
     instance = new CustomerRep(name, this);
+    Ptr<Customer> customer = Customer::CustomerNew(name);
   } else if (type == "Port") {
     instance = new PortRep(name, this);
   } else if (type == "Truck terminal") {
@@ -189,7 +196,9 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
   } else if (type == "Stats") {
     instance = new StatsRep(name, this);
   } else if (type == "Conn") {
+    instance = new ConnRep(name, this);
   } else if (type == "Fleet") {
+    //instance = new FleetRep(name, this);
   } else {
     cerr << "Invalid instance type instantiation";
     instance = NULL;
@@ -202,7 +211,7 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
 
 Ptr<Instance> ManagerImpl::instance(const string& name) {
   map<string,Ptr<Instance> >::const_iterator t = instanceMap_.find(name);
-  return t == instanceMap_.end() ? NULL : (*t).second;
+  return t == instanceMap_.end() ? NULL : t->second;
 }
 
 void ManagerImpl::instanceDel(const string& name) {
@@ -399,11 +408,12 @@ string ConnRep::attribute(const string& name) {
 };
 
 void ConnRep::attributeIs(const string& name, const string& v) {
-
+  // Connections are read-only
+  cerr << "Invalid attribute for connection";
 };
 
-/* Fleet */
 
+/* Fleet */
 
 } /* End namespace Shipping */
 

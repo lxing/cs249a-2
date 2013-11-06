@@ -144,8 +144,8 @@ public:
   std::vector<Path> connectivity(Location _root, Mile _distance, Dollar _cost);
 
 protected:
-  Location(const string& name) : Entity(name) { }
-  virtual ~Location();
+  Location(const string& name) : Entity(name) {}
+  virtual ~Location() {}
 
 private:
   std::vector<Ptr<Segment> > segments_;

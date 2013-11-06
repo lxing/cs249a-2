@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <iostream>
 #include <map>
+#include <regex>
 #include <sstream>
 #include <vector>
 #include "Instance.h"
@@ -34,6 +35,7 @@ public:
       Instance(name), manager_(manager) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
+  void engineObjIs(const Ptr<Location> _location) { location_ = _location; };
 protected:
   Ptr<Location> location_; // Associated engine object
   Ptr<ManagerImpl> manager_;
@@ -91,6 +93,7 @@ class TruckSegmentRep : public SegmentRep {
 public:
   TruckSegmentRep(const string& name, ManagerImpl *manager) :
     SegmentRep(name, manager) {};
+  void engineObjIs(const Ptr<TruckSegment> _segment) { segment_ = _segment; };
 protected:
   Ptr<Segment> segment() {return segment_;};
   void sourceIs(const string& v);
@@ -102,6 +105,7 @@ class BoatSegmentRep : public SegmentRep {
 public:
   BoatSegmentRep(const string& name, ManagerImpl *manager) :
     SegmentRep(name, manager) {};
+  void engineObjIs(const Ptr<BoatSegment> _segment) { segment_ = _segment; };
 protected:
   Ptr<Segment> segment() {return segment_;};
   void sourceIs(const string& v);
@@ -113,6 +117,7 @@ class PlaneSegmentRep : public SegmentRep {
 public:
   PlaneSegmentRep(const string& name, ManagerImpl *manager) :
     SegmentRep(name, manager) {};
+  void engineObjIs(const Ptr<PlaneSegment> _segment) { segment_ = _segment; };
 protected:
   Ptr<Segment> segment() {return segment_;};
   void sourceIs(const string& v);
@@ -152,10 +157,15 @@ public:
     Instance(name), manager_(manager) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
+  void truckFleetIs(const Ptr<TruckFleet> _truckFleet) { truckFleet_ = _truckFleet; };
+  void boatFleetIs(const Ptr<BoatFleet> _boatFleet) { boatFleet_ = _boatFleet; };
+  void planeFleetIs(const Ptr<PlaneFleet> _planeFleet) { planeFleet_ = _planeFleet; };
 protected:
+  Ptr<TruckFleet> truckFleet_;
+  Ptr<BoatFleet> boatFleet_;
+  Ptr<PlaneFleet> planeFleet_;
   Ptr<ManagerImpl> manager_;
 };
-
 
 
 
@@ -165,7 +175,7 @@ protected:
 
 /* Manager */
 ManagerImpl::ManagerImpl() {
-  // TODO Ptr<EngineManager> engine_ = new EngineManager();
+  Ptr<EngineManager> engine_ = new EngineManager();
 }
 
 Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
@@ -177,28 +187,76 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
   }
 
   if (type == "Customer") {
-    instance = new CustomerRep(name, this);
+    Ptr<CustomerRep> rep = new CustomerRep(name, this);
     Ptr<Customer> customer = Customer::CustomerNew(name);
+    engine_->customerIs(customer);
+    rep->engineObjIs(customer);
+    instance = rep;
   } else if (type == "Port") {
-    instance = new PortRep(name, this);
+    Ptr<PortRep> rep = new PortRep(name, this);
+    Ptr<Port> port = Port::PortNew(name);
+    engine_->portIs(port);
+    rep->engineObjIs(port);
+    instance = rep;
   } else if (type == "Truck terminal") {
-    instance = new TruckTerminalRep(name, this);
+    Ptr<TruckTerminalRep> rep = new TruckTerminalRep(name, this);
+    Ptr<TruckTerminal> terminal = TruckTerminal::TruckTerminalNew(name);
+    engine_->truckTerminalIs(terminal);
+    rep->engineObjIs(terminal);
+    instance = rep;
   } else if (type == "Boat terminal") {
-    instance = new BoatTerminalRep(name, this);
+    Ptr<BoatTerminalRep> rep = new BoatTerminalRep(name, this);
+    Ptr<BoatTerminal> terminal = BoatTerminal::BoatTerminalNew(name);
+    engine_->boatTerminalIs(terminal);
+    rep->engineObjIs(terminal);
+    instance = rep;
   } else if (type == "Plane terminal") {
-    instance = new PlaneTerminalRep(name, this);
+    Ptr<PlaneTerminalRep> rep = new PlaneTerminalRep(name, this);
+    Ptr<PlaneTerminal> terminal = PlaneTerminal::PlaneTerminalNew(name);
+    engine_->planeTerminalIs(terminal);
+    rep->engineObjIs(terminal);
+    instance = rep;
   } else if (type == "Truck segment") {
-    instance = new TruckSegmentRep(name, this);
+    Ptr<TruckSegmentRep> rep = new TruckSegmentRep(name, this);
+    Ptr<TruckSegment> segment = TruckSegment::TruckSegmentNew(name);
+    engine_->truckSegmentIs(segment);
+    rep->engineObjIs(segment);
+    instance = rep;
   } else if (type == "Boat segment") {
-    instance = new BoatSegmentRep(name, this);
+    Ptr<BoatSegmentRep> rep = new BoatSegmentRep(name, this);
+    Ptr<BoatSegment> segment = BoatSegment::BoatSegmentNew(name);
+    engine_->boatSegmentIs(segment);
+    rep->engineObjIs(segment);
+    instance = rep;
   } else if (type == "Plane segment") {
-    instance = new PlaneSegmentRep(name, this);
+    Ptr<PlaneSegmentRep> rep = new PlaneSegmentRep(name, this);
+    Ptr<PlaneSegment> segment = PlaneSegment::PlaneSegmentNew(name);
+    engine_->planeSegmentIs(segment);
+    rep->engineObjIs(segment);
+    instance = rep;
   } else if (type == "Stats") {
     instance = new StatsRep(name, this);
+
   } else if (type == "Conn") {
     instance = new ConnRep(name, this);
+    // No need to register with the engine layer; connectivity
+    // is exposed via locations
   } else if (type == "Fleet") {
-    //instance = new FleetRep(name, this);
+    Ptr<FleetRep> rep = new FleetRep(name, this);
+
+    Ptr<TruckFleet> truckFleet = TruckFleet::TruckFleetNew(name);
+    engine_->truckFleetIs(truckFleet);
+    rep->truckFleetIs(truckFleet);
+
+    Ptr<BoatFleet> boatFleet = BoatFleet::BoatFleetNew(name);
+    engine_->boatFleetIs(boatFleet);
+    rep->boatFleetIs(boatFleet);
+
+    Ptr<PlaneFleet> planeFleet = PlaneFleet::PlaneFleetNew(name);
+    engine_->planeFleetIs(planeFleet);
+    rep->planeFleetIs(planeFleet);
+
+    instance = rep;
   } else {
     cerr << "Invalid instance type instantiation";
     instance = NULL;
@@ -414,6 +472,13 @@ void ConnRep::attributeIs(const string& name, const string& v) {
 
 
 /* Fleet */
+string FleetRep::attribute(const string& name) {
+  return "yolo";
+};
+
+void FleetRep::attributeIs(const string& name, const string& v) {
+
+};
 
 } /* End namespace Shipping */
 

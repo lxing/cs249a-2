@@ -248,7 +248,7 @@ public:
 protected:
   Segment(const string& name) : Entity(name), name_(name), length_(0),
       difficulty_(0), expeditedSupport_(no_) { }
-  virtual ~Segment();
+  virtual ~Segment() {};
 
   void sourceIsImpl(Ptr<Location> _loc) { source_ = _loc; }
 

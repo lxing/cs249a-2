@@ -248,8 +248,8 @@ public:
     expeditedSupport_ = _expeditedSupport;
   }
 
-  virtual Dollar cost(EngineManager* manager) = 0;
-  virtual Time time(EngineManager* manager) = 0;
+  virtual Dollar cost(EngineManager* manager, ExpeditedSupport expedited) = 0;
+  virtual Time time(EngineManager* manager, ExpeditedSupport expedited) = 0;
 
 protected:
   Segment(const string& name) : Entity(name), name_(name), length_(0),
@@ -311,8 +311,8 @@ public:
   void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
-  Dollar cost(EngineManager* manager);
-  Time time(EngineManager* manager);
+  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
+  Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
   BoatSegment(const string& name) : Segment(name) {};
@@ -329,8 +329,8 @@ public:
   void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
-  Dollar cost(EngineManager* manager);
-  Time time(EngineManager* manager);
+  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
+  Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
   TruckSegment(const string& name) : Segment(name) {};
@@ -347,8 +347,8 @@ public:
   void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
-  Dollar cost(EngineManager* manager);
-  Time time(EngineManager* manager);
+  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
+  Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
   PlaneSegment(const string& name) : Segment(name) {};
@@ -394,7 +394,7 @@ public:
   Ptr<PlaneSegment> planeSegment(string _name);
 
   std::vector<Fwk::Ptr<Path> > connect(Fwk::Ptr<Location> start,
-      Fwk::Ptr<Location> end, Segment::ExpeditedSupport expedited);
+      Fwk::Ptr<Location> end);
   std::vector<Fwk::Ptr<Path> > explore(
       Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time,
       Segment::ExpeditedSupport _expedited);
@@ -419,6 +419,11 @@ public:
     virtual void onTruckSegmentDel() = 0;
     virtual void onPlaneSegmentDel() = 0;
   };
+
+protected:
+  std::vector<Fwk::Ptr<Path> > connectImpl(
+    Fwk::Ptr<Location> start, Fwk::Ptr<Location> end,
+    Segment::ExpeditedSupport expedited);
 
 private:
   Ptr<Stats> stats_;

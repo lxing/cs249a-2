@@ -281,6 +281,7 @@ public:
   }
 
   virtual Dollar cost(EngineManager* manager) = 0;
+  virtual Time time(EngineManager* manager) = 0;
 
 protected:
   Segment(const string& name) : Entity(name), name_(name), length_(0),
@@ -310,6 +311,7 @@ public:
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
   Dollar cost(EngineManager* manager);
+  Time time(EngineManager* manager);
 
 protected:
   BoatSegment(const string& name) : Segment(name) {};
@@ -327,6 +329,7 @@ public:
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
   Dollar cost(EngineManager* manager);
+  Time time(EngineManager* manager);
 
 protected:
   TruckSegment(const string& name) : Segment(name) {};
@@ -344,6 +347,7 @@ public:
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
   Dollar cost(EngineManager* manager);
+  Time time(EngineManager* manager);
 
 protected:
   PlaneSegment(const string& name) : Segment(name) {};
@@ -388,7 +392,7 @@ public:
   Ptr<PlaneSegment> planeSegment(string _name);
 
   Fwk::Ptr<Path> path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end);
-  std::vector<Path> connectivity(
+  std::vector<Fwk::Ptr<Path> > connectivity(
       Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time);
 
   class Notifiee : public Fwk::NamedInterface::Notifiee{

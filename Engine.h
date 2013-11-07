@@ -392,7 +392,8 @@ public:
   void planeSegmentIs(Ptr<PlaneSegment> _planeSegment);
   Ptr<PlaneSegment> planeSegment(string _name);
 
-  Fwk::Ptr<Path> connect(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end);
+  std::vector<Fwk::Ptr<Path> > connect(Fwk::Ptr<Location> start,
+      Fwk::Ptr<Location> end, ExpeditedSupport expedited);
   std::vector<Fwk::Ptr<Path> > explore(
       Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time,
       Segment::ExpeditedSupport _expedited);

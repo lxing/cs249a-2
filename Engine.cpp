@@ -10,37 +10,43 @@ Fwk::Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
   return copyPath;
 }
 
-Dollar BoatSegment::cost(Shipping::EngineManager* manager) {
+Dollar BoatSegment::cost(
+    Shipping::EngineManager* manager, ExpeditedSupport expedited) {
   // TODO(rhau) finish method
   Dollar cost(0);
   return cost;
 }
 
-Time BoatSegment::time(Shipping::EngineManager* manager) {
+Time BoatSegment::time(
+  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
   // TODO(rhau) finish method
   Time t(0);
   return t;
 }
 
-Dollar TruckSegment::cost(Shipping::EngineManager* manager) {
+Dollar TruckSegment::cost(
+  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
   // TODO(rhau) finish method
   Dollar cost(0);
   return cost;
 }
 
-Time TruckSegment::time(Shipping::EngineManager* manager) {
+Time TruckSegment::time(
+  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
   // TODO(rhau) finish method
   Time t(0);
   return t;
 }
 
-Dollar PlaneSegment::cost(Shipping::EngineManager* manager) {
+Dollar PlaneSegment::cost(
+  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
   // TODO(rhau) finish method
   Dollar cost(0);
   return cost;
 }
 
-Time PlaneSegment::time(Shipping::EngineManager* manager) {
+Time PlaneSegment::time(
+  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
   // TODO(rhau) finish method
   Time t(0);
   return t;
@@ -297,7 +303,8 @@ Fwk::Ptr<PlaneSegment> EngineManager::planeSegment(string _name) {
 }
 
 
-Fwk::Ptr<Path> EngineManager::connect(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end) {
+Fwk::Ptr<Path> EngineManager::connect(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end,
+    ExpeditedSupport expedited) {
   // BFS
   std::queue<Fwk::Ptr<Path> > pathQueue;
   std::vector<Ptr<Segment> > startSegments = start->segments();

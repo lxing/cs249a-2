@@ -487,14 +487,19 @@ string ConnRep::attribute(const string& name) {
   }
 
   Ptr<Location> src; // TODO elems[1]
+  Ptr<EngineManager> engine = manager_->engine();
+
   if (elems[0] == "explore") {
     Mile maxDist(0);
     Dollar maxCost(0);
     Time maxTime(0);
     Segment::ExpeditedSupport support = Segment::no_;
+
+
+
   } else if (elems[0] == "connect") {
     Ptr<Location> dst; // TODO elems[3]
-    // TODO connect src dst
+    Ptr<Path> path = engine->path(src, dst);
   }
 
   return "";

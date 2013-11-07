@@ -10,54 +10,55 @@ Fwk::Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
   return copyPath;
 }
 
-// Dollar BoatSegment::cost(
-//     Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-//   // TODO(rhau) finish method
-//   Dollar cost(0);
-//   return cost;
-// }
+Ptr<Location> Segment::destination() {
+  Ptr<Location> destination = NULL;
+  Ptr<Segment> returnSegment;
+  if (returnSegment) destination = returnSegment->source();
+  return destination;
+}
 
-// Time BoatSegment::time(
-//   Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-//   // TODO(rhau) finish method
-//   Time t(0);
-//   return t;
-// }
+Dollar BoatSegment::cost(Shipping::EngineManager* manager) {
+  // TODO(rhau) finish method
+  Dollar cost(0);
+  return cost;
+}
 
-// Dollar TruckSegment::cost(
-//   Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-//   // TODO(rhau) finish method
-//   Dollar cost(0);
-//   return cost;
-// }
+Time BoatSegment::time(Shipping::EngineManager* manager) {
+  // TODO(rhau) finish method
+  Time t(0);
+  return t;
+}
 
-// Time TruckSegment::time(
-//   Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-//   // TODO(rhau) finish method
-//   Time t(0);
-//   return t;
-// }
+Dollar TruckSegment::cost(Shipping::EngineManager* manager) {
+  // TODO(rhau) finish method
+  Dollar cost(0);
+  return cost;
+}
 
-// Dollar PlaneSegment::cost(
-//   Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-//   // TODO(rhau) finish method
-//   Dollar cost(0);
-//   return cost;
-// }
+Time TruckSegment::time(Shipping::EngineManager* manager) {
+  // TODO(rhau) finish method
+  Time t(0);
+  return t;
+}
 
-// Time PlaneSegment::time(
-//   Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-//   // TODO(rhau) finish method
-//   Time t(0);
-//   return t;
-// }
+Dollar PlaneSegment::cost(Shipping::EngineManager* manager) {
+  // TODO(rhau) finish method
+  Dollar cost(0);
+  return cost;
+}
+
+Time PlaneSegment::time(Shipping::EngineManager* manager) {
+  // TODO(rhau) finish method
+  Time t(0);
+  return t;
+}
 
 EngineManager::EngineManager() {
   stats_ = new Shipping::Stats("stats");
 }
 
 EngineManager::~EngineManager() {
-  
+
 }
 
 Fwk::Ptr<Entity> EngineManager::entity(string _name) {
@@ -66,7 +67,7 @@ Fwk::Ptr<Entity> EngineManager::entity(string _name) {
   if (entityIter == entityMap_.end())  {
     // if the name is not contained, we return null
     Fwk::Ptr<Entity> entityPtr = NULL;
-    return entityPtr;  
+    return entityPtr;
   } else {
     // otherwise return the entity pointer in the map
     return entityIter->second;
@@ -405,7 +406,7 @@ Fwk::Ptr<PlaneSegment> EngineManager::planeSegment(string _name) {
 // }
 
 Stats::Stats(const string& name) :
-    customerCount_(0), portCount_(0), boatTerminalCount_(0), 
+    customerCount_(0), portCount_(0), boatTerminalCount_(0),
     truckTerminalCount_(0), planeTerminalCount_(0), expeditedSegmentCount_(0),
     boatSegmentCount_(0), truckSegmentCount_(0), planeSegmentCount_(0)
 {

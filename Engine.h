@@ -117,12 +117,13 @@ public:
     return segments_[_i];
   }
 
+  virtual std::vector<Ptr<Segment> > segments() {
+    return segments_;
+  }  
+
   virtual void segmentIs(Ptr<Segment> s) {
     segments_.push_back(s);
   }
-
-  Fwk::Ptr<Path> path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end);
-  std::vector<Path> connectivity(Location _root, Mile _distance, Dollar _cost);
 
 protected:
   Location(const string& name) : Entity(name) {}
@@ -134,18 +135,30 @@ private:
 
 class Path : public PtrInterface<Path> {
 public:
+  Path() : pathCost(0), pathLength(0) { }
+  ~Path() { }
+
+  Dollar cost() { return pathCost; }
+  Mile length() { return pathLength; }
+
   string tostring();
   
-  void addLocation(Fwk::Ptr<Entity> loc) {
-    location_.push_back(loc);
+  static Fwk::Ptr<Path> copy(Fwk::Ptr<Path> path);
+
+  void addSegment(Fwk::Ptr<Segment> segment, Dollar segmentCost, Mile length) {
+    pathCost += segmentCost;
+    pathLength += length; 
+    segment_.push_back(segment);
   }
 
-  std::vector<Fwk::Ptr<Entity> > location() {
-    return location_;
+  std::vector<Fwk::Ptr<Segment> > segments() {
+    return segment_;
   }
 
 private:
-  std::vector<Fwk::Ptr<Entity> > location_;
+  Dollar pathCost;
+  Mile pathLength;
+  std::vector<Fwk::Ptr<Segment> > segment_;
 };
 
 class Terminal : public Location {
@@ -215,6 +228,7 @@ protected:
   ~Port() {}
 };
 
+class EngineManager;
 
 // Segments
 class Segment : public Entity {
@@ -241,6 +255,8 @@ public:
     expeditedSupport_ = _expeditedSupport;
   }
 
+  virtual Dollar cost(EngineManager* manager) = 0;
+
 protected:
   Segment(const string& name) : Entity(name), name_(name), length_(0),
       difficulty_(0), expeditedSupport_(no_) { }
@@ -263,9 +279,12 @@ public:
     Ptr<BoatSegment> m = new BoatSegment(name);
     return m;
   }
+
   void sourceIs(Ptr<BoatTerminal> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
+
+  Dollar cost(EngineManager* manager);
 
 protected:
   BoatSegment(const string& name) : Segment(name) {};
@@ -282,6 +301,8 @@ public:
   void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
+  Dollar cost(EngineManager* manager);
+
 protected:
   TruckSegment(const string& name) : Segment(name) {};
   ~TruckSegment() {};
@@ -296,6 +317,8 @@ public:
   void sourceIs(Ptr<PlaneTerminal> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
+
+  Dollar cost(EngineManager* manager);
 
 protected:
   PlaneSegment(const string& name) : Segment(name) {};
@@ -344,6 +367,10 @@ public:
   Ptr<TruckSegment> truckSegment(string _name);
   void planeSegmentIs(Ptr<PlaneSegment> _planeSegment);
   Ptr<PlaneSegment> planeSegment(string _name);
+
+  Fwk::Ptr<Path> path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end);
+  std::vector<Path> connectivity(
+      Fwk::Ptr<Location> start, Mile _distance, Dollar _cost);
 
   class Notifiee : public Fwk::NamedInterface::Notifiee{
   public:

@@ -478,23 +478,40 @@ void StatsRep::attributeIs(const string& name, const string& v) {
 string ConnRep::attribute(const string& name) {
   stringstream ss(name);
   string token;
-  vector<string> elems;
-  while (getline(ss, token, ' ')) { elems.push_back(token); }
+  vector<string> tokens;
+  while (getline(ss, token, ' ')) { tokens.push_back(token); }
 
-  if (elems.size() < 4 || elems[2] != ":") {
+  if (tokens.size() < 4 || tokens[2] != ":") {
     cerr << "Invalid attribute for connectivity";
     return "";
   }
 
-  Ptr<Location> src; // TODO elems[1]
-  if (elems[0] == "explore") {
+  Ptr<EngineManager> engine = manager_->engine();
+  Ptr<Location> src = engine->location(name); // TODO tokens[1]
+
+  if (src != NULL && tokens[0] == "explore") {
     Mile maxDist(0);
     Dollar maxCost(0);
     Time maxTime(0);
     Segment::ExpeditedSupport support = Segment::no_;
-  } else if (elems[0] == "connect") {
-    Ptr<Location> dst; // TODO elems[3]
-    // TODO connect src dst
+
+    for (int attr = 3; attr < tokens.size(); attr++) {
+      string attrName = tokens[attr];
+      if (attrName == "expedited") support = Segment::yes_;
+      else if (attrName == "distance") {
+        maxDist = atoi(tokens[++attr].c_str());
+      } else if (attrName == "cost") {
+        maxCost = atof(tokens[++attr].c_str());
+      } else if (attrName == "time") {
+        maxTime = atoi(tokens[++attr].c_str());
+      }
+    }
+
+    vector<Ptr<Path> > paths = engine->explore(
+      src, maxDist, maxCost, maxTime, support);
+  } else if (src != NULL && tokens[0] == "connect") {
+    Ptr<Location> dst = engine->location(name); // TODO tokens[3]
+    vector<Ptr<Path> > paths = engine->connect(src, dst);
   }
 
   return "";

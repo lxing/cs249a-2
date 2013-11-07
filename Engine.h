@@ -140,7 +140,7 @@ public:
 
   virtual std::vector<Ptr<Segment> > segments() {
     return segments_;
-  }  
+  }
 
   virtual void segmentIs(Ptr<Segment> s) {
     segments_.push_back(s);
@@ -153,6 +153,7 @@ protected:
 private:
   std::vector<Ptr<Segment> > segments_;
 };
+
 
 class Terminal : public Location {
 protected:
@@ -228,6 +229,7 @@ class Segment : public Entity {
 public:
   // returns the global name of the source location
   Ptr<Location> source() { return source_; }
+  Ptr<Location> destination();
 
   Mile length() { return length_; }
   void lengthIs(Mile _length) { length_ = _length; }
@@ -277,13 +279,13 @@ public:
   Time time() { return pathTime_; }
 
   string tostring();
-  
+
   static Fwk::Ptr<Path> copy(Fwk::Ptr<Path> path);
 
   void addSegment(Fwk::Ptr<Segment> segment, Dollar segmentCost, Mile length,
         Time time) {
     pathCost_ = pathCost_.value() + segmentCost.value();
-    pathLength_ = pathLength_.value() + length.value(); 
+    pathLength_ = pathLength_.value() + length.value();
     pathTime_ = pathTime_.value() + time.value();
     segment_.push_back(segment);
   }

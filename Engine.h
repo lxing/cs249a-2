@@ -64,9 +64,9 @@ public:
   }
 };
 
-class Dollar : public Nominal<Dollar, double> {
+class Dollar : public Ordinal<Dollar, double> {
 public:
-  Dollar(double num) : Nominal<Dollar, double>(num) {
+  Dollar(double num) : Ordinal<Dollar, double>(num) {
     if (num < 0.0) {
       throw "Dollar value out of range";
     }
@@ -167,8 +167,8 @@ public:
   static Fwk::Ptr<Path> copy(Fwk::Ptr<Path> path);
 
   void addSegment(Fwk::Ptr<Segment> segment, Dollar segmentCost, Mile length) {
-    pathCost += segmentCost;
-    pathLength += length; 
+    pathCost = pathCost + segmentCost;
+    pathLength = pathLength + length; 
     segment_.push_back(segment);
   }
 

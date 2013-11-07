@@ -106,14 +106,7 @@ protected:
 };
 
 class Segment;
-
-class Path : public PtrInterface<Path> {
-public:
-  string tostring();
-
-private:
-  std::vector<Entity> path_;
-};
+class Path;
 
 // Locations
 class Location : public Entity {
@@ -128,7 +121,7 @@ public:
     segments_.push_back(s);
   }
 
-  Path path(Location _start, Location _end);
+  Fwk::Ptr<Path> path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end);
   std::vector<Path> connectivity(Location _root, Mile _distance, Dollar _cost);
 
 protected:
@@ -139,6 +132,21 @@ private:
   std::vector<Ptr<Segment> > segments_;
 };
 
+class Path : public PtrInterface<Path> {
+public:
+  string tostring();
+  
+  void addLocation(Fwk::Ptr<Entity> loc) {
+    location_.push_back(loc);
+  }
+
+  std::vector<Fwk::Ptr<Entity> > location() {
+    return location_;
+  }
+
+private:
+  std::vector<Fwk::Ptr<Entity> > location_;
+};
 
 class Terminal : public Location {
 protected:

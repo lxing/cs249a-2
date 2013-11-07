@@ -1,11 +1,34 @@
+#include <queue>
+
 #include "Engine.h"
 
 using namespace Shipping;
 
-Path Location::path(Location start, Location end) {
-  // TODO(rhau)
-  Path path;
-  return path;
+Fwk::Ptr<Path> Location::path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end) {
+  // BFS
+  std::queue<Fwk::Ptr<Path> > pathQueue;
+  Fwk::Ptr<Path> startPath = new Path();
+  startPath->addLocation(start);
+  pathQueue.push(startPath);
+
+  while (!pathQueue.empty()) {
+    Fwk::Ptr<Path> path = pathQueue.front();
+    pathQueue.pop();
+    std::vector<Fwk::Ptr<Entity> > locations = path->location();
+
+    for (uint32_t i=0; i<locations.size(); i++) {
+      Fwk::Ptr<Path> newPath = path; // TODO(rhau) does this invoke a deep copy?!
+      newPath->addLocation(locations[i]);
+
+      if (locations[i]->name() == end->name()) {
+        return newPath;
+      }
+      pathQueue.push(newPath);
+    }
+  }
+
+  startPath = NULL;
+  return startPath;
 }
 
 std::vector<Path> Shipping::Location::connectivity(

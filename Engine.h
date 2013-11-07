@@ -156,19 +156,22 @@ private:
 
 class Path : public PtrInterface<Path> {
 public:
-  Path() : pathCost(0), pathLength(0) { }
+  Path() : pathCost_(0), pathLength_(0), pathTime_(0) { }
   ~Path() { }
 
-  Dollar cost() { return pathCost; }
-  Mile length() { return pathLength; }
+  Dollar cost() { return pathCost_; }
+  Mile length() { return pathLength_; }
+  Time time() { return pathTime_; }
 
   string tostring();
   
   static Fwk::Ptr<Path> copy(Fwk::Ptr<Path> path);
 
-  void addSegment(Fwk::Ptr<Segment> segment, Dollar segmentCost, Mile length) {
-    pathCost = pathCost + segmentCost;
-    pathLength = pathLength + length; 
+  void addSegment(Fwk::Ptr<Segment> segment, Dollar segmentCost, Mile length,
+        Time time) {
+    pathCost_ = pathCost_.value() + segmentCost.value();
+    pathLength_ = pathLength_.value() + length.value(); 
+    pathTime_ = pathTime_.value() + time.value();
     segment_.push_back(segment);
   }
 
@@ -177,8 +180,9 @@ public:
   }
 
 private:
-  Dollar pathCost;
-  Mile pathLength;
+  Dollar pathCost_;
+  Mile pathLength_;
+  Time pathTime_;
   std::vector<Fwk::Ptr<Segment> > segment_;
 };
 

@@ -267,7 +267,7 @@ Fwk::Ptr<Path> EngineManager::path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> 
   for (uint32_t i=0; i<startSegments.size(); i++) {
     Fwk::Ptr<Path> startPath = new Path();
     // don't care about segment cost, so we call addSegment with cost 0
-    startPath->addSegment(startSegments[i], 0);
+    startPath->addSegment(startSegments[i], 0, 0, 0);
     pathQueue.push(startPath);
   }
 
@@ -292,7 +292,7 @@ Fwk::Ptr<Path> EngineManager::path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> 
       Ptr<Segment> nextSegment = nextSegments[i];
       Fwk::Ptr<Path> newPath = Path::copy(path);
       // don't care about segment cost, so we call addSegment with cost 0
-      newPath->addSegment(nextSegment, 0);
+      newPath->addSegment(nextSegment, 0, 0, 0);
       pathQueue.push(newPath);
     }
   }
@@ -302,58 +302,58 @@ Fwk::Ptr<Path> EngineManager::path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> 
   return path;
 }
 
-std::vector<Path> EngineManager::connectivity(
-  Fwk::Ptr<Location> start, Mile _distance, Dollar _cost) {
-  // BFS
-  vector<Path> possiblePaths;
-  std::queue<Fwk::Ptr<Path> > pathQueue;
-  std::vector<Ptr<Segment> > startSegments = start->segments();
-  // populate the queue with the segments of the start location
-  for (uint32_t i=0; i<startSegments.size(); i++) {
-    Fwk::Ptr<Path> startPath = new Path();
-    Ptr<Segment> startSegment = startSegments[i];
-    Dollar segmentCost = startSegment.cost(this);
+// std::vector<Path> EngineManager::connectivity(
+//   Fwk::Ptr<Location> start, Mile _distance, Dollar _cost) {
+//   // BFS
+//   vector<Path> possiblePaths;
+//   std::queue<Fwk::Ptr<Path> > pathQueue;
+//   std::vector<Ptr<Segment> > startSegments = start->segments();
+//   // populate the queue with the segments of the start location
+//   for (uint32_t i=0; i<startSegments.size(); i++) {
+//     Fwk::Ptr<Path> startPath = new Path();
+//     Ptr<Segment> startSegment = startSegments[i];
+//     Dollar segmentCost = startSegment.cost(this);
 
-    // check cost, distance, and time are under constraints
-    if (segmentCost+startPath->cost() < _cost &&
-        startSegment->length()+startPath->length() < _distance) {
-      // TODO(rhau) check time
-      startPath->addSegment(startSegments[i], segmentCost);
-      possiblePaths.push_back(startPath);
-      pathQueue.push(startPath);
-    }
-  }
+//     // check cost, distance, and time are under constraints
+//     if (segmentCost+startPath->cost() < _cost &&
+//         startSegment->length()+startPath->length() < _distance) {
+//       // TODO(rhau) check time
+//       startPath->addSegment(startSegments[i], segmentCost);
+//       possiblePaths.push_back(startPath);
+//       pathQueue.push(startPath);
+//     }
+//   }
 
-  while (!pathQueue.empty()) {
-    Fwk::Ptr<Path> path = pathQueue.front();
-    pathQueue.pop();
+//   while (!pathQueue.empty()) {
+//     Fwk::Ptr<Path> path = pathQueue.front();
+//     pathQueue.pop();
 
-    std::vector<Fwk::Ptr<Segment> > segments = path->segments();
-    Ptr<Segment> currSegment = segments[segments.size()-1];
+//     std::vector<Fwk::Ptr<Segment> > segments = path->segments();
+//     Ptr<Segment> currSegment = segments[segments.size()-1];
 
-    // If the source of the return segment (nextLoc) matches our end,
-    // then we found our path.
-    Fwk::Ptr<Location> nextLoc = currSegment->returnSegment()->source();
-    if (nextLoc->name() == end->name()) {
-        return path;
-    }
+//     // If the source of the return segment (nextLoc) matches our end,
+//     // then we found our path.
+//     Fwk::Ptr<Location> nextLoc = currSegment->returnSegment()->source();
+//     if (nextLoc->name() == end->name()) {
+//         return path;
+//     }
 
-    // Otherwise, we add all of the segments from the nextLoc to copies of
-    // the current path and continue our breadth first search.
-    std::vector<Fwk::Ptr<Segment> > nextSegments = nextLoc->segments();
-    for (uint32_t i=0; i<nextSegments.size(); i++) {
-      Ptr<Segment> nextSegment = nextSegments[i];
-      Fwk::Ptr<Path> newPath = Path::copy(path);
-      // don't care about segment cost, so we call addSegment with cost 0
-      newPath->addSegment(nextSegment, 0);
-      pathQueue.push(newPath);
-    }
-  }
+//     // Otherwise, we add all of the segments from the nextLoc to copies of
+//     // the current path and continue our breadth first search.
+//     std::vector<Fwk::Ptr<Segment> > nextSegments = nextLoc->segments();
+//     for (uint32_t i=0; i<nextSegments.size(); i++) {
+//       Ptr<Segment> nextSegment = nextSegments[i];
+//       Fwk::Ptr<Path> newPath = Path::copy(path);
+//       // don't care about segment cost, so we call addSegment with cost 0
+//       newPath->addSegment(nextSegment, 0);
+//       pathQueue.push(newPath);
+//     }
+//   }
 
-  Fwk::Ptr<Path> path = new Path();
-  path = NULL;
-  return path;
-}
+//   Fwk::Ptr<Path> path = new Path();
+//   path = NULL;
+//   return path;
+// }
 
 Stats::Stats(const string& name) :
     customerCount_(0), portCount_(0), boatTerminalCount_(0), 

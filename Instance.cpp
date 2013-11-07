@@ -162,13 +162,15 @@ public:
   enum FleetType {
     truck_ = 0,
     boat_ = 1,
-    plane_ = 2
+    plane_ = 2,
+    nullType_ = 3
   };
 
   enum FleetMode {
-    milesPerHour_ = 0,
-    cpacity_ = 1,
-    costPerMile_ = 2
+    speed_ = 0,
+    cost_ = 1,
+    capacity_ = 2,
+    nullMode_ = 3
   };
 
   void truckFleetIs(const Ptr<TruckFleet> _truckFleet) { truckFleet_ = _truckFleet; };
@@ -477,9 +479,24 @@ string ConnRep::attribute(const string& name) {
   stringstream ss(name);
   string token;
   vector<string> elems;
-  //while (std::getline(ss, token, " ")) {
-  //  elems.push_back(token);
-  //}
+  while (getline(ss, token, ' ')) { elems.push_back(token); }
+
+  if (elems.size() < 4 || elems[2] != ":") {
+    cerr << "Invalid attribute for connectivity";
+    return "";
+  }
+
+  Ptr<Location> src; // TODO elems[1]
+  if (elems[0] == "explore") {
+    Mile maxDist(0);
+    Dollar maxCost(0);
+    Time maxTime(0);
+    Segment::ExpeditedSupport support = Segment::no_;
+  } else if (elems[0] == "connect") {
+    Ptr<Location> dst; // TODO elems[3]
+    // TODO connect src dst
+  }
+
   return "";
 };
 
@@ -493,23 +510,73 @@ void ConnRep::attributeIs(const string& name, const string& v) {
 string FleetRep::attribute(const string& name) {
   FleetType type;
   FleetMode mode;
-  type = boat_;
-  mode = milesPerHour_;
-  return "yolo";
+  parsedInput(name, type, mode);
+
+  Ptr<EngineManager> engine = manager_->engine();
+  Ptr<Fleet> fleet;
+  switch (type) {
+    case truck_: fleet = engine->truckFleet(); break;
+    case boat_: fleet = engine->boatFleet(); break;
+    case plane_: fleet = engine->planeFleet(); break;
+    default: cerr << "Invalid attribute for fleet"; return "";
+  }
+
+  stringstream ss;
+  ss.precision(2);
+
+  switch (mode) {
+    case speed_: ss << fleet->speed().value(); break;
+    case capacity_: ss << fleet->capacity().value(); break;
+    case cost_: ss << fleet->cost().value() ; break;
+    default: cerr << "Invalid attribute for fleet";
+  }
+
+  return ss.str();
 };
 
 void FleetRep::attributeIs(const string& name, const string& v) {
+  FleetType type;
+  FleetMode mode;
+  parsedInput(name, type, mode);
 
+  Ptr<EngineManager> engine = manager_->engine();
+  Ptr<Fleet> fleet;
+  switch (type) {
+    case truck_: fleet = engine->truckFleet(); break;
+    case boat_: fleet = engine->boatFleet(); break;
+    case plane_: fleet = engine->planeFleet(); break;
+    default: cerr << "Invalid attribute for fleet"; return;
+  }
+
+  MilesPerHour speed(atof(v.c_str()));
+  Capacity capacity(atoi(v.c_str()));
+  Dollar cost(atof(v.c_str()));
+  switch (mode) {
+    case speed_: fleet->speedIs(speed); break;
+    case capacity_: fleet->capacityIs(capacity); break;
+    case cost_: fleet->costIs(cost); break;
+    default: cerr << "Invalid attribute for fleet";
+  }
 };
 
 void FleetRep::parsedInput(const string& name, FleetType& type, FleetMode& mode) {
-  istringstream iss(name);
+  stringstream ss(name);
   string token;
 
-  //std::getline(iss, token, ", ");
-};
+  getline(ss, token, ',');
+  if (token == "truck") type = truck_;
+  else if (token == "boat") type = boat_;
+  else if (token == "plane") type = plane_;
+  else type = nullType_;
 
-} /* End namespace Shipping */
+  getline(ss, token);
+  if (token == "speed") mode = speed_;
+  else if (token == "cost") mode = cost_;
+  else if (token == "capacity") mode = capacity_;
+  else mode = nullMode_;
+}
+
+}/* End namespace Shipping */
 
 
 

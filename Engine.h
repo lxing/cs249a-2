@@ -29,23 +29,44 @@ protected:
   Entity(const string& name) : NamedInterface(name) { }
 };
 
-class Mile : public Nominal<Mile, unsigned int> {
+
+// Value types
+class Mile : public Ordinal<Mile, uint32_t> {
 public:
-  Mile(unsigned int num) : Nominal<Mile, unsigned int>(num) { }
+  Mile(uint32_t num) : Ordinal<Mile, uint32_t>(num) { }
 };
 
-class Difficulty : public Nominal<Difficulty, float> {
+class MilesPerHour : public Ordinal<MilesPerHour, double> {
 public:
-  Difficulty(float num) : Nominal<Difficulty, float>(num) {
+  MilesPerHour(double num) : Ordinal<MilesPerHour, double>(num) {
+    if (num < 0.0) {
+      throw "Speed out of range";
+    }
+  }
+};
+
+class Time : public Ordinal<Time, uint32_t> {
+public:
+  Time(uint32_t num) : Ordinal<Time, uint32_t>(num) { }
+};
+
+class Capacity : public Nominal<Capacity, uint32_t> {
+public:
+  Capacity(uint32_t num) : Nominal<Capacity, uint32_t>(num) { }
+};
+
+class Difficulty : public Nominal<Difficulty, double> {
+public:
+  Difficulty(double num) : Nominal<Difficulty, double>(num) {
     if (num < 1.0 || num > 5.0) {
       throw "Difficulty value out of range";
     }
   }
 };
 
-class Dollar : public Nominal<Dollar, float> {
+class Dollar : public Nominal<Dollar, double> {
 public:
-  Dollar(float num) : Nominal<Dollar, float>(num) {
+  Dollar(double num) : Nominal<Dollar, double>(num) {
     if (num < 0.0) {
       throw "Dollar value out of range";
     }
@@ -55,21 +76,21 @@ public:
 class Fleet : public Entity {
 public:
 
-  virtual void milesPerHourIs(Mile _milesPerHour) { milesPerHour_ = _milesPerHour; }
-  virtual Mile milesPerHour() { return milesPerHour_; }
-  virtual void capacityIs(uint32_t _capacity) { capacity_ = _capacity; }
-  virtual uint32_t capacity() { return capacity_; }
-  virtual void costPerMileIs(Dollar _costPerMile) { costPerMile_ = _costPerMile; }
-  virtual Dollar costPerMile() { return costPerMile_; }
+  virtual void speedIs(MilesPerHour _speed) { speed_ = _speed; }
+  virtual MilesPerHour speed() { return speed_; }
+  virtual void capacityIs(Capacity _capacity) { capacity_ = _capacity; }
+  virtual Capacity capacity() { return capacity_; }
+  virtual void costIs(Dollar _cost) { cost_ = _cost; }
+  virtual Dollar cost() { return cost_; }
 
 protected:
-  Fleet(const string& name) : Entity(name), milesPerHour_(0),
-      capacity_(0), costPerMile_(0) { }
+  Fleet(const string& name) : Entity(name), speed_(0),
+      capacity_(0), cost_(0) { }
 
 private:
-  Mile milesPerHour_;
-  uint32_t capacity_;
-  Dollar costPerMile_;
+  MilesPerHour speed_;
+  Capacity capacity_;
+  Dollar cost_;
 };
 
 class BoatFleet : public Fleet {
@@ -337,18 +358,12 @@ public:
 
   Ptr<Stats> stats() { return stats_; }
 
-  void boatFleetIs(Ptr<BoatFleet> _boatFleet) {
-    boatFleet_ = _boatFleet;
-  }
-  Ptr<BoatFleet> boatFleet(string _name) { return boatFleet_; }
-  void planeFleetIs(Ptr<PlaneFleet> _planeFleet) {
-    planeFleet_ = _planeFleet;
-  }
-  Ptr<PlaneFleet> planeFleet(string _name) { return planeFleet_; }
-  void truckFleetIs(Ptr<TruckFleet> _truckFleet) {
-    truckFleet_ = _truckFleet;
-  }
-  Ptr<TruckFleet> truckFleet(string _name) { return truckFleet_; }
+  void boatFleetIs(Ptr<BoatFleet> _boatFleet) { boatFleet_ = _boatFleet; }
+  Ptr<BoatFleet> boatFleet() { return boatFleet_; }
+  void planeFleetIs(Ptr<PlaneFleet> _planeFleet) { planeFleet_ = _planeFleet; }
+  Ptr<PlaneFleet> planeFleet() { return planeFleet_; }
+  void truckFleetIs(Ptr<TruckFleet> _truckFleet) { truckFleet_ = _truckFleet; }
+  Ptr<TruckFleet> truckFleet() { return truckFleet_; }
 
   void customerIs(Ptr<Customer> _customer);
   Ptr<Customer> customer(string _name);
@@ -459,8 +474,8 @@ public:
   uint32_t planeSegmentCount() { return planeSegmentCount_; }
   void planeSegmentCountInc(int delta) { planeSegmentCount_ += delta; }
 
-  float expeditedPercentage() {
-    return (float)expeditedSegmentCount_ /
+  double expeditedPercentage() {
+    return (double)expeditedSegmentCount_ /
         (boatTerminalCount_ + truckSegmentCount_ + planeSegmentCount_) * 100.0;
   }
 

@@ -306,11 +306,11 @@ Fwk::Ptr<PlaneSegment> EngineManager::planeSegment(string _name) {
 std::vector<Fwk::Ptr<Path> > EngineManager::connect(
     Fwk::Ptr<Location> start, Fwk::Ptr<Location> end) {
   std::vector<Fwk::Ptr<Path> >  pathsWithExpedited =
-      connectImpl(start, end, ExpeditedSupport::yes_);
+      connectImpl(start, end, Segment::yes_);
   std::vector<Fwk::Ptr<Path> >  pathsWithOutExpedited =
-      connectImpl(start, end, ExpeditedSupport::no_);
+      connectImpl(start, end, Segment::no_);
 
-  for (int i=0; i<pathsWithExpedited.size(); i++) {
+  for (uint32_t i=0; i<pathsWithExpedited.size(); i++) {
     pathsWithOutExpedited.push_back(pathsWithExpedited[i]);
   }
   return pathsWithOutExpedited;
@@ -319,16 +319,25 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connect(
 std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     Fwk::Ptr<Location> start, Fwk::Ptr<Location> end,
     Segment::ExpeditedSupport expedited) {
-  // BFS
   std::vector<Fwk::Ptr<Path> > possiblePaths;
+  // case where the start and end are same location
+  if (start->name() == end->name()) return possiblePaths;
+
   std::queue<Fwk::Ptr<Path> > pathQueue;
   std::vector<Ptr<Segment> > startSegments = start->segments();
   // populate the queue with the segments of the start location
   for (uint32_t i=0; i<startSegments.size(); i++) {
-    Fwk::Ptr<Path> startPath = new Path();
-    // don't care about segment cost, so we call addSegment with cost 0
-    startPath->addSegment(startSegments[i], 0, 0, 0);
-    pathQueue.push(startPath);
+    // we want to add segment if:
+    // 1. expeditedSupport is yes_ and our segment has expedited support
+    // 2. expeditedSupport is no_
+    if ((expedited == Segment::yes_ &&
+          startSegments[i]->expeditedSupport() == Segment::yes_) ||
+          expedited == Segment::no_) {
+      Fwk::Ptr<Path> startPath = new Path();
+      // don't care about segment cost, so we call addSegment with cost 0
+      startPath->addSegment(startSegments[i], 0, 0, 0);
+      pathQueue.push(startPath);
+    }
   }
 
   while (!pathQueue.empty()) {
@@ -351,10 +360,17 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     std::vector<Fwk::Ptr<Segment> > nextSegments = nextLoc->segments();
     for (uint32_t i=0; i<nextSegments.size(); i++) {
       Ptr<Segment> nextSegment = nextSegments[i];
-      Fwk::Ptr<Path> newPath = Path::copy(path);
-      // don't care about segment cost, so we call addSegment with cost 0
-      newPath->addSegment(nextSegment, 0, 0, 0);
-      pathQueue.push(newPath);
+      // we want to add segment if:
+      // 1. expeditedSupport is yes_ and our segment has expedited support
+      // 2. expeditedSupport is no_
+      if ((expedited == Segment::yes_ &&
+            nextSegment->expeditedSupport() == Segment::yes_) ||
+            expedited == Segment::no_) {
+        Fwk::Ptr<Path> newPath = Path::copy(path);
+        // don't care about segment cost, so we call addSegment with cost 0
+        newPath->addSegment(nextSegment, 0, 0, 0);
+        pathQueue.push(newPath);
+      }
     }
   }
 
@@ -372,14 +388,16 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
   for (uint32_t i=0; i<startSegments.size(); i++) {
     Fwk::Ptr<Path> startPath = new Path();
     Ptr<Segment> startSegment = startSegments[i];
-    Dollar segmentCost = startSegment->cost(this);
-    Time segmentTime = startSegment->time(this);
+    Dollar segmentCost = startSegment->cost(this, _expedited);
+    Time segmentTime = startSegment->time(this, _expedited);
 
     // check cost, distance, and time are under constraints
     if (segmentCost+startPath->cost() < _cost &&
           segmentTime+startPath->time() < _time &&
           startSegment->length()+startPath->length() < _distance &&
-          _expedited == startSegment->expeditedSupport()) {
+          (_expedited == Segment::no_ || 
+              (_expedited == Segment::yes_ &&
+                  startSegment->expeditedSupport() == Segment::yes_))) {
       startPath->addSegment(startSegments[i],
           segmentCost, startSegment->length(), segmentTime);
       possiblePaths.push_back(startPath);
@@ -398,14 +416,17 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
     std::vector<Fwk::Ptr<Segment> > nextSegments = nextLoc->segments();
     for (uint32_t i=0; i<nextSegments.size(); i++) {
       Ptr<Segment> nextSegment = nextSegments[i];
-      Dollar segmentCost = nextSegment->cost(this);
-      Time segmentTime = nextSegment->time(this);
+      Dollar segmentCost = nextSegment->cost(this, _expedited);
+      Time segmentTime = nextSegment->time(this, _expedited);
 
       // check cost, distance, and time are under constraints
       if (segmentCost+path->cost() < _cost &&
             segmentTime+path->time() < _time &&
             nextSegment->length()+path->length() < _distance &&
-            _expedited == nextSegment->expeditedSupport()) {
+            _expedited == nextSegment->expeditedSupport() &&
+            (_expedited == Segment::no_ || 
+              (_expedited == Segment::yes_ &&
+                  nextSegment->expeditedSupport() == Segment::yes_))) {
         Fwk::Ptr<Path> newPath = Path::copy(path);
         newPath->addSegment(nextSegment,
             segmentCost, nextSegment->length(), segmentTime);

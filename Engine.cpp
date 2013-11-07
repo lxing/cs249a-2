@@ -67,6 +67,25 @@ Fwk::Ptr<Entity> EngineManager::entity(string _name) {
   }
 }
 
+Fwk::Ptr<Location> EngineManager::location(string _name) {
+  Fwk::Ptr<Location> loc = customer(_name);
+  if (loc != NULL) return loc;
+
+  loc = port(_name);
+  if (loc != NULL) return loc;
+
+  loc = boatTerminal(_name);
+  if (loc != NULL) return loc;
+
+  loc = truckTerminal(_name);
+  if (loc != NULL) return loc;
+
+  loc = planeTerminal(_name);
+  if (loc != NULL) return loc;
+
+  return loc;
+}
+
 void EngineManager::customerIs(Fwk::Ptr<Customer> _customer) {
   std::map<string, Fwk::Ptr<Customer> >::iterator customerIter;
   customerIter = customerMap_.find(_customer->name());

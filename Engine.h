@@ -363,6 +363,7 @@ public:
   ~EngineManager();
 
   Ptr<Entity> entity(string _name);
+  Ptr<Location> location(string _name);
 
   Ptr<Stats> stats() { return stats_; }
 

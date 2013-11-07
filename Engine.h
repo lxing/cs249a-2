@@ -277,6 +277,7 @@ public:
   Dollar cost() { return pathCost_; }
   Mile length() { return pathLength_; }
   Time time() { return pathTime_; }
+  Segment::ExpeditedSupport expeditedSupport() { return expeditedSupport_; }
 
   string tostring();
 

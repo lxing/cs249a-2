@@ -303,7 +303,7 @@ Fwk::Ptr<Path> EngineManager::path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> 
 }
 
 // std::vector<Path> EngineManager::connectivity(
-//   Fwk::Ptr<Location> start, Mile _distance, Dollar _cost) {
+//   Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time) {
 //   // BFS
 //   vector<Path> possiblePaths;
 //   std::queue<Fwk::Ptr<Path> > pathQueue;

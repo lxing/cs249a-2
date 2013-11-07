@@ -389,7 +389,7 @@ public:
 
   Fwk::Ptr<Path> path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end);
   std::vector<Path> connectivity(
-      Fwk::Ptr<Location> start, Mile _distance, Dollar _cost);
+      Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time);
 
   class Notifiee : public Fwk::NamedInterface::Notifiee{
   public:

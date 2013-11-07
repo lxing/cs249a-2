@@ -45,9 +45,9 @@ public:
   }
 };
 
-class Time : public Ordinal<Time, uint32_t> {
+class Time : public Ordinal<Time, double> {
 public:
-  Time(uint32_t num) : Ordinal<Time, uint32_t>(num) { }
+  Time(double num) : Ordinal<Time, double>(num) { }
 };
 
 class Capacity : public Nominal<Capacity, uint32_t> {
@@ -250,7 +250,7 @@ public:
     expeditedSupport_ = _expeditedSupport;
   }
 
-  virtual Dollar cost(EngineManager* manager, ExpeditedSupport expedited) = 0;
+  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
   virtual Time time(EngineManager* manager, ExpeditedSupport expedited) = 0;
 
 protected:
@@ -313,7 +313,6 @@ public:
   void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
-  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
@@ -331,7 +330,6 @@ public:
   void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
-  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
@@ -349,7 +347,6 @@ public:
   void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
   void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
 
-  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:

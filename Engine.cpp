@@ -4,51 +4,36 @@
 
 using namespace Shipping;
 
+Dollar Segment::cost(EngineManager* manager, ExpeditedSupport expedited) {
+  Dollar cost(0);
+  cost = cost.value() * length().value() * difficulty().value();
+  return cost;
+}
+
 Fwk::Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
   Fwk::Ptr<Path> copyPath = new Path();
   copyPath->segment_ = path->segment_;
   return copyPath;
 }
 
-Dollar BoatSegment::cost(
-    Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  // TODO(rhau) finish method
-  Dollar cost(0);
-  return cost;
-}
-
 Time BoatSegment::time(
   Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  // TODO(rhau) finish method
   Time t(0);
+  t = (double)length().value() / manager->boatFleet()->speed().value();
   return t;
-}
-
-Dollar TruckSegment::cost(
-  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  // TODO(rhau) finish method
-  Dollar cost(0);
-  return cost;
 }
 
 Time TruckSegment::time(
   Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  // TODO(rhau) finish method
   Time t(0);
+  t = (double)length().value() / manager->truckFleet()->speed().value();
   return t;
-}
-
-Dollar PlaneSegment::cost(
-  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  // TODO(rhau) finish method
-  Dollar cost(0);
-  return cost;
 }
 
 Time PlaneSegment::time(
   Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  // TODO(rhau) finish method
   Time t(0);
+  t = (double)length().value() / manager->planeFleet()->speed().value();
   return t;
 }
 

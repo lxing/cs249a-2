@@ -83,6 +83,7 @@ Fwk::Ptr<Location> EngineManager::location(string _name) {
   loc = planeTerminal(_name);
   if (loc != NULL) return loc;
 
+  loc = NULL;
   return loc;
 }
 
@@ -296,7 +297,7 @@ Fwk::Ptr<PlaneSegment> EngineManager::planeSegment(string _name) {
 }
 
 
-Fwk::Ptr<Path> EngineManager::path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end) {
+Fwk::Ptr<Path> EngineManager::connect(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end) {
   // BFS
   std::queue<Fwk::Ptr<Path> > pathQueue;
   std::vector<Ptr<Segment> > startSegments = start->segments();
@@ -339,8 +340,9 @@ Fwk::Ptr<Path> EngineManager::path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> 
   return path;
 }
 
-std::vector<Fwk::Ptr<Path> > EngineManager::connectivity(
-  Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time) {
+std::vector<Fwk::Ptr<Path> > EngineManager::explore(
+    Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time,
+    Segment::ExpeditedSupport _expedited) {
   // BFS
   std::vector<Fwk::Ptr<Path> > possiblePaths;
   std::queue<Fwk::Ptr<Path> > pathQueue;
@@ -355,7 +357,8 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectivity(
     // check cost, distance, and time are under constraints
     if (segmentCost+startPath->cost() < _cost &&
           segmentTime+startPath->time() < _time &&
-          startSegment->length()+startPath->length() < _distance) {
+          startSegment->length()+startPath->length() < _distance &&
+          _expedited == startSegment->expeditedSupport()) {
       startPath->addSegment(startSegments[i],
           segmentCost, startSegment->length(), segmentTime);
       possiblePaths.push_back(startPath);
@@ -380,7 +383,8 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectivity(
       // check cost, distance, and time are under constraints
       if (segmentCost+path->cost() < _cost &&
             segmentTime+path->time() < _time &&
-            nextSegment->length()+path->length() < _distance) {
+            nextSegment->length()+path->length() < _distance &&
+            _expedited == nextSegment->expeditedSupport()) {
         Fwk::Ptr<Path> newPath = Path::copy(path);
         newPath->addSegment(nextSegment,
             segmentCost, nextSegment->length(), segmentTime);

@@ -392,9 +392,10 @@ public:
   void planeSegmentIs(Ptr<PlaneSegment> _planeSegment);
   Ptr<PlaneSegment> planeSegment(string _name);
 
-  Fwk::Ptr<Path> path(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end);
-  std::vector<Fwk::Ptr<Path> > connectivity(
-      Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time);
+  Fwk::Ptr<Path> connect(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end);
+  std::vector<Fwk::Ptr<Path> > explore(
+      Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time,
+      Segment::ExpeditedSupport _expedited);
 
   class Notifiee : public Fwk::NamedInterface::Notifiee{
   public:

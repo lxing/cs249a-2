@@ -75,7 +75,6 @@ public:
 
 class Fleet : public Entity {
 public:
-
   virtual void speedIs(MilesPerHour _speed) { speed_ = _speed; }
   virtual MilesPerHour speed() { return speed_; }
   virtual void capacityIs(Capacity _capacity) { capacity_ = _capacity; }

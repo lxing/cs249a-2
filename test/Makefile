@@ -35,7 +35,7 @@ COMPILER_FLAGS += -g -Wall
 
 # This is a list of tests. You would add the name of any new tests you add here
 # and define it below.
-FILES += EngineTest
+FILES += EngineTest InstanceTest
 
 # This is a list of object files.
 OBJS = $(addsuffix .o, $(FILES))
@@ -48,6 +48,8 @@ LIBS = $(SRC_PATH)/Instance.o
 # ##################
 EngineTest: EngineTest.cpp $(SRC_PATH)/Engine.cpp $(SRC_PATH)/Engine.h $(SRC_PATH)/Engine.o  $(LIBS)
 	$(CXX) $(PREPROCESSOR_FLAGS) $(COMPILER_FLAGS) -c EngineTest.cpp
+InstanceTest: InstanceTest.cpp $(SRC_PATH)/Instance.cpp $(SRC_PATH)/Instance.h $(SRC_PATH)/Engine.o  $(LIBS)
+	$(CXX) $(PREPROCESSOR_FLAGS) $(COMPILER_FLAGS) -c InstanceTest.cpp
 
 # ##################
 # Main Suite

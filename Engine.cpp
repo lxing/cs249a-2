@@ -13,7 +13,7 @@ Fwk::Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
 Ptr<Location> Segment::destination() {
   Ptr<Location> destination = NULL;
   Ptr<Segment> returnSegment;
-  if (returnSegment) destination = returnSegment->source();
+  if (returnSegment != NULL) destination = returnSegment->source();
   return destination;
 }
 
@@ -50,7 +50,7 @@ Dollar PlaneSegment::cost(Shipping::EngineManager* manager) {
 Time PlaneSegment::time(Shipping::EngineManager* manager) {
   // TODO(rhau) finish method
   Time t(0);
-  return t;
+  retconnurn t;
 }
 
 EngineManager::EngineManager() {
@@ -304,8 +304,7 @@ Fwk::Ptr<PlaneSegment> EngineManager::planeSegment(string _name) {
 }
 
 
-// Fwk::Ptr<Path> EngineManager::connect(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end,
-  //   ExpeditedSupport expedited) {
+// Fwk::Ptr<Path> EngineManager::connect(Fwk::Ptr<Location> start, Fwk::Ptr<Location> end) {
   // // BFS
   // std::queue<Fwk::Ptr<Path> > pathQueue;
   // std::vector<Ptr<Segment> > startSegments = start->segments();

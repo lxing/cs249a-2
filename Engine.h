@@ -155,38 +155,6 @@ private:
 };
 
 
-class Path : public PtrInterface<Path> {
-public:
-  Path() : pathCost_(0), pathLength_(0), pathTime_(0) { }
-  ~Path() { }
-
-  Dollar cost() { return pathCost_; }
-  Mile length() { return pathLength_; }
-  Time time() { return pathTime_; }
-
-  string tostring();
-
-  static Fwk::Ptr<Path> copy(Fwk::Ptr<Path> path);
-
-  void addSegment(Fwk::Ptr<Segment> segment, Dollar segmentCost, Mile length,
-        Time time) {
-    pathCost_ = pathCost_.value() + segmentCost.value();
-    pathLength_ = pathLength_.value() + length.value();
-    pathTime_ = pathTime_.value() + time.value();
-    segment_.push_back(segment);
-  }
-
-  std::vector<Fwk::Ptr<Segment> > segments() {
-    return segment_;
-  }
-
-private:
-  Dollar pathCost_;
-  Mile pathLength_;
-  Time pathTime_;
-  std::vector<Fwk::Ptr<Segment> > segment_;
-};
-
 class Terminal : public Location {
 protected:
   Terminal(const string& name) : Location(name) {}
@@ -428,7 +396,7 @@ public:
   Ptr<PlaneSegment> planeSegment(string _name);
 
   std::vector<Fwk::Ptr<Path> > connect(Fwk::Ptr<Location> start,
-      Fwk::Ptr<Location> end, Segment::ExpeditedSupport expedited);
+      Fwk::Ptr<Location> end);
   std::vector<Fwk::Ptr<Path> > explore(
       Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time,
       Segment::ExpeditedSupport _expedited);

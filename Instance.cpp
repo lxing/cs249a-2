@@ -148,6 +148,7 @@ public:
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
 protected:
+  string pathString(Ptr<Path> path);
   Ptr<ManagerImpl> manager_;
 };
 
@@ -476,10 +477,10 @@ void StatsRep::attributeIs(const string& name, const string& v) {
 
 /* Connectivity */
 string ConnRep::attribute(const string& name) {
-  stringstream ss(name);
+  stringstream iss(name);
   string token;
   vector<string> tokens;
-  while (getline(ss, token, ' ')) { tokens.push_back(token); }
+  while (getline(iss, token, ' ')) { tokens.push_back(token); }
 
   if (tokens.size() < 4 || tokens[2] != ":") {
     cerr << "Invalid attribute for connectivity";
@@ -488,6 +489,8 @@ string ConnRep::attribute(const string& name) {
 
   Ptr<EngineManager> engine = manager_->engine();
   Ptr<Location> src = engine->location(name); // TODO tokens[1]
+  stringstream oss;
+  iss.precision(2);
 
   if (src != NULL && tokens[0] == "explore") {
     Mile maxDist(0);
@@ -503,23 +506,42 @@ string ConnRep::attribute(const string& name) {
       } else if (attrName == "cost") {
         maxCost = atof(tokens[++attr].c_str());
       } else if (attrName == "time") {
-        maxTime = atoi(tokens[++attr].c_str());
+        maxTime = atof(tokens[++attr].c_str());
       }
     }
 
     vector<Ptr<Path> > paths = engine->explore(
       src, maxDist, maxCost, maxTime, support);
+    for (int i = 0; i < paths.size(); i++) {
+      oss << pathString(paths[i]) << endl;
+    }
   } else if (src != NULL && tokens[0] == "connect") {
     Ptr<Location> dst = engine->location(name); // TODO tokens[3]
     vector<Ptr<Path> > paths = engine->connect(src, dst);
+    for (int i = 0; i < paths.size(); i++) {
+      oss << paths[i]->cost().value();
+      oss << paths[i]->time().value();
+      oss << paths[i]->expeditedSupport();
+      oss << pathString(paths[i]) << endl;
+    }
   }
 
-  return "";
+  return oss.str();
 };
 
 void ConnRep::attributeIs(const string& name, const string& v) {
   // Connections are read-only
   cerr << "Invalid attribute for connection";
+};
+
+string ConnRep::pathString(Ptr<Path> path) {
+  stringstream ss;
+  vector<Ptr<Segment> > segments = path->segments();
+  for (int i = 0; i < segments.size(); i++) {
+    Ptr<Segment> seg = segments[i];
+    ss << seg->source()->name() << "(";
+  }
+  return ss.str();
 };
 
 

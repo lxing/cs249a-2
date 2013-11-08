@@ -128,7 +128,6 @@ class Path;
 class Location : public Entity {
 public:
   // TODO(rhau) onSegment, which adds a segment as a callback from SegmentNew
-
   static void del(Ptr<Location> loc);
 
   virtual Ptr<Segment> segment(int _i) {
@@ -370,40 +369,48 @@ public:
   Ptr<Stats> stats() { return stats_; }
 
   // Fleet Attributes
-  void boatFleetIs(Ptr<BoatFleet> _boatFleet) { boatFleet_ = _boatFleet; }
   Ptr<BoatFleet> boatFleet() { return boatFleet_; }
+  void boatFleetIs(Ptr<BoatFleet> _boatFleet) { boatFleet_ = _boatFleet; }
 
-  void planeFleetIs(Ptr<PlaneFleet> _planeFleet) { planeFleet_ = _planeFleet; }
   Ptr<PlaneFleet> planeFleet() { return planeFleet_; }
+  void planeFleetIs(Ptr<PlaneFleet> _planeFleet) { planeFleet_ = _planeFleet; }
 
-  void truckFleetIs(Ptr<TruckFleet> _truckFleet) { truckFleet_ = _truckFleet; }
   Ptr<TruckFleet> truckFleet() { return truckFleet_; }
+  void truckFleetIs(Ptr<TruckFleet> _truckFleet) { truckFleet_ = _truckFleet; }
 
   // Location Attributes
-  void customerIs(Ptr<Customer> _customer);
   Ptr<Customer> customer(string _name);
+  void customerIs(Ptr<Customer> _customer);
+  void customerDel(Ptr<Customer> _customer);
 
-  void portIs(Ptr<Port> port);
   Ptr<Port> port(string _name);
+  void portIs(Ptr<Port> port);
+  void portDel(Ptr<Port> port);;
 
-  void boatTerminalIs(Ptr<BoatTerminal> _boatTerminal);
   Ptr<BoatTerminal> boatTerminal(string _name);
+  void boatTerminalIs(Ptr<BoatTerminal> _boatTerminal);
+  void boatTerminalDel(Ptr<BoatTerminal> _boatTerminal);
 
-  void truckTerminalIs(Ptr<TruckTerminal> _truckTerminal);
   Ptr<TruckTerminal> truckTerminal(string _name);
+  void truckTerminalIs(Ptr<TruckTerminal> _truckTerminal);
+  void truckTerminalDel(Ptr<TruckTerminal> _truckTerminal);
 
-  void planeTerminalIs(Ptr<PlaneTerminal> _planeTerminal);
   Ptr<PlaneTerminal> planeTerminal(string _name);
+  void planeTerminalIs(Ptr<PlaneTerminal> _planeTerminal);
+  void planeTerminalDel(Ptr<PlaneTerminal> _planeTerminal);
 
   // Segment Attributes
-  void boatSegmentIs(Ptr<BoatSegment> _boatSegment);
   Ptr<BoatSegment> boatSegment(string _name);
+  void boatSegmentIs(Ptr<BoatSegment> _boatSegment);
+  void boatSegmentDel(Ptr<BoatSegment> _boatSegment);
 
-  void truckSegmentIs(Ptr<TruckSegment> _truckSegment);
   Ptr<TruckSegment> truckSegment(string _name);
+  void truckSegmentIs(Ptr<TruckSegment> _truckSegment);
+  void truckSegmentDel(Ptr<TruckSegment> _truckSegment);
 
-  void planeSegmentIs(Ptr<PlaneSegment> _planeSegment);
   Ptr<PlaneSegment> planeSegment(string _name);
+  void planeSegmentIs(Ptr<PlaneSegment> _planeSegment);
+  void planeSegmentDel(Ptr<PlaneSegment> _planeSegment);
 
   // Connectivity Attributes
   std::vector<Fwk::Ptr<Path> > connect(Fwk::Ptr<Location> start,

@@ -133,6 +133,18 @@ Fwk::Ptr<Location> EngineManager::location(string _name) {
   return loc;
 }
 
+Fwk::Ptr<Customer> EngineManager::customer(string _name) {
+  std::map<string, Fwk::Ptr<Customer> >::iterator customerIter;
+  customerIter = customerMap_.find(_name);
+
+  if (customerIter == customerMap_.end()) {
+    Fwk::Ptr<Customer> ptr = NULL;
+    return ptr;
+  } else {
+    return customerIter->second;
+  }
+}
+
 void EngineManager::customerIs(Fwk::Ptr<Customer> _customer) {
   std::map<string, Fwk::Ptr<Customer> >::iterator customerIter;
   customerIter = customerMap_.find(_customer->name());
@@ -147,15 +159,23 @@ void EngineManager::customerIs(Fwk::Ptr<Customer> _customer) {
   }
 }
 
-Fwk::Ptr<Customer> EngineManager::customer(string _name) {
-  std::map<string, Fwk::Ptr<Customer> >::iterator customerIter;
-  customerIter = customerMap_.find(_name);
+void EngineManager::customerDel(Fwk::Ptr<Customer> _customer) {
+  Location::del(_customer);
 
-  if (customerIter == customerMap_.end()) {
-    Fwk::Ptr<Customer> ptr = NULL;
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onCustomerDel();
+  }
+}
+
+Fwk::Ptr<Port> EngineManager::port(string _name) {
+  std::map<string, Fwk::Ptr<Port> >::iterator portIter;
+  portIter = portMap_.find(_name);
+
+  if (portIter == portMap_.end()) {
+    Fwk::Ptr<Port> ptr = NULL;
     return ptr;
   } else {
-    return customerIter->second;
+    return portIter->second;
   }
 }
 
@@ -173,15 +193,23 @@ void EngineManager::portIs(Fwk::Ptr<Port> _port) {
   }
 }
 
-Fwk::Ptr<Port> EngineManager::port(string _name) {
-  std::map<string, Fwk::Ptr<Port> >::iterator portIter;
-  portIter = portMap_.find(_name);
+void EngineManager::portDel(Fwk::Ptr<Port> _port) {
+  Location::del(_port);
 
-  if (portIter == portMap_.end()) {
-    Fwk::Ptr<Port> ptr = NULL;
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onPortDel();
+  }
+}
+
+Fwk::Ptr<BoatTerminal> EngineManager::boatTerminal(string _name) {
+  std::map<string, Fwk::Ptr<BoatTerminal> >::iterator boatTerminalIter;
+  boatTerminalIter = boatTerminalMap_.find(_name);
+
+  if (boatTerminalIter == boatTerminalMap_.end()) {
+    Fwk::Ptr<BoatTerminal> ptr = NULL;
     return ptr;
   } else {
-    return portIter->second;
+    return boatTerminalIter->second;
   }
 }
 
@@ -199,15 +227,23 @@ void EngineManager::boatTerminalIs(Fwk::Ptr<BoatTerminal> _boatTerminal) {
   }
 }
 
-Fwk::Ptr<BoatTerminal> EngineManager::boatTerminal(string _name) {
-  std::map<string, Fwk::Ptr<BoatTerminal> >::iterator boatTerminalIter;
-  boatTerminalIter = boatTerminalMap_.find(_name);
+void EngineManager::boatTerminalDel(Fwk::Ptr<BoatTerminal> _boatTerminal) {
+  Location::del(_boatTerminal);
 
-  if (boatTerminalIter == boatTerminalMap_.end()) {
-    Fwk::Ptr<BoatTerminal> ptr = NULL;
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onBoatTerminalDel();
+  }
+}
+
+Fwk::Ptr<TruckTerminal> EngineManager::truckTerminal(string _name) {
+  std::map<string, Fwk::Ptr<TruckTerminal> >::iterator truckTerminalIter;
+  truckTerminalIter = truckTerminalMap_.find(_name);
+
+  if (truckTerminalIter == truckTerminalMap_.end()) {
+    Fwk::Ptr<TruckTerminal> ptr = NULL;
     return ptr;
   } else {
-    return boatTerminalIter->second;
+    return truckTerminalIter->second;
   }
 }
 
@@ -225,15 +261,23 @@ void EngineManager::truckTerminalIs(Fwk::Ptr<TruckTerminal> _truckTerminal) {
   }
 }
 
-Fwk::Ptr<TruckTerminal> EngineManager::truckTerminal(string _name) {
-  std::map<string, Fwk::Ptr<TruckTerminal> >::iterator truckTerminalIter;
-  truckTerminalIter = truckTerminalMap_.find(_name);
+void EngineManager::truckTerminalDel(Fwk::Ptr<TruckTerminal> _truckTerminal) {
+  Location::del(_truckTerminal);
 
-  if (truckTerminalIter == truckTerminalMap_.end()) {
-    Fwk::Ptr<TruckTerminal> ptr = NULL;
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onTruckTerminalDel();
+  }
+}
+
+Fwk::Ptr<PlaneTerminal> EngineManager::planeTerminal(string _name) {
+  std::map<string, Fwk::Ptr<PlaneTerminal> >::iterator planeTerminalIter;
+  planeTerminalIter = planeTerminalMap_.find(_name);
+
+  if (planeTerminalIter == planeTerminalMap_.end()) {
+    Fwk::Ptr<PlaneTerminal> ptr = NULL;
     return ptr;
   } else {
-    return truckTerminalIter->second;
+    return planeTerminalIter->second;
   }
 }
 
@@ -251,18 +295,13 @@ void EngineManager::planeTerminalIs(Fwk::Ptr<PlaneTerminal> _planeTerminal) {
   }
 }
 
-Fwk::Ptr<PlaneTerminal> EngineManager::planeTerminal(string _name) {
-  std::map<string, Fwk::Ptr<PlaneTerminal> >::iterator planeTerminalIter;
-  planeTerminalIter = planeTerminalMap_.find(_name);
+void EngineManager::planeTerminalDel(Fwk::Ptr<PlaneTerminal> _planeTerminal) {
+  Location::del(_planeTerminal);
 
-  if (planeTerminalIter == planeTerminalMap_.end()) {
-    Fwk::Ptr<PlaneTerminal> ptr = NULL;
-    return ptr;
-  } else {
-    return planeTerminalIter->second;
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onPlaneTerminalDel();
   }
 }
-
 
 void EngineManager::boatSegmentIs(Fwk::Ptr<BoatSegment> _boatSegment) {
   std::map<string, Fwk::Ptr<BoatSegment> >::iterator boatSegmentIter;
@@ -275,6 +314,14 @@ void EngineManager::boatSegmentIs(Fwk::Ptr<BoatSegment> _boatSegment) {
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onBoatSegmentIs();
+  }
+}
+
+void EngineManager::boatSegmentDel(Fwk::Ptr<BoatSegment> _boatSegment) {
+  Segment::del(_boatSegment);
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onBoatSegmentDel();
   }
 }
 
@@ -304,6 +351,14 @@ void EngineManager::truckSegmentIs(Fwk::Ptr<TruckSegment> _truckSegment) {
   }
 }
 
+void EngineManager::truckSegmentDel(Fwk::Ptr<TruckSegment> _truckSegment) {
+  Segment::del(_truckSegment);
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onTruckSegmentDel();
+  }
+}
+
 Fwk::Ptr<TruckSegment> EngineManager::truckSegment(string _name) {
   std::map<string, Fwk::Ptr<TruckSegment> >::iterator truckSegmentIter;
   truckSegmentIter = truckSegmentMap_.find(_name);
@@ -327,6 +382,14 @@ void EngineManager::planeSegmentIs(Fwk::Ptr<PlaneSegment> _planeSegment) {
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onPlaneSegmentIs();
+  }
+}
+
+void EngineManager::planeSegmentDel(Fwk::Ptr<PlaneSegment> _planeSegment) {
+  Segment::del(_planeSegment);
+
+  for (uint32_t i=0; i<notifiee_.size(); i++) {
+    notifiee_[i]->onPlaneSegmentDel();
   }
 }
 

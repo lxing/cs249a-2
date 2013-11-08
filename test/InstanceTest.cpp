@@ -124,7 +124,7 @@ TEST_F(InstanceTest, SegmentTest) {
 
 TEST_F(InstanceTest, Connectivity) {
   // Test same-type connection
-  // tT --ts->  <-ts2-- tT2
+  // tT --tS-->  <-tS2-- tT2
   Ptr<Instance> truckT2 = manager->instanceNew("truckT2", "Truck terminal");
   Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
   truckS->attributeIs("source", "truckT");
@@ -153,9 +153,9 @@ TEST_F(InstanceTest, Connectivity) {
   ASSERT_EQ(port->attribute("segment1"), "planeS");
 }
 
-TEST_F(InstanceTest, Deletion) {
-  // tT --ts-->  <-ts2-- tT2
-  //    --ts3->
+TEST_F(InstanceTest, SegmentDel) {
+  // tT --tS-->  <-tS2-- tT2
+  //    --tS3->
   return;
   Ptr<Instance> truckT2 = manager->instanceNew("truckT2", "Truck terminal");
   Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
@@ -165,7 +165,37 @@ TEST_F(InstanceTest, Deletion) {
   truckS3->attributeIs("source", "truckT2");
   truckS->attributeIs("return segment", "truckS2"); 
 
+  ASSERT_EQ(truckT2->attribute("segment1"), "truckS2");
   ASSERT_EQ(truckT->attribute("segment2"), "truckS3");
 
-  //manager->instanceDel 
+  manager->instanceDel("truckS");
+
+  // Instance should be gone
+  ASSERT_EQ(manager->instance("truckS"), null);
+
+  // Segments should have shifted
+  ASSERT_EQ(truckT->attribute("segment1"), "truckS3");
+  ASSERT_EQ(truckT->attribute("segment2"), "");
+  
+  // Return segment should be updated 
+  ASSERT_EQ(truckT2->attribute("segment1"), "truckS2");
+  ASSERT_EQ(truckS2->attribute("return segment"), "");
+}
+
+TEST_F(InstanceTest, LocationDel) {
+  // tT --tS-->  <-tS2-- tT2
+  Ptr<Instance> truckT2 = manager->instanceNew("truckT2", "Truck terminal");
+  Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
+  truckS->attributeIs("source", "truckT");
+  truckS2->attributeIs("source", "truckT2");
+  truckS->attributeIs("return segment", "truckS2"); 
+
+  manager->instanceDel("truckT");
+  
+  // Instance should be gone
+  ASSERT_EQ(manager->instance("truckT"), null);
+
+  // Segment should have no source, but still exist
+  ASSERT_NE(manager->instance("truckS"), null);
+  ASSERT_EQ(truckS->attribute("source"), "");
 }

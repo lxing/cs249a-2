@@ -24,7 +24,6 @@ public:
   Ptr<Instance> instanceNew(const string& name, const string& type);
   Ptr<Instance> instance(const string& name);
   void instanceDel(const string& name);
-  Ptr<EngineManager> engine() { return engine_; };
 protected:
   map<string,Ptr<Instance> > instanceMap_;
   Ptr<EngineManager> engine_;
@@ -33,68 +32,67 @@ protected:
 /* Locations */
 class LocationRep : public Instance {
 public:
-  LocationRep(const string& name, ManagerImpl* manager) :
-      Instance(name), manager_(manager) {};
+  LocationRep(const string& name, Ptr<EngineManager> engine) :
+      Instance(name), engine_(engine) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
   void engineObjIs(const Ptr<Location> _location) { location_ = _location; };
 protected:
   Ptr<Location> location_; // Associated engine object
-  Ptr<ManagerImpl> manager_;
+  Ptr<EngineManager> engine_;
   int segmentNumber(const string& name);
 };
 
 class CustomerRep : public LocationRep {
 public:
-  CustomerRep(const string& name, ManagerImpl *manager) :
-    LocationRep(name, manager) {};
+  CustomerRep(const string& name, Ptr<EngineManager> engine) :
+    LocationRep(name, engine) {};
 };
 
 class PortRep : public LocationRep {
 public:
-  PortRep(const string& name, ManagerImpl *manager) :
-    LocationRep(name, manager) {};
+  PortRep(const string& name, Ptr<EngineManager> engine) :
+    LocationRep(name, engine) {};
 };
 
 class TruckTerminalRep : public LocationRep {
 public:
-  TruckTerminalRep(const string& name, ManagerImpl *manager) :
-    LocationRep(name, manager) {};
+  TruckTerminalRep(const string& name, Ptr<EngineManager> engine) :
+    LocationRep(name, engine) {};
 };
 
 class BoatTerminalRep : public LocationRep {
 public:
-  BoatTerminalRep(const string& name, ManagerImpl *manager) :
-    LocationRep(name, manager) {};
-
+  BoatTerminalRep(const string& name, Ptr<EngineManager> engine) :
+    LocationRep(name, engine) {};
 };
 
 class PlaneTerminalRep : public LocationRep {
 public:
-  PlaneTerminalRep(const string& name, ManagerImpl *manager) :
-    LocationRep(name, manager) {};
+  PlaneTerminalRep(const string& name, Ptr<EngineManager> engine) :
+    LocationRep(name, engine) {};
 };
 
 
 /* Segments */
 class SegmentRep : public Instance {
 public:
-  SegmentRep(const string& name, ManagerImpl* manager) :
-    Instance(name), manager_(manager) {};
+  SegmentRep(const string& name, Ptr<EngineManager> engine) :
+    Instance(name), engine_(engine) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
 protected:
   virtual Ptr<Segment> segment() = 0;
   virtual void sourceIs(const string& v) = 0;
   virtual void returnSegmentIs(const string& v) = 0;
-  Ptr<ManagerImpl> manager_;
+  Ptr<EngineManager> engine_;
 };
 
 
 class TruckSegmentRep : public SegmentRep {
 public:
-  TruckSegmentRep(const string& name, ManagerImpl *manager) :
-    SegmentRep(name, manager) {};
+  TruckSegmentRep(const string& name, Ptr<EngineManager> engine) :
+    SegmentRep(name, engine) {};
   void engineObjIs(const Ptr<TruckSegment> _segment) { segment_ = _segment; };
 protected:
   Ptr<Segment> segment() {return segment_;};
@@ -105,8 +103,8 @@ protected:
 
 class BoatSegmentRep : public SegmentRep {
 public:
-  BoatSegmentRep(const string& name, ManagerImpl *manager) :
-    SegmentRep(name, manager) {};
+  BoatSegmentRep(const string& name, Ptr<EngineManager> engine) :
+    SegmentRep(name, engine) {};
   void engineObjIs(const Ptr<BoatSegment> _segment) { segment_ = _segment; };
 protected:
   Ptr<Segment> segment() {return segment_;};
@@ -117,8 +115,8 @@ protected:
 
 class PlaneSegmentRep : public SegmentRep {
 public:
-  PlaneSegmentRep(const string& name, ManagerImpl *manager) :
-    SegmentRep(name, manager) {};
+  PlaneSegmentRep(const string& name, Ptr<EngineManager> engine) :
+    SegmentRep(name, engine) {};
   void engineObjIs(const Ptr<PlaneSegment> _segment) { segment_ = _segment; };
 protected:
   Ptr<Segment> segment() {return segment_;};
@@ -131,34 +129,34 @@ protected:
 /* Stats */
 class StatsRep : public Instance {
 public:
-  StatsRep(const string& name, ManagerImpl* manager) :
-    Instance(name), manager_(manager) {};
+  StatsRep(const string& name, Ptr<EngineManager> engine) :
+    Instance(name), engine_(engine) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
   void engineObjIs(const Ptr<Stats> _stats) { stats_ = _stats; };
 protected:
   Ptr<Stats> stats_;
-  Ptr<ManagerImpl> manager_;
+  Ptr<EngineManager> engine_;
 };
 
 
 /* Connectivity */
 class ConnRep : public Instance {
 public:
-  ConnRep(const string& name, ManagerImpl* manager) :
-    Instance(name), manager_(manager) {};
+  ConnRep(const string& name, Ptr<EngineManager> engine) :
+    Instance(name), engine_(engine) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
 protected:
   string pathString(Ptr<Path> path);
-  Ptr<ManagerImpl> manager_;
+  Ptr<EngineManager> engine_;
 };
 
 /* Fleet */
 class FleetRep : public Instance {
 public:
-  FleetRep(const string& name, ManagerImpl* manager) :
-    Instance(name), manager_(manager) {};
+  FleetRep(const string& name, Ptr<EngineManager> engine) :
+    Instance(name), engine_(engine) {};
   string attribute(const string& name);
   void attributeIs(const string& name, const string& v);
 
@@ -184,7 +182,7 @@ protected:
   Ptr<TruckFleet> truckFleet_;
   Ptr<BoatFleet> boatFleet_;
   Ptr<PlaneFleet> planeFleet_;
-  Ptr<ManagerImpl> manager_;
+  Ptr<EngineManager> engine_;
 };
 
 
@@ -207,64 +205,64 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
   }
 
   if (type == "Customer") {
-    Ptr<CustomerRep> rep = new CustomerRep(name, this);
+    Ptr<CustomerRep> rep = new CustomerRep(name, engine_);
     Ptr<Customer> customer = Customer::CustomerNew(name);
     engine_->customerIs(customer);
     rep->engineObjIs(customer);
     instance = rep;
   } else if (type == "Port") {
-    Ptr<PortRep> rep = new PortRep(name, this);
+    Ptr<PortRep> rep = new PortRep(name, engine_);
     Ptr<Port> port = Port::PortNew(name);
     engine_->portIs(port);
     rep->engineObjIs(port);
     instance = rep;
   } else if (type == "Truck terminal") {
-    Ptr<TruckTerminalRep> rep = new TruckTerminalRep(name, this);
+    Ptr<TruckTerminalRep> rep = new TruckTerminalRep(name, engine_);
     Ptr<TruckTerminal> terminal = TruckTerminal::TruckTerminalNew(name);
     engine_->truckTerminalIs(terminal);
     rep->engineObjIs(terminal);
     instance = rep;
   } else if (type == "Boat terminal") {
-    Ptr<BoatTerminalRep> rep = new BoatTerminalRep(name, this);
+    Ptr<BoatTerminalRep> rep = new BoatTerminalRep(name, engine_);
     Ptr<BoatTerminal> terminal = BoatTerminal::BoatTerminalNew(name);
     engine_->boatTerminalIs(terminal);
     rep->engineObjIs(terminal);
     instance = rep;
   } else if (type == "Plane terminal") {
-    Ptr<PlaneTerminalRep> rep = new PlaneTerminalRep(name, this);
+    Ptr<PlaneTerminalRep> rep = new PlaneTerminalRep(name, engine_);
     Ptr<PlaneTerminal> terminal = PlaneTerminal::PlaneTerminalNew(name);
     engine_->planeTerminalIs(terminal);
     rep->engineObjIs(terminal);
     instance = rep;
   } else if (type == "Truck segment") {
-    Ptr<TruckSegmentRep> rep = new TruckSegmentRep(name, this);
+    Ptr<TruckSegmentRep> rep = new TruckSegmentRep(name, engine_);
     Ptr<TruckSegment> segment = TruckSegment::TruckSegmentNew(name);
     engine_->truckSegmentIs(segment);
     rep->engineObjIs(segment);
     instance = rep;
   } else if (type == "Boat segment") {
-    Ptr<BoatSegmentRep> rep = new BoatSegmentRep(name, this);
+    Ptr<BoatSegmentRep> rep = new BoatSegmentRep(name, engine_);
     Ptr<BoatSegment> segment = BoatSegment::BoatSegmentNew(name);
     engine_->boatSegmentIs(segment);
     rep->engineObjIs(segment);
     instance = rep;
   } else if (type == "Plane segment") {
-    Ptr<PlaneSegmentRep> rep = new PlaneSegmentRep(name, this);
+    Ptr<PlaneSegmentRep> rep = new PlaneSegmentRep(name, engine_);
     Ptr<PlaneSegment> segment = PlaneSegment::PlaneSegmentNew(name);
     engine_->planeSegmentIs(segment);
     rep->engineObjIs(segment);
     instance = rep;
   } else if (type == "Stats") {
-    Ptr<StatsRep> rep = new StatsRep(name, this);
+    Ptr<StatsRep> rep = new StatsRep(name, engine_);
     Ptr<Stats> stats = engine_->stats();
     rep->engineObjIs(stats);
     instance = rep;
   } else if (type == "Conn") {
-    instance = new ConnRep(name, this);
+    instance = new ConnRep(name, engine_);
     // No need to register with the engine layer; connectivity
     // is exposed via locations
   } else if (type == "Fleet") {
-    Ptr<FleetRep> rep = new FleetRep(name, this);
+    Ptr<FleetRep> rep = new FleetRep(name, engine_);
 
     Ptr<TruckFleet> truckFleet = TruckFleet::TruckFleetNew(name);
     engine_->truckFleetIs(truckFleet);
@@ -385,18 +383,17 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
 }
 
 void TruckSegmentRep::sourceIs(const string& v) {
-  Ptr<EngineManager> engine = manager_->engine();
-  Ptr<TruckTerminal> terminal = engine->truckTerminal(v);
+  Ptr<TruckTerminal> terminal = engine_->truckTerminal(v);
   if (terminal) { segment_->sourceIs(terminal); return; }
-  Ptr<Customer> customer = engine->customer(v);
+  Ptr<Customer> customer = engine_->customer(v);
   if (customer) { segment_->sourceIs(customer); return; }
-  Ptr<Port> port = engine->port(v);
+  Ptr<Port> port = engine_->port(v);
   if (port) { segment_->sourceIs(port); return; }
   cerr << "Invalid source";
 }
 
 void TruckSegmentRep::returnSegmentIs(const string& v) {
-  Ptr<TruckSegment> returnSegment = manager_->engine()->truckSegment(v);
+  Ptr<TruckSegment> returnSegment = engine_->truckSegment(v);
   if (returnSegment)
     segment_->returnSegmentIs(returnSegment);
   else
@@ -404,18 +401,17 @@ void TruckSegmentRep::returnSegmentIs(const string& v) {
 }
 
 void BoatSegmentRep::sourceIs(const string& v) {
-  Ptr<EngineManager> engine = manager_->engine();
-  Ptr<BoatTerminal> terminal = engine->boatTerminal(v);
+  Ptr<BoatTerminal> terminal = engine_->boatTerminal(v);
   if (terminal) { segment_->sourceIs(terminal); return; }
-  Ptr<Customer> customer = engine->customer(v);
+  Ptr<Customer> customer = engine_->customer(v);
   if (customer) { segment_->sourceIs(customer); return; }
-  Ptr<Port> port = engine->port(v);
+  Ptr<Port> port = engine_->port(v);
   if (port) { segment_->sourceIs(port); return; }
   cerr << "Invalid source";
 }
 
 void BoatSegmentRep::returnSegmentIs(const string& v) {
-  Ptr<BoatSegment> returnSegment = manager_->engine()->boatSegment(v);
+  Ptr<BoatSegment> returnSegment = engine_->boatSegment(v);
   if (returnSegment)
     segment_->returnSegmentIs(returnSegment);
   else
@@ -423,18 +419,17 @@ void BoatSegmentRep::returnSegmentIs(const string& v) {
 }
 
 void PlaneSegmentRep::sourceIs(const string& v) {
-  Ptr<EngineManager> engine = manager_->engine();
-  Ptr<PlaneTerminal> terminal = engine->planeTerminal(v);
+  Ptr<PlaneTerminal> terminal = engine_->planeTerminal(v);
   if (terminal) { segment_->sourceIs(terminal); return; }
-  Ptr<Customer> customer = engine->customer(v);
+  Ptr<Customer> customer = engine_->customer(v);
   if (customer) { segment_->sourceIs(customer); return; }
-  Ptr<Port> port = engine->port(v);
+  Ptr<Port> port = engine_->port(v);
   if (port) { segment_->sourceIs(port); return; }
   cerr << "Invalid source";
 }
 
 void PlaneSegmentRep::returnSegmentIs(const string& v) {
-  Ptr<PlaneSegment> returnSegment = manager_->engine()->planeSegment(v);
+  Ptr<PlaneSegment> returnSegment = engine_->planeSegment(v);
   if (returnSegment)
     segment_->returnSegmentIs(returnSegment);
   else
@@ -491,8 +486,7 @@ string ConnRep::attribute(const string& name) {
     return "";
   }
 
-  Ptr<EngineManager> engine = manager_->engine();
-  Ptr<Location> src = engine->location(tokens[1]);
+  Ptr<Location> src = engine_->location(tokens[1]);
   stringstream oss;
   oss << fixed << setprecision(PRECISION);
 
@@ -514,14 +508,14 @@ string ConnRep::attribute(const string& name) {
       }
     }
 
-    vector<Ptr<Path> > paths = engine->explore(
+    vector<Ptr<Path> > paths = engine_->explore(
       src, maxDist, maxCost, maxTime, support);
     for (unsigned int i = 0; i < paths.size(); i++) {
       oss << pathString(paths[i]) << endl;
     }
   } else if (src != NULL && tokens[0] == "connect") {
-    Ptr<Location> dst = engine->location(tokens[3]);
-    vector<Ptr<Path> > paths = engine->connect(src, dst);
+    Ptr<Location> dst = engine_->location(tokens[3]);
+    vector<Ptr<Path> > paths = engine_->connect(src, dst);
     for (unsigned int i = 0; i < paths.size(); i++) {
       oss << paths[i]->cost().value();
       oss << paths[i]->time().value();
@@ -555,12 +549,11 @@ string FleetRep::attribute(const string& name) {
   FleetMode mode;
   parsedInput(name, type, mode);
 
-  Ptr<EngineManager> engine = manager_->engine();
   Ptr<Fleet> fleet;
   switch (type) {
-    case truck_: fleet = engine->truckFleet(); break;
-    case boat_: fleet = engine->boatFleet(); break;
-    case plane_: fleet = engine->planeFleet(); break;
+    case truck_: fleet = engine_->truckFleet(); break;
+    case boat_: fleet = engine_->boatFleet(); break;
+    case plane_: fleet = engine_->planeFleet(); break;
     default: cerr << "Invalid attribute for fleet"; return "";
   }
 
@@ -582,12 +575,11 @@ void FleetRep::attributeIs(const string& name, const string& v) {
   FleetMode mode;
   parsedInput(name, type, mode);
 
-  Ptr<EngineManager> engine = manager_->engine();
   Ptr<Fleet> fleet;
   switch (type) {
-    case truck_: fleet = engine->truckFleet(); break;
-    case boat_: fleet = engine->boatFleet(); break;
-    case plane_: fleet = engine->planeFleet(); break;
+    case truck_: fleet = engine_->truckFleet(); break;
+    case boat_: fleet = engine_->boatFleet(); break;
+    case plane_: fleet = engine_->planeFleet(); break;
     default: cerr << "Invalid attribute for fleet"; return;
   }
 

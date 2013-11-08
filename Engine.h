@@ -89,7 +89,8 @@ public:
   virtual Dollar cost() { return cost_; }
 
 protected:
-  Fleet(const string& name, Fwk::Ptr<EngineManager> em) : Entity(name, em), speed_(0),
+  Fleet(const string& name, Fwk::Ptr<EngineManager> em) :
+      Entity(name, em), speed_(0),
       capacity_(0), cost_(0) { }
 
 private:
@@ -100,35 +101,41 @@ private:
 
 class BoatFleet : public Fleet {
 public:
-  static Ptr<BoatFleet> BoatFleetNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<BoatFleet> BoatFleetNew(
+        const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<BoatFleet> m = new BoatFleet(name, em);
     return m;
   }
 
 protected:
-  BoatFleet(const string& name, Fwk::Ptr<EngineManager> em) : Fleet(name, em) { }
+  BoatFleet(const string& name, Fwk::Ptr<EngineManager> em) :
+      Fleet(name, em) { }
 };
 
 class PlaneFleet : public Fleet {
 public:
-  static Ptr<PlaneFleet> PlaneFleetNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<PlaneFleet> PlaneFleetNew(
+        const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<PlaneFleet> m = new PlaneFleet(name, em);
     return m;
   }
 
 protected:
-  PlaneFleet(const string& name, Fwk::Ptr<EngineManager> em) : Fleet(name, em) { }
+  PlaneFleet(const string& name, Fwk::Ptr<EngineManager> em) :
+      Fleet(name, em) { }
 };
 
 class TruckFleet : public Fleet {
 public:
-  static Ptr<TruckFleet> TruckFleetNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<TruckFleet> TruckFleetNew(
+        const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<TruckFleet> m = new TruckFleet(name, em);
     return m;
   }
 
 protected:
-  TruckFleet(const string& name, Fwk::Ptr<EngineManager> em) : Fleet(name, em) {}
+  TruckFleet(const string& name, Fwk::Ptr<EngineManager> em) :
+      Fleet(name, em) {}
 };
 
 class Segment;
@@ -166,56 +173,65 @@ private:
 
 class Terminal : public Location {
 protected:
-  Terminal(const string& name, Fwk::Ptr<EngineManager> em) : Location(name, em) {}
+  Terminal(const string& name, Fwk::Ptr<EngineManager> em) :
+      Location(name, em) {}
   ~Terminal() {}
 };
 
 // Terminals
 class BoatTerminal : public Terminal {
 public:
-  static Ptr<BoatTerminal> BoatTerminalNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<BoatTerminal> BoatTerminalNew(
+        const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<BoatTerminal> m = new BoatTerminal(name, em);
     return m;
   }
 
 protected:
-  BoatTerminal(const string& name, Fwk::Ptr<EngineManager> em) : Terminal(name, em) {}
+  BoatTerminal(const string& name, Fwk::Ptr<EngineManager> em) :
+      Terminal(name, em) {}
   ~BoatTerminal() {}
 };
 
 class TruckTerminal : public Terminal {
 public:
-  static Ptr<TruckTerminal> TruckTerminalNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<TruckTerminal> TruckTerminalNew(
+        const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<TruckTerminal> m = new TruckTerminal(name, em);
     return m;
   }
 
 protected:
-  TruckTerminal(const string& name, Fwk::Ptr<EngineManager> em) : Terminal(name, em) {}
+  TruckTerminal(const string& name, Fwk::Ptr<EngineManager> em) :
+      Terminal(name, em) {}
   ~TruckTerminal() {}
 };
 
 class PlaneTerminal : public Terminal {
 public:
-  static Ptr<PlaneTerminal> PlaneTerminalNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<PlaneTerminal> PlaneTerminalNew(
+        const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<PlaneTerminal> m = new PlaneTerminal(name, em);
     return m;
   }
 
 protected:
-  PlaneTerminal(const string& name, Fwk::Ptr<EngineManager> em) : Terminal(name, em) {}
+  PlaneTerminal(const string& name, Fwk::Ptr<EngineManager> em) :
+      Terminal(name, em) {}
   ~PlaneTerminal() {}
 };
 
 class Customer : public Location {
 public:
-  static Ptr<Customer> CustomerNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<Customer> CustomerNew(
+        const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<Customer> m = new Customer(name, em);
     return m;
   }
 
 protected:
-  Customer(const string& name, Fwk::Ptr<EngineManager> em) : Location(name, em) {}
+  Customer(const string& name, Fwk::Ptr<EngineManager> em) :
+      Location(name, em) {}
   ~Customer() {}
 };
 
@@ -264,8 +280,9 @@ public:
   virtual Time time(EngineManager* manager, ExpeditedSupport expedited) = 0;
 
 protected:
-  Segment(const string& name, Fwk::Ptr<EngineManager> em) : Entity(name, em), name_(name), length_(0),
-      difficulty_(1.0), expeditedSupport_(no_) { }
+  Segment(const string& name, Fwk::Ptr<EngineManager> em) :
+      Entity(name, em), name_(name), length_(0), difficulty_(1.0),
+      expeditedSupport_(no_) { }
   virtual ~Segment() {};
 
 
@@ -314,7 +331,8 @@ private:
 
 class BoatSegment : public Segment {
 public:
-  static Ptr<BoatSegment> BoatSegmentNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<BoatSegment> BoatSegmentNew(
+      const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<BoatSegment> m = new BoatSegment(name, em);
     return m;
   }
@@ -326,13 +344,15 @@ public:
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
-  BoatSegment(const string& name, Fwk::Ptr<EngineManager> em) : Segment(name, em) {};
+  BoatSegment(const string& name, Fwk::Ptr<EngineManager> em) :
+      Segment(name, em) {};
   ~BoatSegment() {};
 };
 
 class TruckSegment : public Segment {
 public:
-  static Ptr<TruckSegment> TruckSegmentNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<TruckSegment> TruckSegmentNew(
+      const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<TruckSegment> m = new TruckSegment(name, em);
     return m;
   }
@@ -343,13 +363,15 @@ public:
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
-  TruckSegment(const string& name, Fwk::Ptr<EngineManager> em) : Segment(name, em) {};
+  TruckSegment(
+      const string& name, Fwk::Ptr<EngineManager> em) : Segment(name, em) {};
   ~TruckSegment() {};
 };
 
 class PlaneSegment : public Segment {
 public:
-  static Ptr<PlaneSegment> PlaneSegmentNew(const string& name, Fwk::Ptr<EngineManager> em) {
+  static Ptr<PlaneSegment> PlaneSegmentNew(
+      const string& name, Fwk::Ptr<EngineManager> em) {
     Ptr<PlaneSegment> m = new PlaneSegment(name, em);
     return m;
   }
@@ -360,7 +382,8 @@ public:
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
-  PlaneSegment(const string& name, Fwk::Ptr<EngineManager> em) : Segment(name, em) {};
+  PlaneSegment(
+      const string& name, Fwk::Ptr<EngineManager> em) : Segment(name, em) {};
   ~PlaneSegment() {};
 };
 

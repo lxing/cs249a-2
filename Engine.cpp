@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <iostream>
 #include <queue>
 #include <set>
@@ -404,6 +405,16 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     std::vector<Fwk::Ptr<Segment> > nextSegments = currLoc->segments();
     for (uint32_t i=0; i<nextSegments.size(); i++) {
       Ptr<Segment> nextSegment = nextSegments[i];
+      if (nextSegment == NULL) {
+        std::cout << "currSegment" << std::endl;
+      }
+      if (nextSegment->returnSegment() == NULL) {
+        std::cout << nextSegment->name() << std::endl;
+        std::cout << "returnSegment" << std::endl;
+      }
+      if (nextSegment->returnSegment()->source() == NULL) {
+        std::cout << "source" << std::endl;
+      }
       Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
       
       std::set<string>::iterator it = visitedLocs.find(nextLoc->name());

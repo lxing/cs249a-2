@@ -92,6 +92,7 @@ protected:
     bsb->expeditedSupportIs(Shipping::Segment::no_);
 
     bsa->returnSegmentIs(bsb);
+    bsbc->returnSegmentIs(bscb);
   }
 
   Shipping::EngineManager em;
@@ -143,13 +144,17 @@ TEST_F(EngineTest, BoatSegmentTest) {
   bsb->difficultyIs(Shipping::Difficulty(3));
   bsb->expeditedSupportIs(Shipping::Segment::no_);
 
-  bsa->returnSegmentIs(bsb);
-  bsbc->returnSegmentIs(bscb);
+  // bsa->returnSegmentIs(bsb);
+  // bsbc->returnSegmentIs(bscb);
 
   ASSERT_EQ("BoatTerminalA", bsa->source()->name());
   ASSERT_EQ("BoatTerminalB", bsb->source()->name());
-  ASSERT_EQ(bsa->returnSegment()->name(), bsb->name());
-  ASSERT_EQ(bsb->returnSegment()->name(), bsa->name());
+  
+  ASSERT_EQ(bsa->returnSegment()->name(), "BoatSegmentB");
+  ASSERT_EQ(bsb->returnSegment()->name(), "BoatSegmentA");
+  ASSERT_EQ(bsbc->returnSegment()->name(), "BoatSegmentCB");
+  ASSERT_EQ(bscb->returnSegment()->name(), "BoatSegmentBC");
+
   ASSERT_EQ(1, bta->segments().size());
   ASSERT_EQ(2, btb->segments().size());
 }
@@ -184,10 +189,18 @@ TEST_F(EngineTest, PlaneTerminalTest) {
   ASSERT_NE(nullTerminal, pt);
 }
 
-TEST_F(EngineTest, SimpleConnectTest) {
+TEST_F(EngineTest, SimpleConnectOneStepTest) {
   Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
   Ptr<Shipping::BoatTerminal> btb = em.boatTerminal("BoatTerminalB");
 
   std::vector<Fwk::Ptr<Shipping::Path> > paths = em.connect(bta, btb);
-  ASSERT_EQ(2, paths.size());
+  ASSERT_EQ(1, paths.size());
+}
+
+TEST_F(EngineTest, SimpleConnectTwoStepsTest) {
+  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> btc = em.boatTerminal("BoatTerminalC");
+
+  std::vector<Fwk::Ptr<Shipping::Path> > paths = em.connect(bta, btc);
+  ASSERT_EQ(1, paths.size());
 }

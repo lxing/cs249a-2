@@ -327,6 +327,7 @@ int LocationRep::segmentNumber(const string& name) {
 /* Segments */
 string SegmentRep::attribute(const string& name) {
   stringstream ss;
+  ss << fixed << setprecision(PRECISION);
 
   if (name == "source") {
     Ptr<Location> source = segment()->source();
@@ -364,7 +365,7 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
     Mile length = atoi(v.c_str());
     segment()->lengthIs(length);
   } else if (name == "difficulty") {
-    Difficulty difficulty = atoi(v.c_str());
+    Difficulty difficulty = atof(v.c_str());
     segment()->difficultyIs(difficulty);
   } else if (name == "return segment") {
     returnSegmentIs(v);

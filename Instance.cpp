@@ -448,17 +448,17 @@ string StatsRep::attribute(const string& name) {
     ss << stats_->customerCount();
   } else if (name == "Port") {
     ss << stats_->portCount();
-  } else if (name == "Truck Terminal") {
+  } else if (name == "Truck terminal") {
     ss << stats_->truckTerminalCount();
-  } else if (name == "Boat Terminal") {
+  } else if (name == "Boat terminal") {
     ss << stats_->boatTerminalCount();
-  } else if (name == "Plane Terminal") {
+  } else if (name == "Plane terminal") {
     ss << stats_->planeTerminalCount();
-  } else if (name == "Truck Segment") {
+  } else if (name == "Truck segment") {
     ss << stats_->truckSegmentCount();
-  } else if (name == "Boat Segment") {
+  } else if (name == "Boat segment") {
     ss << stats_->boatSegmentCount();
-  } else if (name == "Plane Segment") {
+  } else if (name == "Plane segment") {
     ss << stats_->planeSegmentCount();
   } else {
     cerr << "Invlaid attribute for stats";

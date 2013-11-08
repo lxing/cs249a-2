@@ -1,11 +1,13 @@
 #include <stdlib.h>
+#include <iomanip> // Output decimal precision
 #include <iostream>
 #include <map>
-// #include <regex>
 #include <sstream>
 #include <vector>
 #include "Instance.h"
 #include "Engine.h"
+
+#define PRECISION 2
 
 namespace Shipping {
 
@@ -193,7 +195,7 @@ protected:
 
 /* Manager */
 ManagerImpl::ManagerImpl() {
-  Ptr<EngineManager> engine_ = new EngineManager();
+  engine_ = new EngineManager();
 }
 
 Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
@@ -375,6 +377,7 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
     } else {
       cerr << "Invalid value for expedited support";
     }
+    segment()->expeditedSupportIs(support);
   } else {
     cerr << "Invalid attribute for segment";
   }
@@ -490,7 +493,7 @@ string ConnRep::attribute(const string& name) {
   Ptr<EngineManager> engine = manager_->engine();
   Ptr<Location> src = engine->location(name); // TODO tokens[1]
   stringstream oss;
-  iss.precision(2);
+  oss << fixed << setprecision(PRECISION);
 
   if (src != NULL && tokens[0] == "explore") {
     Mile maxDist(0);
@@ -498,7 +501,7 @@ string ConnRep::attribute(const string& name) {
     Time maxTime(0);
     Segment::ExpeditedSupport support = Segment::no_;
 
-    for (int attr = 3; attr < tokens.size(); attr++) {
+    for (unsigned int attr = 3; attr < tokens.size(); attr++) {
       string attrName = tokens[attr];
       if (attrName == "expedited") support = Segment::yes_;
       else if (attrName == "distance") {
@@ -512,13 +515,13 @@ string ConnRep::attribute(const string& name) {
 
     vector<Ptr<Path> > paths = engine->explore(
       src, maxDist, maxCost, maxTime, support);
-    for (int i = 0; i < paths.size(); i++) {
+    for (unsigned int i = 0; i < paths.size(); i++) {
       oss << pathString(paths[i]) << endl;
     }
   } else if (src != NULL && tokens[0] == "connect") {
     Ptr<Location> dst = engine->location(name); // TODO tokens[3]
     vector<Ptr<Path> > paths = engine->connect(src, dst);
-    for (int i = 0; i < paths.size(); i++) {
+    for (unsigned int i = 0; i < paths.size(); i++) {
       oss << paths[i]->cost().value();
       oss << paths[i]->time().value();
       oss << paths[i]->expeditedSupport();
@@ -537,7 +540,7 @@ void ConnRep::attributeIs(const string& name, const string& v) {
 string ConnRep::pathString(Ptr<Path> path) {
   stringstream ss;
   vector<Ptr<Segment> > segments = path->segments();
-  for (int i = 0; i < segments.size(); i++) {
+  for (unsigned int i = 0; i < segments.size(); i++) {
     Ptr<Segment> seg = segments[i];
     ss << seg->source()->name() << "(";
   }
@@ -561,7 +564,7 @@ string FleetRep::attribute(const string& name) {
   }
 
   stringstream ss;
-  ss.precision(2);
+  ss << fixed << std::setprecision(PRECISION);
 
   switch (mode) {
     case speed_: ss << fleet->speed().value(); break;
@@ -603,15 +606,15 @@ void FleetRep::parsedInput(const string& name, FleetType& type, FleetMode& mode)
   string token;
 
   getline(ss, token, ',');
-  if (token == "truck") type = truck_;
-  else if (token == "boat") type = boat_;
-  else if (token == "plane") type = plane_;
+  if (token == "Truck") type = truck_;
+  else if (token == "Boat") type = boat_;
+  else if (token == "Plane") type = plane_;
   else type = nullType_;
 
   getline(ss, token);
-  if (token == "speed") mode = speed_;
-  else if (token == "cost") mode = cost_;
-  else if (token == "capacity") mode = capacity_;
+  if (token == " speed") mode = speed_;
+  else if (token == " cost") mode = cost_;
+  else if (token == " capacity") mode = capacity_;
   else mode = nullMode_;
 }
 

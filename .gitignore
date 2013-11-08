@@ -1,2 +1,4 @@
 *.o
-./example
+example
+test/UnitTest
+.*swp

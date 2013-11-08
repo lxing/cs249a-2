@@ -353,6 +353,7 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connect(
   for (uint32_t i=0; i<pathsWithExpedited.size(); i++) {
     pathsWithOutExpedited.push_back(pathsWithExpedited[i]);
   }
+
   return pathsWithOutExpedited;
 }
 
@@ -389,7 +390,6 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
 
     std::vector<Fwk::Ptr<Segment> > segments = path->segments();
     Ptr<Segment> currSegment = segments[segments.size()-1];
-
     // If the source of the return segment (nextLoc) matches our end,
     // then we found our path.
 
@@ -405,16 +405,6 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     std::vector<Fwk::Ptr<Segment> > nextSegments = currLoc->segments();
     for (uint32_t i=0; i<nextSegments.size(); i++) {
       Ptr<Segment> nextSegment = nextSegments[i];
-      if (nextSegment == NULL) {
-        std::cout << "currSegment" << std::endl;
-      }
-      if (nextSegment->returnSegment() == NULL) {
-        std::cout << nextSegment->name() << std::endl;
-        std::cout << "returnSegment" << std::endl;
-      }
-      if (nextSegment->returnSegment()->source() == NULL) {
-        std::cout << "source" << std::endl;
-      }
       Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
       
       std::set<string>::iterator it = visitedLocs.find(nextLoc->name());
@@ -444,10 +434,13 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
     Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time,
     Segment::ExpeditedSupport _expedited) {
   // BFS
+  std::set<string> visitedLocs;
   std::vector<Fwk::Ptr<Path> > possiblePaths;
   std::queue<Fwk::Ptr<Path> > pathQueue;
   std::vector<Ptr<Segment> > startSegments = start->segments();
+
   // populate the queue with the segments of the start location
+  visitedLocs.insert(start->name());
   for (uint32_t i=0; i<startSegments.size(); i++) {
     Fwk::Ptr<Path> startPath = new Path();
     Ptr<Segment> startSegment = startSegments[i];
@@ -455,12 +448,15 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
     Time segmentTime = startSegment->time(this, _expedited);
 
     // check cost, distance, and time are under constraints
-    if (segmentCost+startPath->cost() < _cost &&
-          segmentTime+startPath->time() < _time &&
-          startSegment->length()+startPath->length() < _distance &&
+    if (segmentCost+startPath->cost() <= _cost &&
+          segmentTime+startPath->time() <= _time &&
+          startSegment->length()+startPath->length() <= _distance &&
           (_expedited == Segment::no_ || 
               (_expedited == Segment::yes_ &&
                   startSegment->expeditedSupport() == Segment::yes_))) {
+      Fwk::Ptr<Location> nextLoc = startSegments[i]->returnSegment()->source();
+      visitedLocs.insert(nextLoc->name());
+
       startPath->addSegment(startSegments[i],
           segmentCost, startSegment->length(), segmentTime);
       possiblePaths.push_back(startPath);
@@ -474,23 +470,32 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
 
     std::vector<Fwk::Ptr<Segment> > segments = path->segments();
     Ptr<Segment> currSegment = segments[segments.size()-1];
-    Fwk::Ptr<Location> nextLoc = currSegment->returnSegment()->source();
+    Fwk::Ptr<Location> currLoc = currSegment->returnSegment()->source();
 
-    std::vector<Fwk::Ptr<Segment> > nextSegments = nextLoc->segments();
+    std::vector<Fwk::Ptr<Segment> > nextSegments = currLoc->segments();
     for (uint32_t i=0; i<nextSegments.size(); i++) {
       Ptr<Segment> nextSegment = nextSegments[i];
+      Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
+
+      std::set<string>::iterator it = visitedLocs.find(nextLoc->name());
+      if (it != visitedLocs.end()) {
+        // if we have visited this location already, continue
+        continue;
+      }
+
       Dollar segmentCost = nextSegment->cost(this, _expedited);
       Time segmentTime = nextSegment->time(this, _expedited);
 
       // check cost, distance, and time are under constraints
-      if (segmentCost+path->cost() < _cost &&
-            segmentTime+path->time() < _time &&
-            nextSegment->length()+path->length() < _distance &&
+      if (segmentCost+path->cost() <= _cost &&
+            segmentTime+path->time() <= _time &&
+            nextSegment->length()+path->length() <= _distance &&
             _expedited == nextSegment->expeditedSupport() &&
             (_expedited == Segment::no_ || 
               (_expedited == Segment::yes_ &&
                   nextSegment->expeditedSupport() == Segment::yes_))) {
         Fwk::Ptr<Path> newPath = Path::copy(path);
+        visitedLocs.insert(nextLoc->name());
         newPath->addSegment(nextSegment,
             segmentCost, nextSegment->length(), segmentTime);
         possiblePaths.push_back(newPath);

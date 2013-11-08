@@ -136,7 +136,8 @@ public:
   virtual void del();
 
   virtual Ptr<Segment> segment(int _i) {
-    return segments_[_i];
+    Ptr<Segment> s = (_i < segments_.size()) ? segments_[_i] : NULL;
+    return s;
   }
 
   virtual std::vector<Ptr<Segment> > segments() {

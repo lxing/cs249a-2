@@ -350,4 +350,10 @@ TEST_F(EngineTest, StatsCountDownTest) {
   Ptr<Shipping::BoatSegment> bscb = em->boatSegment("BoatSegmentCB");
   bscb->expeditedSupportIs(Shipping::Segment::yes_);
   ASSERT_EQ(4, stats->expeditedSegmentCount());
+
+  bsa->expeditedSupportIs(Shipping::Segment::no_);
+  ASSERT_EQ(3, stats->expeditedSegmentCount());
+
+  em->entityDel("BoatSegmentB");
+  ASSERT_EQ(2, stats->expeditedSegmentCount());
 }

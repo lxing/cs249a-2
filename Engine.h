@@ -31,9 +31,11 @@ protected:
 
 
 // Value types
-class Mile : public Ordinal<Mile, uint32_t> {
+class Mile : public Ordinal<Mile, double> {
 public:
-  Mile(uint32_t num) : Ordinal<Mile, uint32_t>(num) { }
+  Mile(double num) : Ordinal<Mile, double>(num) { 
+    if (num < 0.0) throw "Mile out of range";
+  }
 };
 
 class MilesPerHour : public Ordinal<MilesPerHour, double> {

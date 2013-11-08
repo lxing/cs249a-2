@@ -360,7 +360,7 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
   if (name == "source") {
     sourceIs(v);
   } else if (name == "length") {
-    Mile length = atoi(v.c_str());
+    Mile length = atof(v.c_str());
     segment()->lengthIs(length);
   } else if (name == "difficulty") {
     Difficulty difficulty = atof(v.c_str());
@@ -487,6 +487,7 @@ string ConnRep::attribute(const string& name) {
   }
 
   Ptr<Location> src = engine_->location(tokens[1]);
+  Segment::ExpeditedSupport support = Segment::no_;
   stringstream oss;
   oss << fixed << setprecision(PRECISION);
 
@@ -494,13 +495,12 @@ string ConnRep::attribute(const string& name) {
     Mile maxDist(0);
     Dollar maxCost(0);
     Time maxTime(0);
-    Segment::ExpeditedSupport support = Segment::no_;
 
     for (unsigned int attr = 3; attr < tokens.size(); attr++) {
       string attrName = tokens[attr];
       if (attrName == "expedited") support = Segment::yes_;
       else if (attrName == "distance") {
-        maxDist = atoi(tokens[++attr].c_str());
+        maxDist = atof(tokens[++attr].c_str());
       } else if (attrName == "cost") {
         maxCost = atof(tokens[++attr].c_str());
       } else if (attrName == "time") {
@@ -516,10 +516,13 @@ string ConnRep::attribute(const string& name) {
   } else if (src != NULL && tokens[0] == "connect") {
     Ptr<Location> dst = engine_->location(tokens[3]);
     vector<Ptr<Path> > paths = engine_->connect(src, dst);
+    Ptr<Path> path;
     for (unsigned int i = 0; i < paths.size(); i++) {
-      oss << paths[i]->cost().value();
-      oss << paths[i]->time().value();
-      oss << paths[i]->expeditedSupport();
+      path = paths[i];
+      support = path->expeditedSupport();
+      oss << path->cost().value() << " ";
+      oss << path->time().value() << " ";
+      oss << (support == Segment::no_ ? "no" : "yes") << "; ";;
       oss << pathString(paths[i]) << endl;
     }
   }
@@ -534,10 +537,14 @@ void ConnRep::attributeIs(const string& name, const string& v) {
 
 string ConnRep::pathString(Ptr<Path> path) {
   stringstream ss;
+  ss << fixed << setprecision(2);
   vector<Ptr<Segment> > segments = path->segments();
   for (unsigned int i = 0; i < segments.size(); i++) {
     Ptr<Segment> seg = segments[i];
-    ss << seg->source()->name() << "(";
+    if (i > 0) ss << " ";
+    ss << seg->source()->name();
+    ss << "(" << seg->name() << ":" << seg->length().value();
+    ss << ":" << seg->returnSegment()->name() << ")";
   }
   return ss.str();
 };

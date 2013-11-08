@@ -492,7 +492,7 @@ string ConnRep::attribute(const string& name) {
   }
 
   Ptr<EngineManager> engine = manager_->engine();
-  Ptr<Location> src = engine->location(name); // TODO tokens[1]
+  Ptr<Location> src = engine->location(tokens[1]);
   stringstream oss;
   oss << fixed << setprecision(PRECISION);
 
@@ -520,7 +520,7 @@ string ConnRep::attribute(const string& name) {
       oss << pathString(paths[i]) << endl;
     }
   } else if (src != NULL && tokens[0] == "connect") {
-    Ptr<Location> dst = engine->location(name); // TODO tokens[3]
+    Ptr<Location> dst = engine->location(tokens[3]);
     vector<Ptr<Path> > paths = engine->connect(src, dst);
     for (unsigned int i = 0; i < paths.size(); i++) {
       oss << paths[i]->cost().value();

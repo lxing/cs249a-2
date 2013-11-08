@@ -40,6 +40,8 @@ protected:
     planeS = manager->instanceNew("planeS", "Plane segment");
     planeS->attributeIs("length", "1502");
     planeS->attributeIs("difficulty", "3.2");
+
+    stats = manager->instanceNew("stats", "Stats");
   }
 
   Ptr<Instance::Manager> manager;
@@ -56,6 +58,8 @@ protected:
   Ptr<Instance> truckS;
   Ptr<Instance> boatS;
   Ptr<Instance> planeS;
+
+  Ptr<Instance> stats;
 };
 
 /*****************/
@@ -75,6 +79,12 @@ TEST_F(InstanceTest, FleetTest) {
   ASSERT_EQ(fleet->attribute("Plane, speed"), "300.00");
   ASSERT_EQ(fleet->attribute("Plane, capacity"), "2");
   ASSERT_EQ(fleet->attribute("Plane, cost"), "5.67"); // Test rounding
+}
+
+TEST_F(InstanceTest, StatsTest) {
+  ASSERT_NE(stats, null);
+  ASSERT_NE(manager->instance("stats"), null);
+  // TODO implement stats
 }
 
 TEST_F(InstanceTest, LocationTest) {
@@ -105,3 +115,5 @@ TEST_F(InstanceTest, SegmentTest) {
   ASSERT_EQ(planeS->attribute("length"), "1502");
   ASSERT_EQ(planeS->attribute("difficulty"), "3.20");
 }
+
+

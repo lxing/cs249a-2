@@ -134,6 +134,8 @@ class Location : public Entity {
 public:
   // TODO(rhau) onSegment, which adds a segment as a callback from SegmentNew
 
+  static void del(Ptr<Location> loc);
+
   virtual Ptr<Segment> segment(int _i) {
     return segments_[_i];
   }
@@ -145,6 +147,8 @@ public:
   virtual void segmentIs(Ptr<Segment> s) {
     segments_.push_back(s);
   }
+
+  virtual void segmentDel(Ptr<Segment> s);
 
 protected:
   Location(const string& name) : Entity(name) {}
@@ -227,6 +231,8 @@ class EngineManager;
 // Segments
 class Segment : public Entity {
 public:
+  static void del(Ptr<Segment> seg);
+
   // returns the global name of the source location
   Ptr<Location> source() { return source_; }
   Ptr<Location> destination();
@@ -234,8 +240,8 @@ public:
   Mile length() { return length_; }
   void lengthIs(Mile _length) { length_ = _length; }
 
-  Ptr<Segment> returnSegment() { return returnSegment_; }
-  void returnSegmentIs(Ptr<Segment> returnSegment) { returnSegment_ = returnSegment; }
+  Fwk::Ptr<Segment> returnSegment() { return returnSegment_; }
+  void returnSegmentIs(Ptr<Segment> returnSegment);
 
   Difficulty difficulty() { return difficulty_; }
   void difficultyIs(Difficulty _difficulty) { difficulty_ = _difficulty; }
@@ -255,10 +261,10 @@ public:
 
 protected:
   Segment(const string& name) : Entity(name), name_(name), length_(0),
-      difficulty_(0), expeditedSupport_(no_) { }
+      difficulty_(1.0), expeditedSupport_(no_) { }
   virtual ~Segment() {};
 
-  void sourceIsImpl(Ptr<Location> _loc) { source_ = _loc; }
+  void sourceIsImpl(Ptr<Location> _loc);
 
 private:
   string name_;
@@ -368,37 +374,50 @@ public:
 
   Ptr<Stats> stats() { return stats_; }
 
+  // Fleet Attributes
   void boatFleetIs(Ptr<BoatFleet> _boatFleet) { boatFleet_ = _boatFleet; }
   Ptr<BoatFleet> boatFleet() { return boatFleet_; }
+
   void planeFleetIs(Ptr<PlaneFleet> _planeFleet) { planeFleet_ = _planeFleet; }
   Ptr<PlaneFleet> planeFleet() { return planeFleet_; }
+
   void truckFleetIs(Ptr<TruckFleet> _truckFleet) { truckFleet_ = _truckFleet; }
   Ptr<TruckFleet> truckFleet() { return truckFleet_; }
 
+  // Location Attributes
   void customerIs(Ptr<Customer> _customer);
   Ptr<Customer> customer(string _name);
+
   void portIs(Ptr<Port> port);
   Ptr<Port> port(string _name);
+
   void boatTerminalIs(Ptr<BoatTerminal> _boatTerminal);
   Ptr<BoatTerminal> boatTerminal(string _name);
+
   void truckTerminalIs(Ptr<TruckTerminal> _truckTerminal);
   Ptr<TruckTerminal> truckTerminal(string _name);
+
   void planeTerminalIs(Ptr<PlaneTerminal> _planeTerminal);
   Ptr<PlaneTerminal> planeTerminal(string _name);
 
+  // Segment Attributes
   void boatSegmentIs(Ptr<BoatSegment> _boatSegment);
   Ptr<BoatSegment> boatSegment(string _name);
+
   void truckSegmentIs(Ptr<TruckSegment> _truckSegment);
   Ptr<TruckSegment> truckSegment(string _name);
+
   void planeSegmentIs(Ptr<PlaneSegment> _planeSegment);
   Ptr<PlaneSegment> planeSegment(string _name);
 
+  // Connectivity Attributes
   std::vector<Fwk::Ptr<Path> > connect(Fwk::Ptr<Location> start,
       Fwk::Ptr<Location> end);
   std::vector<Fwk::Ptr<Path> > explore(
       Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time,
       Segment::ExpeditedSupport _expedited);
 
+  // Notifiee
   class Notifiee : public Fwk::NamedInterface::Notifiee{
   public:
     virtual void onCustomerIs() = 0;

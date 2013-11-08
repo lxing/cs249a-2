@@ -1,8 +1,62 @@
+#include <iostream>
 #include <queue>
+#include <set>
 
 #include "Engine.h"
 
 using namespace Shipping;
+
+void Location::del(Ptr<Location> loc) {
+  // iterate over all of the constituent segments, calling delete on each one
+  for (uint32_t i=0; i<loc->segments_.size(); i++) {
+    Ptr<Segment> segment = loc->segments_[i];
+    Segment::del(segment);
+  }
+}
+
+void Location::segmentDel(Ptr<Segment> s) {
+  for (uint32_t i=0; i<segments_.size(); i++) {
+    if (s->name() == segments_[i]->name()) {
+      segments_.erase(segments_.begin() + i);
+      break;
+    }
+  }
+}
+
+void Segment::del(Ptr<Segment> seg) {
+  // 1. dels itself from its source's list of segments
+  Ptr<Location> source = seg->source();
+  source->segmentDel(seg);
+
+  // 2. dels the corresponding returnSegment from its returnLoc list of segments
+  Ptr<Location> returnSource = seg->returnSegment()->source();
+  returnSource->segmentDel(seg->returnSegment());
+}
+
+void Segment::returnSegmentIs(Ptr<Segment> _returnSegment) {
+  // 1. set internal return segment
+  returnSegment_ = _returnSegment;
+
+  // 2. set return segment of returnSegment
+  if (_returnSegment->returnSegment() == NULL) {
+    // If the return segment of our returnSegment does not point to us,
+    // we create a pointer to ourself and call returnSegmentIs on our 
+    // return segment.
+    Fwk::Ptr<Shipping::Segment> segment = this;
+    _returnSegment->returnSegmentIs(segment);
+  } else {
+    // If the return segment of our returnSegment points to us already, then
+    // we do nothing and return.
+    return;
+  }
+}
+
+void Segment::sourceIsImpl(Ptr<Location> loc) {
+  source_ = loc;
+
+  Fwk::Ptr<Shipping::Segment> seg = this;
+  loc->segmentIs(seg);
+}
 
 Dollar Segment::cost(EngineManager* manager, ExpeditedSupport expedited) {
   Dollar cost(0);
@@ -304,9 +358,12 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connect(
 std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     Fwk::Ptr<Location> start, Fwk::Ptr<Location> end,
     Segment::ExpeditedSupport expedited) {
+  std::set<string> visitedLocs;
   std::vector<Fwk::Ptr<Path> > possiblePaths;
+
   // case where the start and end are same location
   if (start->name() == end->name()) return possiblePaths;
+  visitedLocs.insert(start->name());
 
   std::queue<Fwk::Ptr<Path> > pathQueue;
   std::vector<Ptr<Segment> > startSegments = start->segments();
@@ -334,17 +391,27 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
 
     // If the source of the return segment (nextLoc) matches our end,
     // then we found our path.
-    Fwk::Ptr<Location> nextLoc = currSegment->returnSegment()->source();
-    if (nextLoc->name() == end->name()) {
+
+    Fwk::Ptr<Location> currLoc = currSegment->returnSegment()->source();
+    if (currLoc->name() == end->name()) {
         // add path to list of possible paths
         possiblePaths.push_back(path);
     }
+    visitedLocs.insert(currLoc->name());
 
-    // Otherwise, we add all of the segments from the nextLoc to copies of
+    // Otherwise, we add all of the segments from the currLoc to copies of
     // the current path and continue our breadth first search.
-    std::vector<Fwk::Ptr<Segment> > nextSegments = nextLoc->segments();
+    std::vector<Fwk::Ptr<Segment> > nextSegments = currLoc->segments();
     for (uint32_t i=0; i<nextSegments.size(); i++) {
       Ptr<Segment> nextSegment = nextSegments[i];
+      Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
+      
+      std::set<string>::iterator it = visitedLocs.find(nextLoc->name());
+      if (it != visitedLocs.end()) {
+        // if we have visited this location already, continue
+        continue;
+      }
+
       // we want to add segment if:
       // 1. expeditedSupport is yes_ and our segment has expedited support
       // 2. expeditedSupport is no_

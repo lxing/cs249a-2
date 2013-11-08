@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "gtest/gtest.h"
 #include "../Engine.h"
 
@@ -48,6 +50,48 @@ protected:
     Ptr<Shipping::PlaneTerminal> pt =
         Shipping::PlaneTerminal::PlaneTerminalNew("PlaneTerminal");
     em.planeTerminalIs(pt);
+
+    Ptr<Shipping::BoatTerminal> bta =
+    Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalA");
+    em.boatTerminalIs(bta);
+
+    Ptr<Shipping::BoatTerminal> btb =
+        Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalB");
+    em.boatTerminalIs(btb);
+
+    Ptr<Shipping::BoatTerminal> btc =
+        Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalC");
+    em.boatTerminalIs(btc);
+
+    Ptr<Shipping::BoatSegment> bsa =
+        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentA");
+    bsa->sourceIs(bta);
+    em.boatSegmentIs(bsa);
+
+    Ptr<Shipping::BoatSegment> bsb =
+        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentB");
+    bsb->sourceIs(btb);
+    em.boatSegmentIs(bsb);
+
+    Ptr<Shipping::BoatSegment> bsbc =
+        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentBC");
+    bsbc->sourceIs(btb);
+    em.boatSegmentIs(bsbc);
+
+    Ptr<Shipping::BoatSegment> bscb =
+        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentCB");
+    bscb->sourceIs(btc);
+    em.boatSegmentIs(bscb);
+
+    bsa->lengthIs(Shipping::Mile(50));
+    bsa->difficultyIs(Shipping::Difficulty(3));
+    bsa->expeditedSupportIs(Shipping::Segment::no_);
+
+    bsb->lengthIs(Shipping::Mile(50));
+    bsb->difficultyIs(Shipping::Difficulty(3));
+    bsb->expeditedSupportIs(Shipping::Segment::no_);
+
+    bsa->returnSegmentIs(bsb);
   }
 
   Shipping::EngineManager em;
@@ -81,6 +125,35 @@ TEST_F(EngineTest, PlaneFleetTest) {
   ASSERT_EQ(200, pf->cost().value());
 }
 
+TEST_F(EngineTest, BoatSegmentTest) {
+  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> btb = em.boatTerminal("BoatTerminalB");
+  Ptr<Shipping::BoatTerminal> btc = em.boatTerminal("BoatTerminalC");
+
+  Ptr<Shipping::BoatSegment> bsa = em.boatSegment("BoatSegmentA");
+  Ptr<Shipping::BoatSegment> bsb = em.boatSegment("BoatSegmentB");
+  Ptr<Shipping::BoatSegment> bsbc = em.boatSegment("BoatSegmentBC");
+  Ptr<Shipping::BoatSegment> bscb = em.boatSegment("BoatSegmentCB");
+
+  bsa->lengthIs(Shipping::Mile(50));
+  bsa->difficultyIs(Shipping::Difficulty(3));
+  bsa->expeditedSupportIs(Shipping::Segment::no_);
+
+  bsb->lengthIs(Shipping::Mile(50));
+  bsb->difficultyIs(Shipping::Difficulty(3));
+  bsb->expeditedSupportIs(Shipping::Segment::no_);
+
+  bsa->returnSegmentIs(bsb);
+  bsbc->returnSegmentIs(bscb);
+
+  ASSERT_EQ("BoatTerminalA", bsa->source()->name());
+  ASSERT_EQ("BoatTerminalB", bsb->source()->name());
+  ASSERT_EQ(bsa->returnSegment()->name(), bsb->name());
+  ASSERT_EQ(bsb->returnSegment()->name(), bsa->name());
+  ASSERT_EQ(1, bta->segments().size());
+  ASSERT_EQ(2, btb->segments().size());
+}
+
 TEST_F(EngineTest, CustomerTest) {
   Ptr<Shipping::Customer> c = em.customer("Customer");
   Ptr<Shipping::Customer> nullCustomer = NULL;
@@ -109,4 +182,12 @@ TEST_F(EngineTest, PlaneTerminalTest) {
   Ptr<Shipping::PlaneTerminal> pt = em.planeTerminal("PlaneTerminal");
   Ptr<Shipping::PlaneTerminal> nullTerminal = NULL;
   ASSERT_NE(nullTerminal, pt);
+}
+
+TEST_F(EngineTest, SimpleConnectTest) {
+  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> btb = em.boatTerminal("BoatTerminalB");
+
+  std::vector<Fwk::Ptr<Shipping::Path> > paths = em.connect(bta, btb);
+  ASSERT_EQ(2, paths.size());
 }

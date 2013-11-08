@@ -25,12 +25,16 @@ using Fwk::PtrInterface;
 
 namespace Shipping {
 
+class EngineManager;
+
 class Entity : public NamedInterface {
 public:
   virtual void del() { }
 
 protected:
-  Entity(const string& name) : NamedInterface(name) { }
+  Entity(const string& name, Fwk::Ptr<EngineManager> em) :
+      NamedInterface(name), em_(em) { }
+  Fwk::Ptr<EngineManager> em_;
 };
 
 
@@ -85,7 +89,7 @@ public:
   virtual Dollar cost() { return cost_; }
 
 protected:
-  Fleet(const string& name) : Entity(name), speed_(0),
+  Fleet(const string& name, Fwk::Ptr<EngineManager> em) : Entity(name, em), speed_(0),
       capacity_(0), cost_(0) { }
 
 private:
@@ -96,35 +100,35 @@ private:
 
 class BoatFleet : public Fleet {
 public:
-  static Ptr<BoatFleet> BoatFleetNew(const string& name) {
-    Ptr<BoatFleet> m = new BoatFleet(name);
+  static Ptr<BoatFleet> BoatFleetNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<BoatFleet> m = new BoatFleet(name, em);
     return m;
   }
 
 protected:
-  BoatFleet(const string& name) : Fleet(name) { }
+  BoatFleet(const string& name, Fwk::Ptr<EngineManager> em) : Fleet(name, em) { }
 };
 
 class PlaneFleet : public Fleet {
 public:
-  static Ptr<PlaneFleet> PlaneFleetNew(const string& name) {
-    Ptr<PlaneFleet> m = new PlaneFleet(name);
+  static Ptr<PlaneFleet> PlaneFleetNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<PlaneFleet> m = new PlaneFleet(name, em);
     return m;
   }
 
 protected:
-  PlaneFleet(const string& name) : Fleet(name) { }
+  PlaneFleet(const string& name, Fwk::Ptr<EngineManager> em) : Fleet(name, em) { }
 };
 
 class TruckFleet : public Fleet {
 public:
-  static Ptr<TruckFleet> TruckFleetNew(const string& name) {
-    Ptr<TruckFleet> m = new TruckFleet(name);
+  static Ptr<TruckFleet> TruckFleetNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<TruckFleet> m = new TruckFleet(name, em);
     return m;
   }
 
 protected:
-  TruckFleet(const string& name) : Fleet(name) {}
+  TruckFleet(const string& name, Fwk::Ptr<EngineManager> em) : Fleet(name, em) {}
 };
 
 class Segment;
@@ -136,7 +140,7 @@ public:
   // TODO(rhau) onSegment, which adds a segment as a callback from SegmentNew
   virtual void del();
 
-  virtual Ptr<Segment> segment(int _i) {
+  virtual Ptr<Segment> segment(uint32_t _i) {
     Ptr<Segment> s = (_i < segments_.size()) ? segments_[_i] : NULL;
     return s;
   }
@@ -152,7 +156,7 @@ public:
   virtual void segmentDel(Ptr<Segment> s);
 
 protected:
-  Location(const string& name) : Entity(name) {}
+  Location(const string& name, Fwk::Ptr<EngineManager> em) : Entity(name, em) {}
   virtual ~Location() {}
 
 private:
@@ -162,68 +166,68 @@ private:
 
 class Terminal : public Location {
 protected:
-  Terminal(const string& name) : Location(name) {}
+  Terminal(const string& name, Fwk::Ptr<EngineManager> em) : Location(name, em) {}
   ~Terminal() {}
 };
 
 // Terminals
 class BoatTerminal : public Terminal {
 public:
-  static Ptr<BoatTerminal> BoatTerminalNew(const string& name) {
-    Ptr<BoatTerminal> m = new BoatTerminal(name);
+  static Ptr<BoatTerminal> BoatTerminalNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<BoatTerminal> m = new BoatTerminal(name, em);
     return m;
   }
 
 protected:
-  BoatTerminal(const string& name) : Terminal(name) {}
+  BoatTerminal(const string& name, Fwk::Ptr<EngineManager> em) : Terminal(name, em) {}
   ~BoatTerminal() {}
 };
 
 class TruckTerminal : public Terminal {
 public:
-  static Ptr<TruckTerminal> TruckTerminalNew(const string& name) {
-    Ptr<TruckTerminal> m = new TruckTerminal(name);
+  static Ptr<TruckTerminal> TruckTerminalNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<TruckTerminal> m = new TruckTerminal(name, em);
     return m;
   }
 
 protected:
-  TruckTerminal(const string& name) : Terminal(name) {}
+  TruckTerminal(const string& name, Fwk::Ptr<EngineManager> em) : Terminal(name, em) {}
   ~TruckTerminal() {}
 };
 
 class PlaneTerminal : public Terminal {
 public:
-  static Ptr<PlaneTerminal> PlaneTerminalNew(const string& name) {
-    Ptr<PlaneTerminal> m = new PlaneTerminal(name);
+  static Ptr<PlaneTerminal> PlaneTerminalNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<PlaneTerminal> m = new PlaneTerminal(name, em);
     return m;
   }
 
 protected:
-  PlaneTerminal(const string& name) : Terminal(name) {}
+  PlaneTerminal(const string& name, Fwk::Ptr<EngineManager> em) : Terminal(name, em) {}
   ~PlaneTerminal() {}
 };
 
 class Customer : public Location {
 public:
-  static Ptr<Customer> CustomerNew(const string& name) {
-    Ptr<Customer> m = new Customer(name);
+  static Ptr<Customer> CustomerNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<Customer> m = new Customer(name, em);
     return m;
   }
 
 protected:
-  Customer(const string& name) : Location(name) {}
+  Customer(const string& name, Fwk::Ptr<EngineManager> em) : Location(name, em) {}
   ~Customer() {}
 };
 
 class Port : public Location {
 public:
-  static Ptr<Port> PortNew(const string& name) {
-    Ptr<Port> m = new Port(name);
+  static Ptr<Port> PortNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<Port> m = new Port(name, em);
     return m;
   }
 
 protected:
-  Port(const string& name) : Location(name) {}
+  Port(const string& name, Fwk::Ptr<EngineManager> em) : Location(name, em) {}
   ~Port() {}
 };
 
@@ -254,15 +258,13 @@ public:
   };
 
   ExpeditedSupport expeditedSupport() { return expeditedSupport_; };
-  void expeditedSupportIs(ExpeditedSupport _expeditedSupport) {
-    expeditedSupport_ = _expeditedSupport;
-  }
+  void expeditedSupportIs(ExpeditedSupport _expeditedSupport);
 
   Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
   virtual Time time(EngineManager* manager, ExpeditedSupport expedited) = 0;
 
 protected:
-  Segment(const string& name) : Entity(name), name_(name), length_(0),
+  Segment(const string& name, Fwk::Ptr<EngineManager> em) : Entity(name, em), name_(name), length_(0),
       difficulty_(1.0), expeditedSupport_(no_) { }
   virtual ~Segment() {};
 
@@ -312,8 +314,8 @@ private:
 
 class BoatSegment : public Segment {
 public:
-  static Ptr<BoatSegment> BoatSegmentNew(const string& name) {
-    Ptr<BoatSegment> m = new BoatSegment(name);
+  static Ptr<BoatSegment> BoatSegmentNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<BoatSegment> m = new BoatSegment(name, em);
     return m;
   }
 
@@ -324,14 +326,14 @@ public:
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
-  BoatSegment(const string& name) : Segment(name) {};
+  BoatSegment(const string& name, Fwk::Ptr<EngineManager> em) : Segment(name, em) {};
   ~BoatSegment() {};
 };
 
 class TruckSegment : public Segment {
 public:
-  static Ptr<TruckSegment> TruckSegmentNew(const string& name) {
-    Ptr<TruckSegment> m = new TruckSegment(name);
+  static Ptr<TruckSegment> TruckSegmentNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<TruckSegment> m = new TruckSegment(name, em);
     return m;
   }
   void sourceIs(Ptr<TruckTerminal> _loc) { Segment::sourceIs(_loc); }
@@ -341,14 +343,14 @@ public:
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
-  TruckSegment(const string& name) : Segment(name) {};
+  TruckSegment(const string& name, Fwk::Ptr<EngineManager> em) : Segment(name, em) {};
   ~TruckSegment() {};
 };
 
 class PlaneSegment : public Segment {
 public:
-  static Ptr<PlaneSegment> PlaneSegmentNew(const string& name) {
-    Ptr<PlaneSegment> m = new PlaneSegment(name);
+  static Ptr<PlaneSegment> PlaneSegmentNew(const string& name, Fwk::Ptr<EngineManager> em) {
+    Ptr<PlaneSegment> m = new PlaneSegment(name, em);
     return m;
   }
   void sourceIs(Ptr<PlaneTerminal> _loc) { Segment::sourceIs(_loc); }
@@ -358,7 +360,7 @@ public:
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
-  PlaneSegment(const string& name) : Segment(name) {};
+  PlaneSegment(const string& name, Fwk::Ptr<EngineManager> em) : Segment(name, em) {};
   ~PlaneSegment() {};
 };
 
@@ -444,6 +446,7 @@ public:
     virtual void onBoatSegmentIs() = 0;
     virtual void onTruckSegmentIs() = 0;
     virtual void onPlaneSegmentIs() = 0;
+    virtual void onExpeditedSegmentIs() = 0;
 
     virtual void onCustomerDel() = 0;
     virtual void onPortDel() = 0;
@@ -453,6 +456,7 @@ public:
     virtual void onBoatSegmentDel() = 0;
     virtual void onTruckSegmentDel() = 0;
     virtual void onPlaneSegmentDel() = 0;
+    virtual void onExpeditedSegmentDel() = 0;
   };
 
 protected:
@@ -497,6 +501,7 @@ public:
   void onBoatSegmentIs();
   void onTruckSegmentIs();
   void onPlaneSegmentIs();
+  void onExpeditedSegmentIs();
 
   void onCustomerDel();
   void onPortDel();
@@ -506,6 +511,7 @@ public:
   void onBoatSegmentDel();
   void onTruckSegmentDel();
   void onPlaneSegmentDel();
+  void onExpeditedSegmentDel();
 
   uint32_t customerCount() { return customerCount_; }
   void customerCountInc(int delta) { customerCount_ += delta; }
@@ -525,6 +531,9 @@ public:
   void truckSegmentCountInc(int delta) { truckSegmentCount_ += delta; }
   uint32_t planeSegmentCount() { return planeSegmentCount_; }
   void planeSegmentCountInc(int delta) { planeSegmentCount_ += delta; }
+
+  uint32_t expeditedSegmentCount() { return expeditedSegmentCount_; }
+  void expeditedSegmentCountInc(int delta) { expeditedSegmentCount_ += delta; }
 
   double expeditedPercentage() {
     return (double)expeditedSegmentCount_ /

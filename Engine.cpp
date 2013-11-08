@@ -57,6 +57,21 @@ void Segment::sourceIs(Ptr<Location> loc) {
   if (loc != NULL) loc->segmentIs(seg);
 }
 
+void Segment::expeditedSupportIs(ExpeditedSupport _expeditedSupport) {
+  if (_expeditedSupport == expeditedSupport_) {
+    // ensures idempotency
+    return;
+  }
+  if (expeditedSupport_ == Segment::yes_) {
+    em_->stats()->onExpeditedSegmentDel();
+  }
+
+  if (expeditedSupport_ == Segment::no_) {
+    em_->stats()->onExpeditedSegmentIs();
+  }
+  expeditedSupport_ = _expeditedSupport;
+}
+
 Dollar Segment::cost(EngineManager* manager, ExpeditedSupport expedited) {
   Dollar cost(0);
   cost = cost.value() * length().value() * difficulty().value();
@@ -349,6 +364,9 @@ void EngineManager::boatSegmentIs(Fwk::Ptr<BoatSegment> _boatSegment) {
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onBoatSegmentIs();
+    if (_boatSegment->expeditedSupport() == Shipping::Segment::yes_) {
+      notifiee_[i]->onExpeditedSegmentIs();
+    }
   }
 }
 
@@ -357,6 +375,9 @@ void EngineManager::boatSegmentDel(Fwk::Ptr<BoatSegment> _boatSegment) {
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onBoatSegmentDel();
+    if (_boatSegment->expeditedSupport() == Shipping::Segment::yes_) {
+      notifiee_[i]->onExpeditedSegmentDel();
+    }
   }
 }
 
@@ -383,6 +404,9 @@ void EngineManager::truckSegmentIs(Fwk::Ptr<TruckSegment> _truckSegment) {
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onTruckSegmentIs();
+    if (_truckSegment->expeditedSupport() == Shipping::Segment::yes_) {
+      notifiee_[i]->onExpeditedSegmentIs();
+    }
   }
 }
 
@@ -391,6 +415,9 @@ void EngineManager::truckSegmentDel(Fwk::Ptr<TruckSegment> _truckSegment) {
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onTruckSegmentDel();
+    if (_truckSegment->expeditedSupport() == Shipping::Segment::yes_) {
+      notifiee_[i]->onExpeditedSegmentDel();
+    }
   }
 }
 
@@ -417,6 +444,9 @@ void EngineManager::planeSegmentIs(Fwk::Ptr<PlaneSegment> _planeSegment) {
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onPlaneSegmentIs();
+    if (_planeSegment->expeditedSupport() == Shipping::Segment::yes_) {
+      notifiee_[i]->onExpeditedSegmentIs();
+    }
   }
 }
 
@@ -425,6 +455,9 @@ void EngineManager::planeSegmentDel(Fwk::Ptr<PlaneSegment> _planeSegment) {
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onPlaneSegmentDel();
+    if (_planeSegment->expeditedSupport() == Shipping::Segment::yes_) {
+      notifiee_[i]->onExpeditedSegmentDel();
+    }
   }
 }
 
@@ -631,6 +664,10 @@ void Stats::onTruckSegmentIs() { truckSegmentCountInc(1); }
 
 void Stats::onPlaneSegmentIs() { planeSegmentCountInc(1); }
 
+void Stats::onExpeditedSegmentIs() {
+  std::cout << expeditedSegmentCount_ << std::endl;
+  expeditedSegmentCountInc(1); }
+
 void Stats::onCustomerDel() { customerCountInc(-1); }
 
 void Stats::onPortDel() { portCountInc(-1); }
@@ -646,3 +683,5 @@ void Stats::onBoatSegmentDel() { boatSegmentCountInc(-1); }
 void Stats::onTruckSegmentDel() { truckSegmentCountInc(-1); }
 
 void Stats::onPlaneSegmentDel() { planeSegmentCountInc(-1); }
+
+void Stats::onExpeditedSegmentDel() { expeditedSegmentCountInc(-1); }

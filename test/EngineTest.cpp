@@ -10,78 +10,79 @@
 class EngineTest : public ::testing::Test {
 protected:
   virtual void SetUp() {
+    em = new Shipping::EngineManager();
     Ptr<Shipping::BoatFleet> bf =
-        Shipping::BoatFleet::BoatFleetNew("BoatFleet");
+        Shipping::BoatFleet::BoatFleetNew("BoatFleet", em);
     bf->speedIs(100);
     bf->capacityIs(100);
     bf->costIs(100);
-    em.boatFleetIs(bf);
+    em->boatFleetIs(bf);
 
     Ptr<Shipping::TruckFleet> tf =
-        Shipping::TruckFleet::TruckFleetNew("TruckFleet");
+        Shipping::TruckFleet::TruckFleetNew("TruckFleet", em);
     tf->speedIs(150);
     tf->capacityIs(150);
     tf->costIs(150);
-    em.truckFleetIs(tf);
+    em->truckFleetIs(tf);
 
     Ptr<Shipping::PlaneFleet> pf =
-        Shipping::PlaneFleet::PlaneFleetNew("PlaneFleet");
+        Shipping::PlaneFleet::PlaneFleetNew("PlaneFleet", em);
     pf->speedIs(200);
     pf->capacityIs(200);
     pf->costIs(200);
-    em.planeFleetIs(pf);
+    em->planeFleetIs(pf);
 
     Ptr<Shipping::Customer> c = 
-        Shipping::Customer::CustomerNew("Customer");
-    em.customerIs(c);
+        Shipping::Customer::CustomerNew("Customer", em);
+    em->customerIs(c);
 
     Ptr<Shipping::Port> port =
-        Shipping::Port::PortNew("Port");
-    em.portIs(port);
+        Shipping::Port::PortNew("Port", em);
+    em->portIs(port);
 
     Ptr<Shipping::BoatTerminal> bt =
-        Shipping::BoatTerminal::BoatTerminalNew("BoatTerminal");
-    em.boatTerminalIs(bt);
+        Shipping::BoatTerminal::BoatTerminalNew("BoatTerminal", em);
+    em->boatTerminalIs(bt);
 
     Ptr<Shipping::TruckTerminal> tt =
-        Shipping::TruckTerminal::TruckTerminalNew("TruckTerminal");
-    em.truckTerminalIs(tt);
+        Shipping::TruckTerminal::TruckTerminalNew("TruckTerminal", em);
+    em->truckTerminalIs(tt);
 
     Ptr<Shipping::PlaneTerminal> pt =
-        Shipping::PlaneTerminal::PlaneTerminalNew("PlaneTerminal");
-    em.planeTerminalIs(pt);
+        Shipping::PlaneTerminal::PlaneTerminalNew("PlaneTerminal", em);
+    em->planeTerminalIs(pt);
 
     Ptr<Shipping::BoatTerminal> bta =
-    Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalA");
-    em.boatTerminalIs(bta);
+    Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalA", em);
+    em->boatTerminalIs(bta);
 
     Ptr<Shipping::BoatTerminal> btb =
-        Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalB");
-    em.boatTerminalIs(btb);
+        Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalB", em);
+    em->boatTerminalIs(btb);
 
     Ptr<Shipping::BoatTerminal> btc =
-        Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalC");
-    em.boatTerminalIs(btc);
+        Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalC", em);
+    em->boatTerminalIs(btc);
 
     Ptr<Shipping::BoatSegment> bsa =
-        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentA");
+        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentA", em);
     bsa->sourceIs(bta);
-    em.boatSegmentIs(bsa);
+    em->boatSegmentIs(bsa);
 
     Ptr<Shipping::BoatSegment> bsb =
-        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentB");
+        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentB", em);
     bsb->sourceIs(btb);
-    em.boatSegmentIs(bsb);
+    em->boatSegmentIs(bsb);
 
     Ptr<Shipping::BoatSegment> bsbc =
-        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentBC");
+        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentBC", em);
     bsbc->sourceIs(btb);
-    em.boatSegmentIs(bsbc);
+    em->boatSegmentIs(bsbc);
 
     Ptr<Shipping::BoatSegment> bscb =
-        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentCB");
+        Shipping::BoatSegment::BoatSegmentNew("BoatSegmentCB", em);
     bscb->sourceIs(btc);
-    em.boatSegmentIs(bscb);
+    em->boatSegmentIs(bscb);
 
     bsa->lengthIs(Shipping::Mile(50));
     bsa->difficultyIs(Shipping::Difficulty(1));
@@ -103,7 +104,7 @@ protected:
     bsbc->returnSegmentIs(bscb);
   }
 
-  Shipping::EngineManager em;
+  Fwk::Ptr<Shipping::EngineManager> em;
 };
 
 /*******************/
@@ -111,7 +112,7 @@ protected:
 /*******************/
 
 TEST_F(EngineTest, BoatFleetTest) {
-  Ptr<Shipping::BoatFleet> bf = em.boatFleet();
+  Ptr<Shipping::BoatFleet> bf = em->boatFleet();
 
   ASSERT_EQ(100, bf->speed().value());
   ASSERT_EQ(100, bf->capacity().value());
@@ -119,7 +120,7 @@ TEST_F(EngineTest, BoatFleetTest) {
 }
 
 TEST_F(EngineTest, TruckFleetTest) {
-  Ptr<Shipping::TruckFleet> tf = em.truckFleet();
+  Ptr<Shipping::TruckFleet> tf = em->truckFleet();
 
   ASSERT_EQ(150, tf->speed().value());
   ASSERT_EQ(150, tf->capacity().value());
@@ -127,7 +128,7 @@ TEST_F(EngineTest, TruckFleetTest) {
 }
 
 TEST_F(EngineTest, PlaneFleetTest) {
-  Ptr<Shipping::PlaneFleet> pf = em.planeFleet();
+  Ptr<Shipping::PlaneFleet> pf = em->planeFleet();
 
   ASSERT_EQ(200, pf->speed().value());
   ASSERT_EQ(200, pf->capacity().value());
@@ -135,14 +136,14 @@ TEST_F(EngineTest, PlaneFleetTest) {
 }
 
 TEST_F(EngineTest, BoatSegmentTest) {
-  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
-  Ptr<Shipping::BoatTerminal> btb = em.boatTerminal("BoatTerminalB");
-  Ptr<Shipping::BoatTerminal> btc = em.boatTerminal("BoatTerminalC");
+  Ptr<Shipping::BoatTerminal> bta = em->boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> btb = em->boatTerminal("BoatTerminalB");
+  Ptr<Shipping::BoatTerminal> btc = em->boatTerminal("BoatTerminalC");
 
-  Ptr<Shipping::BoatSegment> bsa = em.boatSegment("BoatSegmentA");
-  Ptr<Shipping::BoatSegment> bsb = em.boatSegment("BoatSegmentB");
-  Ptr<Shipping::BoatSegment> bsbc = em.boatSegment("BoatSegmentBC");
-  Ptr<Shipping::BoatSegment> bscb = em.boatSegment("BoatSegmentCB");
+  Ptr<Shipping::BoatSegment> bsa = em->boatSegment("BoatSegmentA");
+  Ptr<Shipping::BoatSegment> bsb = em->boatSegment("BoatSegmentB");
+  Ptr<Shipping::BoatSegment> bsbc = em->boatSegment("BoatSegmentBC");
+  Ptr<Shipping::BoatSegment> bscb = em->boatSegment("BoatSegmentCB");
 
   bsa->lengthIs(Shipping::Mile(50));
   bsa->difficultyIs(Shipping::Difficulty(1));
@@ -168,53 +169,53 @@ TEST_F(EngineTest, BoatSegmentTest) {
 }
 
 TEST_F(EngineTest, CustomerTest) {
-  Ptr<Shipping::Customer> c = em.customer("Customer");
+  Ptr<Shipping::Customer> c = em->customer("Customer");
   Ptr<Shipping::Customer> nullCustomer = NULL;
   ASSERT_NE(nullCustomer, c);
 }
 
 TEST_F(EngineTest, PortTest) {
-  Ptr<Shipping::Port> port = em.port("Port");
+  Ptr<Shipping::Port> port = em->port("Port");
   Ptr<Shipping::Port> nullPort = NULL;
   ASSERT_NE(nullPort, port);
 }
 
 TEST_F(EngineTest, BoatTerminalTest) {
-  Ptr<Shipping::BoatTerminal> bt = em.boatTerminal("BoatTerminal");
+  Ptr<Shipping::BoatTerminal> bt = em->boatTerminal("BoatTerminal");
   Ptr<Shipping::BoatTerminal> nullTerminal = NULL;
   ASSERT_NE(nullTerminal, bt);
 }
 
 TEST_F(EngineTest, TruckTerminalTest) {
-  Ptr<Shipping::TruckTerminal> tt = em.truckTerminal("TruckTerminal");
+  Ptr<Shipping::TruckTerminal> tt = em->truckTerminal("TruckTerminal");
   Ptr<Shipping::TruckTerminal> nullTerminal = NULL;
   ASSERT_NE(nullTerminal, tt);
 }
 
 TEST_F(EngineTest, PlaneTerminalTest) {
-  Ptr<Shipping::PlaneTerminal> pt = em.planeTerminal("PlaneTerminal");
+  Ptr<Shipping::PlaneTerminal> pt = em->planeTerminal("PlaneTerminal");
   Ptr<Shipping::PlaneTerminal> nullTerminal = NULL;
   ASSERT_NE(nullTerminal, pt);
 }
 
 TEST_F(EngineTest, SimpleConnectOneStepTest) {
-  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
-  Ptr<Shipping::BoatTerminal> btb = em.boatTerminal("BoatTerminalB");
+  Ptr<Shipping::BoatTerminal> bta = em->boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> btb = em->boatTerminal("BoatTerminalB");
 
-  std::vector<Fwk::Ptr<Shipping::Path> > paths = em.connect(bta, btb);
+  std::vector<Fwk::Ptr<Shipping::Path> > paths = em->connect(bta, btb);
   ASSERT_EQ(1, paths.size());
 }
 
 TEST_F(EngineTest, SimpleConnectTwoStepsTest) {
-  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
-  Ptr<Shipping::BoatTerminal> btc = em.boatTerminal("BoatTerminalC");
+  Ptr<Shipping::BoatTerminal> bta = em->boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> btc = em->boatTerminal("BoatTerminalC");
 
-  std::vector<Fwk::Ptr<Shipping::Path> > paths = em.connect(bta, btc);
+  std::vector<Fwk::Ptr<Shipping::Path> > paths = em->connect(bta, btc);
   ASSERT_EQ(1, paths.size());
 }
 
 TEST_F(EngineTest, SimpleExploreLineTest) {
-  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> bta = em->boatTerminal("BoatTerminalA");
 
   Shipping::Mile distance(100);
   Shipping::Dollar cost(100);
@@ -223,27 +224,27 @@ TEST_F(EngineTest, SimpleExploreLineTest) {
       Shipping::Segment::no_;
 
   std::vector<Fwk::Ptr<Shipping::Path> > paths =
-      em.explore(bta, distance, cost, t, expedited);
+      em->explore(bta, distance, cost, t, expedited);
 
   ASSERT_EQ(2, paths.size());
 }
 
 TEST_F(EngineTest, SimpleExploreGraphTest) {
-  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> bta = em->boatTerminal("BoatTerminalA");
 
   Ptr<Shipping::BoatTerminal> btd =
-      Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalD");
-  em.boatTerminalIs(btd);
+      Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalD", em);
+  em->boatTerminalIs(btd);
 
   Ptr<Shipping::BoatSegment> bsad =
-      Shipping::BoatSegment::BoatSegmentNew("BoatSegmentAD");
+      Shipping::BoatSegment::BoatSegmentNew("BoatSegmentAD", em);
   bsad->sourceIs(bta);
-  em.boatSegmentIs(bsad);
+  em->boatSegmentIs(bsad);
 
   Ptr<Shipping::BoatSegment> bsda =
-      Shipping::BoatSegment::BoatSegmentNew("BoatSegmentDA");
+      Shipping::BoatSegment::BoatSegmentNew("BoatSegmentDA", em);
   bsda->sourceIs(btd);
-  em.boatSegmentIs(bsda);
+  em->boatSegmentIs(bsda);
 
   bsad->returnSegmentIs(bsda);
 
@@ -254,28 +255,28 @@ TEST_F(EngineTest, SimpleExploreGraphTest) {
       Shipping::Segment::no_;
 
   std::vector<Fwk::Ptr<Shipping::Path> > paths =
-      em.explore(bta, distance, cost, t, expedited);
+      em->explore(bta, distance, cost, t, expedited);
 
   ASSERT_EQ(3, paths.size());
 }
 
 TEST_F(EngineTest, SimpleExploreGraphOutOfBoundaryTest) {
-  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> bta = em->boatTerminal("BoatTerminalA");
 
   Ptr<Shipping::BoatTerminal> btd =
-      Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalD");
-  em.boatTerminalIs(btd);
+      Shipping::BoatTerminal::BoatTerminalNew("BoatTerminalD", em);
+  em->boatTerminalIs(btd);
 
   Ptr<Shipping::BoatSegment> bsad =
-      Shipping::BoatSegment::BoatSegmentNew("BoatSegmentAD");
+      Shipping::BoatSegment::BoatSegmentNew("BoatSegmentAD", em);
   bsad->sourceIs(bta);
   bsad->lengthIs(200);
-  em.boatSegmentIs(bsad);
+  em->boatSegmentIs(bsad);
 
   Ptr<Shipping::BoatSegment> bsda =
-      Shipping::BoatSegment::BoatSegmentNew("BoatSegmentDA");
+      Shipping::BoatSegment::BoatSegmentNew("BoatSegmentDA", em);
   bsda->sourceIs(btd);
-  em.boatSegmentIs(bsda);
+  em->boatSegmentIs(bsda);
 
   bsad->returnSegmentIs(bsda);
 
@@ -286,13 +287,13 @@ TEST_F(EngineTest, SimpleExploreGraphOutOfBoundaryTest) {
       Shipping::Segment::no_;
 
   std::vector<Fwk::Ptr<Shipping::Path> > paths =
-      em.explore(bta, distance, cost, t, expedited);
+      em->explore(bta, distance, cost, t, expedited);
 
   ASSERT_EQ(2, paths.size());
 }
 
 TEST_F(EngineTest, SimpleExploreGraphNegativeTest) {
-  Ptr<Shipping::BoatTerminal> bta = em.boatTerminal("BoatTerminalA");
+  Ptr<Shipping::BoatTerminal> bta = em->boatTerminal("BoatTerminalA");
 
   Shipping::Mile distance(101);
   Shipping::Dollar cost(101);
@@ -301,7 +302,7 @@ TEST_F(EngineTest, SimpleExploreGraphNegativeTest) {
       Shipping::Segment::yes_;
 
   std::vector<Fwk::Ptr<Shipping::Path> > paths =
-      em.explore(bta, distance, cost, t, expedited);
+      em->explore(bta, distance, cost, t, expedited);
 
   ASSERT_EQ(0, paths.size());
 }
@@ -309,33 +310,44 @@ TEST_F(EngineTest, SimpleExploreGraphNegativeTest) {
 
 
 TEST_F(EngineTest, StatsCountUpTest) {
-  Fwk::Ptr<Shipping::Stats> stats = em.stats();
+  Fwk::Ptr<Shipping::Stats> stats = em->stats();
   ASSERT_EQ(1, stats->customerCount());
   ASSERT_EQ(1, stats->portCount());
   ASSERT_EQ(4, stats->boatTerminalCount());
   ASSERT_EQ(1, stats->truckTerminalCount());
   ASSERT_EQ(1, stats->planeTerminalCount());
   ASSERT_EQ(4, stats->boatSegmentCount());
+  ASSERT_EQ(0, stats->expeditedSegmentCount());
 }
 
 TEST_F(EngineTest, StatsCountDownTest) {
-  Fwk::Ptr<Shipping::Stats> stats = em.stats();
+  Fwk::Ptr<Shipping::Stats> stats = em->stats();
 
-  em.entityDel("Customer");
+  em->entityDel("Customer");
   ASSERT_EQ(0, stats->customerCount());
   
-  em.entityDel("Port");
+  em->entityDel("Port");
   ASSERT_EQ(0, stats->portCount());
 
-  em.entityDel("BoatTerminal");
+  em->entityDel("BoatTerminal");
   ASSERT_EQ(3, stats->boatTerminalCount());
 
-  em.entityDel("TruckTerminal");
+  em->entityDel("TruckTerminal");
   ASSERT_EQ(0, stats->truckTerminalCount());
 
-  em.entityDel("PlaneTerminal");
+  em->entityDel("PlaneTerminal");
   ASSERT_EQ(0, stats->planeTerminalCount());
 
-  em.entityDel("BoatSegmentA");
+  em->entityDel("BoatSegmentA");
   ASSERT_EQ(3, stats->boatSegmentCount());
+
+  Ptr<Shipping::BoatSegment> bsa = em->boatSegment("BoatSegmentA");
+  bsa->expeditedSupportIs(Shipping::Segment::yes_);
+  Ptr<Shipping::BoatSegment> bsb = em->boatSegment("BoatSegmentB");
+  bsb->expeditedSupportIs(Shipping::Segment::yes_);
+  Ptr<Shipping::BoatSegment> bsbc = em->boatSegment("BoatSegmentBC");
+  bsbc->expeditedSupportIs(Shipping::Segment::yes_);
+  Ptr<Shipping::BoatSegment> bscb = em->boatSegment("BoatSegmentCB");
+  bscb->expeditedSupportIs(Shipping::Segment::yes_);
+  ASSERT_EQ(4, stats->expeditedSegmentCount());
 }

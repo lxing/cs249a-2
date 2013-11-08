@@ -25,6 +25,9 @@ using Fwk::PtrInterface;
 namespace Shipping {
 
 class Entity : public NamedInterface {
+public:
+  virtual void del() { }
+
 protected:
   Entity(const string& name) : NamedInterface(name) { }
 };
@@ -128,7 +131,7 @@ class Path;
 class Location : public Entity {
 public:
   // TODO(rhau) onSegment, which adds a segment as a callback from SegmentNew
-  static void del(Ptr<Location> loc);
+  virtual void del();
 
   virtual Ptr<Segment> segment(int _i) {
     return segments_[_i];
@@ -225,7 +228,7 @@ class EngineManager;
 // Segments
 class Segment : public Entity {
 public:
-  static void del(Ptr<Segment> seg);
+  virtual void del();
 
   // returns the global name of the source location
   Ptr<Location> source() { return source_; }
@@ -365,6 +368,7 @@ public:
 
   Ptr<Entity> entity(string _name);
   Ptr<Location> location(string _name);
+  void entityDel(string _name);
 
   Ptr<Stats> stats() { return stats_; }
 

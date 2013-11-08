@@ -7,11 +7,12 @@
 
 using namespace Shipping;
 
-void Location::del(Ptr<Location> loc) {
+void Location::del() {
   // iterate over all of the constituent segments, calling delete on each one
-  for (uint32_t i=0; i<loc->segments_.size(); i++) {
-    Ptr<Segment> segment = loc->segments_[i];
-    Segment::del(segment);
+  for (uint32_t i=0; i<segments_.size(); i++) {
+    Ptr<Segment> segment = segments_[i];
+    segment->del();
+    // Segment::del(segment);
   }
 }
 
@@ -24,10 +25,10 @@ void Location::segmentDel(Ptr<Segment> s) {
   }
 }
 
-void Segment::del(Ptr<Segment> seg) {
+void Segment::del() {
   // 1. dels itself from its source's list of segments
-  Ptr<Location> source = seg->source();
-  source->segmentDel(seg);
+  Fwk::Ptr<Segment> seg = this;
+  source()->segmentDel(seg);
 
   // 2. dels the corresponding returnSegment from its returnLoc list of segments
   Ptr<Location> returnSource = seg->returnSegment()->source();
@@ -135,6 +136,35 @@ Fwk::Ptr<Location> EngineManager::location(string _name) {
   return loc;
 }
 
+void EngineManager::entityDel(string _name) {
+  // remove from global entity map
+  // remove from specific type map
+  // call del() function on entity
+  Fwk::Ptr<Entity> entity = NULL;
+  if ((entity = customer(_name)) != NULL) {
+    customerMap_.erase(_name);
+  } else if ((entity = port(_name)) != NULL) {
+    portMap_.erase(_name);
+  } else if ((entity = boatTerminal(_name)) != NULL) {
+    boatTerminalMap_.erase(_name);
+  } else if ((entity = truckTerminal(_name)) != NULL) {
+    truckTerminalMap_.erase(_name);
+  } else if ((entity = planeTerminal(_name)) != NULL) {
+    planeTerminalMap_.erase(_name);
+  } else if ((entity = boatSegment(_name)) != NULL) {
+    boatSegmentMap_.erase(_name);
+  } else if ((entity = truckSegment(_name)) != NULL) {
+    truckSegmentMap_.erase(_name);
+  } else if ((entity = planeSegment(_name)) != NULL) {
+    planeSegmentMap_.erase(_name);
+  }
+
+  if (entity != NULL) {
+    entityMap_.erase(_name);
+    entity->del();
+  }
+}
+
 Fwk::Ptr<Customer> EngineManager::customer(string _name) {
   std::map<string, Fwk::Ptr<Customer> >::iterator customerIter;
   customerIter = customerMap_.find(_name);
@@ -162,7 +192,7 @@ void EngineManager::customerIs(Fwk::Ptr<Customer> _customer) {
 }
 
 void EngineManager::customerDel(Fwk::Ptr<Customer> _customer) {
-  Location::del(_customer);
+  _customer->del();
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onCustomerDel();
@@ -196,7 +226,7 @@ void EngineManager::portIs(Fwk::Ptr<Port> _port) {
 }
 
 void EngineManager::portDel(Fwk::Ptr<Port> _port) {
-  Location::del(_port);
+  _port->del();
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onPortDel();
@@ -230,7 +260,7 @@ void EngineManager::boatTerminalIs(Fwk::Ptr<BoatTerminal> _boatTerminal) {
 }
 
 void EngineManager::boatTerminalDel(Fwk::Ptr<BoatTerminal> _boatTerminal) {
-  Location::del(_boatTerminal);
+  _boatTerminal->del();
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onBoatTerminalDel();
@@ -264,7 +294,7 @@ void EngineManager::truckTerminalIs(Fwk::Ptr<TruckTerminal> _truckTerminal) {
 }
 
 void EngineManager::truckTerminalDel(Fwk::Ptr<TruckTerminal> _truckTerminal) {
-  Location::del(_truckTerminal);
+  _truckTerminal->del();
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onTruckTerminalDel();
@@ -298,7 +328,7 @@ void EngineManager::planeTerminalIs(Fwk::Ptr<PlaneTerminal> _planeTerminal) {
 }
 
 void EngineManager::planeTerminalDel(Fwk::Ptr<PlaneTerminal> _planeTerminal) {
-  Location::del(_planeTerminal);
+  _planeTerminal->del();
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onPlaneTerminalDel();
@@ -320,7 +350,7 @@ void EngineManager::boatSegmentIs(Fwk::Ptr<BoatSegment> _boatSegment) {
 }
 
 void EngineManager::boatSegmentDel(Fwk::Ptr<BoatSegment> _boatSegment) {
-  Segment::del(_boatSegment);
+  _boatSegment->del();
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onBoatSegmentDel();
@@ -354,7 +384,7 @@ void EngineManager::truckSegmentIs(Fwk::Ptr<TruckSegment> _truckSegment) {
 }
 
 void EngineManager::truckSegmentDel(Fwk::Ptr<TruckSegment> _truckSegment) {
-  Segment::del(_truckSegment);
+  _truckSegment->del();
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onTruckSegmentDel();
@@ -388,7 +418,7 @@ void EngineManager::planeSegmentIs(Fwk::Ptr<PlaneSegment> _planeSegment) {
 }
 
 void EngineManager::planeSegmentDel(Fwk::Ptr<PlaneSegment> _planeSegment) {
-  Segment::del(_planeSegment);
+  _planeSegment->del();
 
   for (uint32_t i=0; i<notifiee_.size(); i++) {
     notifiee_[i]->onPlaneSegmentDel();

@@ -84,7 +84,25 @@ TEST_F(InstanceTest, FleetTest) {
 TEST_F(InstanceTest, StatsTest) {
   ASSERT_NE(stats, null);
   ASSERT_NE(manager->instance("stats"), null);
-  // TODO implement stats
+
+  ASSERT_EQ(stats->attribute("Customer"), "1");
+  ASSERT_EQ(stats->attribute("Port"), "1");
+  ASSERT_EQ(stats->attribute("Truck terminal"), "1");
+  ASSERT_EQ(stats->attribute("Boat terminal"), "1");
+  ASSERT_EQ(stats->attribute("Plane terminal"), "1");
+  ASSERT_EQ(stats->attribute("Truck segment"), "1");
+  ASSERT_EQ(stats->attribute("Boat segment"), "1");
+  ASSERT_EQ(stats->attribute("Plane segment"), "1");
+  
+  // Dynamic add
+  Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment");
+  ASSERT_EQ(stats->attribute("Truck segment"), "2");
+  
+  // Dynamic delete
+  manager->instanceDel("port");
+  ASSERT_EQ(stats->attribute("Port"), "0");
+
+  // TODO: expedite percentage
 }
 
 TEST_F(InstanceTest, LocationTest) {
@@ -201,4 +219,19 @@ TEST_F(InstanceTest, LocationDel) {
   // Segment should have no source, but still exist
   ASSERT_NE(manager->instance("truckS"), null);
   ASSERT_EQ(truckS->attribute("source"), "");
+}
+
+TEST_F(InstanceTest, Explore) {
+  // bT --bS2-> <-bS-- port --tS-> <-tS2-- tT
+  //                    |
+  //                    pS
+  //                    v
+  //                    ^
+  //                   pS2
+  //                    |
+  //                 customer
+  Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
+  truckS->attributeIs("source", "port");
+  truckS2->attributeIs("source", "truckT");
+  truckS->attributeIs("return segment", "truckS2"); 
 }

@@ -441,6 +441,7 @@ void PlaneSegmentRep::returnSegmentIs(const string& v) {
 /* Stats */
 string StatsRep::attribute(const string& name) {
   stringstream ss;
+  ss << fixed << setprecision(PRECISION);
 
   if (name == "expedite percentage") {
     ss << stats_->expeditedPercentage();

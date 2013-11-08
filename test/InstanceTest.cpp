@@ -234,4 +234,5 @@ TEST_F(InstanceTest, Explore) {
   truckS->attributeIs("source", "port");
   truckS2->attributeIs("source", "truckT");
   truckS->attributeIs("return segment", "truckS2"); 
+  
 }

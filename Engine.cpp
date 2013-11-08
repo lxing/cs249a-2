@@ -664,9 +664,7 @@ void Stats::onTruckSegmentIs() { truckSegmentCountInc(1); }
 
 void Stats::onPlaneSegmentIs() { planeSegmentCountInc(1); }
 
-void Stats::onExpeditedSegmentIs() {
-  std::cout << expeditedSegmentCount_ << std::endl;
-  expeditedSegmentCountInc(1); }
+void Stats::onExpeditedSegmentIs() { expeditedSegmentCountInc(1); }
 
 void Stats::onCustomerDel() { customerCountInc(-1); }
 

@@ -206,49 +206,49 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
 
   if (type == "Customer") {
     Ptr<CustomerRep> rep = new CustomerRep(name, engine_);
-    Ptr<Customer> customer = Customer::CustomerNew(name);
+    Ptr<Customer> customer = Customer::CustomerNew(name, engine_);
     engine_->customerIs(customer);
     rep->engineObjIs(customer);
     instance = rep;
   } else if (type == "Port") {
     Ptr<PortRep> rep = new PortRep(name, engine_);
-    Ptr<Port> port = Port::PortNew(name);
+    Ptr<Port> port = Port::PortNew(name, engine_);
     engine_->portIs(port);
     rep->engineObjIs(port);
     instance = rep;
   } else if (type == "Truck terminal") {
     Ptr<TruckTerminalRep> rep = new TruckTerminalRep(name, engine_);
-    Ptr<TruckTerminal> terminal = TruckTerminal::TruckTerminalNew(name);
+    Ptr<TruckTerminal> terminal = TruckTerminal::TruckTerminalNew(name, engine_);
     engine_->truckTerminalIs(terminal);
     rep->engineObjIs(terminal);
     instance = rep;
   } else if (type == "Boat terminal") {
     Ptr<BoatTerminalRep> rep = new BoatTerminalRep(name, engine_);
-    Ptr<BoatTerminal> terminal = BoatTerminal::BoatTerminalNew(name);
+    Ptr<BoatTerminal> terminal = BoatTerminal::BoatTerminalNew(name, engine_);
     engine_->boatTerminalIs(terminal);
     rep->engineObjIs(terminal);
     instance = rep;
   } else if (type == "Plane terminal") {
     Ptr<PlaneTerminalRep> rep = new PlaneTerminalRep(name, engine_);
-    Ptr<PlaneTerminal> terminal = PlaneTerminal::PlaneTerminalNew(name);
+    Ptr<PlaneTerminal> terminal = PlaneTerminal::PlaneTerminalNew(name, engine_);
     engine_->planeTerminalIs(terminal);
     rep->engineObjIs(terminal);
     instance = rep;
   } else if (type == "Truck segment") {
     Ptr<TruckSegmentRep> rep = new TruckSegmentRep(name, engine_);
-    Ptr<TruckSegment> segment = TruckSegment::TruckSegmentNew(name);
+    Ptr<TruckSegment> segment = TruckSegment::TruckSegmentNew(name, engine_);
     engine_->truckSegmentIs(segment);
     rep->engineObjIs(segment);
     instance = rep;
   } else if (type == "Boat segment") {
     Ptr<BoatSegmentRep> rep = new BoatSegmentRep(name, engine_);
-    Ptr<BoatSegment> segment = BoatSegment::BoatSegmentNew(name);
+    Ptr<BoatSegment> segment = BoatSegment::BoatSegmentNew(name, engine_);
     engine_->boatSegmentIs(segment);
     rep->engineObjIs(segment);
     instance = rep;
   } else if (type == "Plane segment") {
     Ptr<PlaneSegmentRep> rep = new PlaneSegmentRep(name, engine_);
-    Ptr<PlaneSegment> segment = PlaneSegment::PlaneSegmentNew(name);
+    Ptr<PlaneSegment> segment = PlaneSegment::PlaneSegmentNew(name, engine_);
     engine_->planeSegmentIs(segment);
     rep->engineObjIs(segment);
     instance = rep;
@@ -264,15 +264,15 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
   } else if (type == "Fleet") {
     Ptr<FleetRep> rep = new FleetRep(name, engine_);
 
-    Ptr<TruckFleet> truckFleet = TruckFleet::TruckFleetNew(name);
+    Ptr<TruckFleet> truckFleet = TruckFleet::TruckFleetNew(name, engine_);
     engine_->truckFleetIs(truckFleet);
     rep->truckFleetIs(truckFleet);
 
-    Ptr<BoatFleet> boatFleet = BoatFleet::BoatFleetNew(name);
+    Ptr<BoatFleet> boatFleet = BoatFleet::BoatFleetNew(name, engine_);
     engine_->boatFleetIs(boatFleet);
     rep->boatFleetIs(boatFleet);
 
-    Ptr<PlaneFleet> planeFleet = PlaneFleet::PlaneFleetNew(name);
+    Ptr<PlaneFleet> planeFleet = PlaneFleet::PlaneFleetNew(name, engine_);
     engine_->planeFleetIs(planeFleet);
     rep->planeFleetIs(planeFleet);
 

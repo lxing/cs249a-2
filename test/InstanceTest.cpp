@@ -151,18 +151,21 @@ TEST_F(InstanceTest, Connectivity) {
   ASSERT_EQ(customer->attribute("segment1"), "boatS");
   planeS->attributeIs("source", "port");
   ASSERT_EQ(port->attribute("segment1"), "planeS");
+
+  // Changing source should update source
+  truckS->attributeIs("source", "truckT2");
+  ASSERT_EQ(truckT->attribute("segment1"), "");
 }
 
 TEST_F(InstanceTest, SegmentDel) {
   // tT --tS-->  <-tS2-- tT2
   //    --tS3->
-  return;
   Ptr<Instance> truckT2 = manager->instanceNew("truckT2", "Truck terminal");
   Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
-  Ptr<Instance> truckS3 = manager->instanceNew("truckS2", "Truck segment"); 
+  Ptr<Instance> truckS3 = manager->instanceNew("truckS3", "Truck segment"); 
   truckS->attributeIs("source", "truckT");
   truckS2->attributeIs("source", "truckT2");
-  truckS3->attributeIs("source", "truckT2");
+  truckS3->attributeIs("source", "truckT");
   truckS->attributeIs("return segment", "truckS2"); 
 
   ASSERT_EQ(truckT2->attribute("segment1"), "truckS2");

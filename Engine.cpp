@@ -28,11 +28,11 @@ void Location::segmentDel(Ptr<Segment> s) {
 void Segment::del() {
   // 1. dels itself from its source's list of segments
   Fwk::Ptr<Segment> seg = this;
-  source()->segmentDel(seg);
+  source_->segmentDel(seg);
 
   // 2. dels itself from the returnSegment's returnSegment field
   seg = NULL;
-  returnSegment_ = seg;
+  if (returnSegment_ != NULL) returnSegment_->returnSegmentIs(seg);
 }
 
 void Segment::returnSegmentIs(Ptr<Segment> _returnSegment) {
@@ -41,16 +41,13 @@ void Segment::returnSegmentIs(Ptr<Segment> _returnSegment) {
   returnSegment_ = _returnSegment;
 
   // 2. set return segment of returnSegment
-  if (_returnSegment->returnSegment() == NULL) {
+  if (_returnSegment != NULL &&
+      _returnSegment->returnSegment() == NULL) {
     // If the return segment of our returnSegment does not point to us,
     // we create a pointer to ourself and call returnSegmentIs on our 
     // return segment.
     Fwk::Ptr<Shipping::Segment> segment = this;
     _returnSegment->returnSegmentIs(segment);
-  } else {
-    // If the return segment of our returnSegment points to us already, then
-    // we do nothing and return.
-    return;
   }
 }
 

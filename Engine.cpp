@@ -52,7 +52,7 @@ void Segment::returnSegmentIs(Ptr<Segment> _returnSegment) {
 
 void Segment::sourceIs(Ptr<Location> loc) {
   Fwk::Ptr<Shipping::Segment> seg = this;
-  if (source_ != NULL) source_->segmentDel(seg); // Remove self from the old source
+  if (source_ != NULL) source_->segmentDel(seg); // Remove from the old source
   source_ = loc;
   if (loc != NULL) loc->segmentIs(seg);
 }

@@ -334,7 +334,7 @@ TEST_F(EngineTest, StatsCountDownTest) {
   ASSERT_EQ(0, stats->truckTerminalCount());
 
   em.entityDel("PlaneTerminal");
-  ASSERT_EQ(1, stats->planeTerminalCount());
+  ASSERT_EQ(0, stats->planeTerminalCount());
 
   em.entityDel("BoatSegmentA");
   ASSERT_EQ(3, stats->boatSegmentCount());

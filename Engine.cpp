@@ -138,26 +138,33 @@ void EngineManager::entityDel(string _name) {
   // call del() function on entity
   Fwk::Ptr<Entity> entity = NULL;
   if ((entity = customer(_name)) != NULL) {
-    customerMap_.erase(_name);
+    Fwk::Ptr<Customer> c = customer(_name);
+    customerDel(c);
   } else if ((entity = port(_name)) != NULL) {
-    portMap_.erase(_name);
+    Fwk::Ptr<Port> p = port(_name);
+    portDel(p);
   } else if ((entity = boatTerminal(_name)) != NULL) {
-    boatTerminalMap_.erase(_name);
+    Fwk::Ptr<BoatTerminal> bt = boatTerminal(_name);
+    boatTerminalDel(bt);
   } else if ((entity = truckTerminal(_name)) != NULL) {
-    truckTerminalMap_.erase(_name);
+    Fwk::Ptr<TruckTerminal> tt = truckTerminal(_name);
+    truckTerminalDel(tt);
   } else if ((entity = planeTerminal(_name)) != NULL) {
-    planeTerminalMap_.erase(_name);
+    Fwk::Ptr<PlaneTerminal> pt = planeTerminal(_name);
+    planeTerminalDel(pt);
   } else if ((entity = boatSegment(_name)) != NULL) {
-    boatSegmentMap_.erase(_name);
+    Fwk::Ptr<BoatSegment> bs = boatSegment(_name);
+    boatSegmentDel(bs);
   } else if ((entity = truckSegment(_name)) != NULL) {
-    truckSegmentMap_.erase(_name);
+    Fwk::Ptr<TruckSegment> ts = truckSegment(_name);
+    truckSegmentDel(ts);
   } else if ((entity = planeSegment(_name)) != NULL) {
-    planeSegmentMap_.erase(_name);
+    Fwk::Ptr<PlaneSegment> ps = planeSegment(_name);
+    planeSegmentDel(ps);
   }
 
   if (entity != NULL) {
     entityMap_.erase(_name);
-    entity->del();
   }
 }
 

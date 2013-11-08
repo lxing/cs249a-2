@@ -327,6 +327,7 @@ int LocationRep::segmentNumber(const string& name) {
 /* Segments */
 string SegmentRep::attribute(const string& name) {
   stringstream ss;
+  ss << fixed << setprecision(PRECISION);
 
   if (name == "source") {
     Ptr<Location> source = segment()->source();
@@ -364,7 +365,7 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
     Mile length = atoi(v.c_str());
     segment()->lengthIs(length);
   } else if (name == "difficulty") {
-    Difficulty difficulty = atoi(v.c_str());
+    Difficulty difficulty = atof(v.c_str());
     segment()->difficultyIs(difficulty);
   } else if (name == "return segment") {
     returnSegmentIs(v);
@@ -491,7 +492,7 @@ string ConnRep::attribute(const string& name) {
   }
 
   Ptr<EngineManager> engine = manager_->engine();
-  Ptr<Location> src = engine->location(name); // TODO tokens[1]
+  Ptr<Location> src = engine->location(tokens[1]);
   stringstream oss;
   oss << fixed << setprecision(PRECISION);
 
@@ -519,7 +520,7 @@ string ConnRep::attribute(const string& name) {
       oss << pathString(paths[i]) << endl;
     }
   } else if (src != NULL && tokens[0] == "connect") {
-    Ptr<Location> dst = engine->location(name); // TODO tokens[3]
+    Ptr<Location> dst = engine->location(tokens[3]);
     vector<Ptr<Path> > paths = engine->connect(src, dst);
     for (unsigned int i = 0; i < paths.size(); i++) {
       oss << paths[i]->cost().value();

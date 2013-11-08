@@ -39,15 +39,15 @@ public:
 class MilesPerHour : public Ordinal<MilesPerHour, double> {
 public:
   MilesPerHour(double num) : Ordinal<MilesPerHour, double>(num) {
-    if (num < 0.0) {
-      throw "Speed out of range";
-    }
+    if (num < 0.0) throw "Speed out of range";
   }
 };
 
 class Time : public Ordinal<Time, double> {
 public:
-  Time(double num) : Ordinal<Time, double>(num) { }
+  Time(double num) : Ordinal<Time, double>(num) { 
+    if (num < 0.0) throw "Time out of range";
+  }
 };
 
 class Capacity : public Nominal<Capacity, uint32_t> {
@@ -58,18 +58,14 @@ public:
 class Difficulty : public Nominal<Difficulty, double> {
 public:
   Difficulty(double num) : Nominal<Difficulty, double>(num) {
-    if (num < 1.0 || num > 5.0) {
-      throw "Difficulty value out of range";
-    }
+    if (num < 1.0 || num > 5.0) throw "Difficulty value out of range";
   }
 };
 
 class Dollar : public Ordinal<Dollar, double> {
 public:
   Dollar(double num) : Ordinal<Dollar, double>(num) {
-    if (num < 0.0) {
-      throw "Dollar value out of range";
-    }
+    if (num < 0.0) throw "Dollar value out of range";
   }
 };
 

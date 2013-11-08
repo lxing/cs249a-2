@@ -31,9 +31,17 @@ protected:
     boatT = manager->instanceNew("boatT", "Boat terminal");
     planeT = manager->instanceNew("planeT", "Plane terminal");
 
-    //truckS = manager->instanceNew("truckS", "Truck segment");
-    //boatS = manager->instanceNew("boatS", "Boat segment");
-    //planeS = manager->instanceNew("planeS", "Plane segment");
+    truckS = manager->instanceNew("truckS", "Truck segment");
+    truckS->attributeIs("length", "2000");
+    truckS->attributeIs("difficulty", "2");
+    boatS = manager->instanceNew("boatS", "Boat segment");
+    boatS->attributeIs("length", "300");
+    boatS->attributeIs("difficulty", "1");
+    planeS = manager->instanceNew("planeS", "Plane segment");
+    planeS->attributeIs("length", "1502");
+    planeS->attributeIs("difficulty", "3.2");
+
+    stats = manager->instanceNew("stats", "Stats");
   }
 
   Ptr<Instance::Manager> manager;
@@ -50,6 +58,8 @@ protected:
   Ptr<Instance> truckS;
   Ptr<Instance> boatS;
   Ptr<Instance> planeS;
+
+  Ptr<Instance> stats;
 };
 
 /*****************/
@@ -71,6 +81,12 @@ TEST_F(InstanceTest, FleetTest) {
   ASSERT_EQ(fleet->attribute("Plane, cost"), "5.67"); // Test rounding
 }
 
+TEST_F(InstanceTest, StatsTest) {
+  ASSERT_NE(stats, null);
+  ASSERT_NE(manager->instance("stats"), null);
+  // TODO implement stats
+}
+
 TEST_F(InstanceTest, LocationTest) {
   ASSERT_NE(customer, null);
   ASSERT_NE(port, null);
@@ -85,10 +101,19 @@ TEST_F(InstanceTest, LocationTest) {
 }
 
 TEST_F(InstanceTest, SegmentTest) {
-  //ASSERT_NE(truckS, null);
-  //ASSERT_NE(boatS, null);
-  //ASSERT_NE(planeS, null);
-  //ASSERT_NE(manager->instance("truckS"), null);
-  //ASSERT_NE(manager->instance("boatS"), null);
-  //ASSERT_NE(manager->instance("planeS"), null);
+  ASSERT_NE(truckS, null);
+  ASSERT_NE(boatS, null);
+  ASSERT_NE(planeS, null);
+  ASSERT_NE(manager->instance("truckS"), null);
+  ASSERT_NE(manager->instance("boatS"), null);
+  ASSERT_NE(manager->instance("planeS"), null);
+
+  ASSERT_EQ(truckS->attribute("length"), "2000");
+  ASSERT_EQ(truckS->attribute("difficulty"), "2.00");
+  ASSERT_EQ(boatS->attribute("length"), "300");
+  ASSERT_EQ(boatS->attribute("difficulty"), "1.00");
+  ASSERT_EQ(planeS->attribute("length"), "1502");
+  ASSERT_EQ(planeS->attribute("difficulty"), "3.20");
 }
+
+

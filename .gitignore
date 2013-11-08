@@ -1,4 +1,5 @@
 *.o
 example
-test/UnitTest
 .*swp
+test/.*swp
+test/UnitTest

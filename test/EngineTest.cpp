@@ -305,3 +305,7 @@ TEST_F(EngineTest, SimpleExploreGraphNegativeTest) {
 
   ASSERT_EQ(0, paths.size());
 }
+
+TEST_F(EngineTest, StatsTest) {
+  
+}

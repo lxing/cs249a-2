@@ -306,6 +306,36 @@ TEST_F(EngineTest, SimpleExploreGraphNegativeTest) {
   ASSERT_EQ(0, paths.size());
 }
 
-TEST_F(EngineTest, StatsTest) {
+
+
+TEST_F(EngineTest, StatsCountUpTest) {
+  Fwk::Ptr<Shipping::Stats> stats = em.stats();
+  ASSERT_EQ(1, stats->customerCount());
+  ASSERT_EQ(1, stats->portCount());
+  ASSERT_EQ(4, stats->boatTerminalCount());
+  ASSERT_EQ(1, stats->truckTerminalCount());
+  ASSERT_EQ(1, stats->planeTerminalCount());
+  ASSERT_EQ(4, stats->boatSegmentCount());
+}
+
+TEST_F(EngineTest, StatsCountDownTest) {
+  Fwk::Ptr<Shipping::Stats> stats = em.stats();
+
+  em.entityDel("Customer");
+  ASSERT_EQ(0, stats->customerCount());
   
+  em.entityDel("Port");
+  ASSERT_EQ(0, stats->portCount());
+
+  em.entityDel("BoatTerminal");
+  ASSERT_EQ(3, stats->boatTerminalCount());
+
+  em.entityDel("TruckTerminal");
+  ASSERT_EQ(0, stats->truckTerminalCount());
+
+  em.entityDel("PlaneTerminal");
+  ASSERT_EQ(1, stats->planeTerminalCount());
+
+  em.entityDel("BoatSegmentA");
+  ASSERT_EQ(3, stats->boatSegmentCount());
 }

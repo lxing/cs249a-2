@@ -1,6 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
+#include <iostream>
 #include <typeinfo>
 
 #ifdef _MSC_VER
@@ -372,6 +373,12 @@ public:
   Ptr<Location> location(string _name);
   void entityDel(string _name);
 
+  class Notifiee;
+
+  void notifieeIs(Fwk::Ptr<Notifiee> notifiee) {
+    notifiee_.push_back(notifiee);
+  }
+
   Ptr<Stats> stats() { return stats_; }
 
   // Fleet Attributes
@@ -512,7 +519,7 @@ public:
   void planeTerminalCountInc(int delta) { planeTerminalCount_ += delta; }
 
   uint32_t boatSegmentCount() { return boatSegmentCount_; }
-  void boatSegmentCountInc(int delta) { boatTerminalCount_ += delta; }
+  void boatSegmentCountInc(int delta) { boatSegmentCount_ += delta; }
   uint32_t truckSegmentCount() {return truckSegmentCount_; }
   void truckSegmentCountInc(int delta) { truckSegmentCount_ += delta; }
   uint32_t planeSegmentCount() { return planeSegmentCount_; }

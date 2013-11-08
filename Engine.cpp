@@ -1,5 +1,4 @@
 #include <assert.h>
-#include <iostream>
 #include <queue>
 #include <set>
 
@@ -97,6 +96,7 @@ Time PlaneSegment::time(
 
 EngineManager::EngineManager() {
   stats_ = new Shipping::Stats("stats");
+  notifieeIs(stats_);
 }
 
 EngineManager::~EngineManager() {
@@ -618,7 +618,7 @@ void Stats::onPortIs() { portCountInc(1); }
 
 void Stats::onBoatTerminalIs() { boatTerminalCountInc(1); }
 
-void Stats::onTruckTerminalIs() { truckSegmentCountInc(1); }
+void Stats::onTruckTerminalIs() { truckTerminalCountInc(1); }
 
 void Stats::onPlaneTerminalIs() { planeTerminalCountInc(1); }
 

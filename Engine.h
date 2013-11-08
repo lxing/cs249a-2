@@ -137,7 +137,8 @@ public:
   virtual void del();
 
   virtual Ptr<Segment> segment(int _i) {
-    return segments_[_i];
+    Ptr<Segment> s = (_i < segments_.size()) ? segments_[_i] : NULL;
+    return s;
   }
 
   virtual std::vector<Ptr<Segment> > segments() {
@@ -235,6 +236,7 @@ public:
 
   // returns the global name of the source location
   Ptr<Location> source() { return source_; }
+  void sourceIs(Ptr<Location> _loc);
   Ptr<Location> destination();
 
   Mile length() { return length_; }
@@ -264,7 +266,6 @@ protected:
       difficulty_(1.0), expeditedSupport_(no_) { }
   virtual ~Segment() {};
 
-  void sourceIsImpl(Ptr<Location> _loc);
 
 private:
   string name_;
@@ -316,9 +317,9 @@ public:
     return m;
   }
 
-  void sourceIs(Ptr<BoatTerminal> _loc) { sourceIsImpl(_loc); }
-  void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
-  void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
+  void sourceIs(Ptr<BoatTerminal> _loc) { Segment::sourceIs(_loc); }
+  void sourceIs(Ptr<Customer> _loc) { Segment::sourceIs(_loc); }
+  void sourceIs(Ptr<Port> _loc) { Segment::sourceIs(_loc); }
 
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
@@ -333,9 +334,9 @@ public:
     Ptr<TruckSegment> m = new TruckSegment(name);
     return m;
   }
-  void sourceIs(Ptr<TruckTerminal> _loc) { sourceIsImpl(_loc); }
-  void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
-  void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
+  void sourceIs(Ptr<TruckTerminal> _loc) { Segment::sourceIs(_loc); }
+  void sourceIs(Ptr<Customer> _loc) { Segment::sourceIs(_loc); }
+  void sourceIs(Ptr<Port> _loc) { Segment::sourceIs(_loc); }
 
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
@@ -350,9 +351,9 @@ public:
     Ptr<PlaneSegment> m = new PlaneSegment(name);
     return m;
   }
-  void sourceIs(Ptr<PlaneTerminal> _loc) { sourceIsImpl(_loc); }
-  void sourceIs(Ptr<Customer> _loc) { sourceIsImpl(_loc); }
-  void sourceIs(Ptr<Port> _loc) { sourceIsImpl(_loc); }
+  void sourceIs(Ptr<PlaneTerminal> _loc) { Segment::sourceIs(_loc); }
+  void sourceIs(Ptr<Customer> _loc) { Segment::sourceIs(_loc); }
+  void sourceIs(Ptr<Port> _loc) { Segment::sourceIs(_loc); }
 
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 

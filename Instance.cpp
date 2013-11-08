@@ -293,16 +293,16 @@ Ptr<Instance> ManagerImpl::instance(const string& name) {
 }
 
 void ManagerImpl::instanceDel(const string& name) {
-  // Semantics?
+  engine_->entityDel(name);
+  instanceMap_.erase(name);
 }
-
 
 /* Locations */
 string LocationRep::attribute(const string& name) {
   int i = segmentNumber(name);
-  Ptr<Segment> segment = location_->segment(i);
-  if (segment == NULL) return "";
-  return segment->name();
+  if (i < 1) return ""; // Segments are 1-indexed in the rep layer
+  Ptr<Segment> segment = location_->segment(i - 1);
+  return (segment == NULL) ? "" : segment->name();
 }
 
 void LocationRep::attributeIs(const string& name, const string& v) {

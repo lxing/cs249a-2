@@ -104,22 +104,27 @@ TEST_F(InstanceTest, SegmentTest) {
   ASSERT_NE(truckS, null);
   ASSERT_NE(boatS, null);
   ASSERT_NE(planeS, null);
+
   ASSERT_NE(manager->instance("truckS"), null);
   ASSERT_NE(manager->instance("boatS"), null);
   ASSERT_NE(manager->instance("planeS"), null);
 
   ASSERT_EQ(truckS->attribute("length"), "2000.00");
   ASSERT_EQ(truckS->attribute("difficulty"), "2.00");
+  ASSERT_EQ(truckS->attribute("expedite support"), "no");
+
+  boatS->attributeIs("expedite support", "yes");
   ASSERT_EQ(boatS->attribute("length"), "300.50");
   ASSERT_EQ(boatS->attribute("difficulty"), "1.00");
+  ASSERT_EQ(boatS->attribute("expedite support"), "yes");
+
   ASSERT_EQ(planeS->attribute("length"), "1502.00");
   ASSERT_EQ(planeS->attribute("difficulty"), "3.20");
 }
 
 TEST_F(InstanceTest, Connectivity) {
   // Test same-type connection
-  // tT --ts-->
-  //    <-ts2-- tT2
+  // tT --tS-->  <-tS2-- tT2
   Ptr<Instance> truckT2 = manager->instanceNew("truckT2", "Truck terminal");
   Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
   truckS->attributeIs("source", "truckT");
@@ -129,10 +134,10 @@ TEST_F(InstanceTest, Connectivity) {
   ASSERT_EQ(truckS->attribute("return segment"), "truckS2");
   ASSERT_EQ(truckS2->attribute("return segment"), "truckS");
   ASSERT_EQ(truckS->attribute("source"), "truckT");
-  ASSERT_EQ(truckT->attribute("segment0"), "truckS");
+  ASSERT_EQ(truckT->attribute("segment1"), "truckS");
 
   // Test missing segment
-  ASSERT_EQ(truckT->attribute("segment1"), "");
+  ASSERT_EQ(truckT->attribute("segment2"), "");
   ASSERT_EQ(boatS->attribute("return segment"), "");
 
   // Test wrong-type connection
@@ -143,7 +148,54 @@ TEST_F(InstanceTest, Connectivity) {
 
   // Test port and customer connections
   boatS->attributeIs("source", "customer");
-  ASSERT_EQ(customer->attribute("segment0"), "boatS");
+  ASSERT_EQ(customer->attribute("segment1"), "boatS");
   planeS->attributeIs("source", "port");
-  ASSERT_EQ(port->attribute("segment0"), "planeS");
+  ASSERT_EQ(port->attribute("segment1"), "planeS");
+}
+
+TEST_F(InstanceTest, SegmentDel) {
+  // tT --tS-->  <-tS2-- tT2
+  //    --tS3->
+  return;
+  Ptr<Instance> truckT2 = manager->instanceNew("truckT2", "Truck terminal");
+  Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
+  Ptr<Instance> truckS3 = manager->instanceNew("truckS2", "Truck segment"); 
+  truckS->attributeIs("source", "truckT");
+  truckS2->attributeIs("source", "truckT2");
+  truckS3->attributeIs("source", "truckT2");
+  truckS->attributeIs("return segment", "truckS2"); 
+
+  ASSERT_EQ(truckT2->attribute("segment1"), "truckS2");
+  ASSERT_EQ(truckT->attribute("segment2"), "truckS3");
+
+  manager->instanceDel("truckS");
+
+  // Instance should be gone
+  ASSERT_EQ(manager->instance("truckS"), null);
+
+  // Segments should have shifted
+  ASSERT_EQ(truckT->attribute("segment1"), "truckS3");
+  ASSERT_EQ(truckT->attribute("segment2"), "");
+  
+  // Return segment should be updated 
+  ASSERT_EQ(truckT2->attribute("segment1"), "truckS2");
+  ASSERT_EQ(truckS2->attribute("return segment"), "");
+}
+
+TEST_F(InstanceTest, LocationDel) {
+  // tT --tS-->  <-tS2-- tT2
+  Ptr<Instance> truckT2 = manager->instanceNew("truckT2", "Truck terminal");
+  Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
+  truckS->attributeIs("source", "truckT");
+  truckS2->attributeIs("source", "truckT2");
+  truckS->attributeIs("return segment", "truckS2"); 
+
+  manager->instanceDel("truckT");
+  
+  // Instance should be gone
+  ASSERT_EQ(manager->instance("truckT"), null);
+
+  // Segment should have no source, but still exist
+  ASSERT_NE(manager->instance("truckS"), null);
+  ASSERT_EQ(truckS->attribute("source"), "");
 }

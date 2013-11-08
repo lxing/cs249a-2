@@ -10,8 +10,8 @@ void Location::del() {
   // iterate over all of the constituent segments, calling delete on each one
   for (uint32_t i=0; i<segments_.size(); i++) {
     Ptr<Segment> segment = segments_[i];
-    segment->del();
-    // Segment::del(segment);
+    Ptr<Location> location = NULL;
+    segment->sourceIs(location);
   }
 }
 
@@ -29,9 +29,9 @@ void Segment::del() {
   Fwk::Ptr<Segment> seg = this;
   source()->segmentDel(seg);
 
-  // 2. dels the corresponding returnSegment from its returnLoc list of segments
-  Ptr<Location> returnSource = seg->returnSegment()->source();
-  returnSource->segmentDel(seg->returnSegment());
+  // 2. dels itself from the returnSegment's returnSegment field
+  seg = NULL;
+  returnSegment_ = seg;
 }
 
 void Segment::returnSegmentIs(Ptr<Segment> _returnSegment) {
@@ -53,12 +53,11 @@ void Segment::returnSegmentIs(Ptr<Segment> _returnSegment) {
   }
 }
 
-void Segment::sourceIsImpl(Ptr<Location> loc) {
+void Segment::sourceIs(Ptr<Location> loc) {
   Fwk::Ptr<Shipping::Segment> seg = this;
-  if (source_ != NULL)
-    source_->segmentDel(seg); // Remove self from the old source
+  if (source_ != NULL) source_->segmentDel(seg); // Remove self from the old source
   source_ = loc;
-  loc->segmentIs(seg);
+  if (loc != NULL) loc->segmentIs(seg);
 }
 
 Dollar Segment::cost(EngineManager* manager, ExpeditedSupport expedited) {

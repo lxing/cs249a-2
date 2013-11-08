@@ -392,7 +392,7 @@ void TruckSegmentRep::sourceIs(const string& v) {
   if (customer) { segment_->sourceIs(customer); return; }
   Ptr<Port> port = engine->port(v);
   if (port) { segment_->sourceIs(port); return; }
-  cerr << "Source does not exist";
+  cerr << "Invalid source";
 }
 
 void TruckSegmentRep::returnSegmentIs(const string& v) {
@@ -400,7 +400,7 @@ void TruckSegmentRep::returnSegmentIs(const string& v) {
   if (returnSegment)
     segment_->returnSegmentIs(returnSegment);
   else
-    cerr << "Return segment does not exist";
+    cerr << "Invalid return segment";
 }
 
 void BoatSegmentRep::sourceIs(const string& v) {
@@ -411,7 +411,7 @@ void BoatSegmentRep::sourceIs(const string& v) {
   if (customer) { segment_->sourceIs(customer); return; }
   Ptr<Port> port = engine->port(v);
   if (port) { segment_->sourceIs(port); return; }
-  cerr << "Source does not exist";
+  cerr << "Invalid source";
 }
 
 void BoatSegmentRep::returnSegmentIs(const string& v) {
@@ -419,7 +419,7 @@ void BoatSegmentRep::returnSegmentIs(const string& v) {
   if (returnSegment)
     segment_->returnSegmentIs(returnSegment);
   else
-    cerr << "Return segment does not exist";
+    cerr << "Invalid return segment";
 }
 
 void PlaneSegmentRep::sourceIs(const string& v) {
@@ -430,7 +430,7 @@ void PlaneSegmentRep::sourceIs(const string& v) {
   if (customer) { segment_->sourceIs(customer); return; }
   Ptr<Port> port = engine->port(v);
   if (port) { segment_->sourceIs(port); return; }
-  cerr << "Source does not exist";
+  cerr << "Invalid source";
 }
 
 void PlaneSegmentRep::returnSegmentIs(const string& v) {
@@ -438,7 +438,7 @@ void PlaneSegmentRep::returnSegmentIs(const string& v) {
   if (returnSegment)
     segment_->returnSegmentIs(returnSegment);
   else
-    cerr << "Return segment does not exist";
+    cerr << "Invalid return segment";
 }
 
 

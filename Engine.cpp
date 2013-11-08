@@ -36,6 +36,7 @@ void Segment::del(Ptr<Segment> seg) {
 
 void Segment::returnSegmentIs(Ptr<Segment> _returnSegment) {
   // 1. set internal return segment
+  // TODO: better semantics
   returnSegment_ = _returnSegment;
 
   // 2. set return segment of returnSegment

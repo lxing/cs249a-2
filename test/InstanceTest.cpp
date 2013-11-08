@@ -25,7 +25,7 @@ protected:
     fleet->attributeIs("Plane, capacity", "2");
     fleet->attributeIs("Plane, cost", "5.666");
 
-    customer = manager->instanceNew("cust", "Customer");
+    customer = manager->instanceNew("customer", "Customer");
     port = manager->instanceNew("port", "Port");
     truckT = manager->instanceNew("truckT", "Truck terminal");
     boatT = manager->instanceNew("boatT", "Boat terminal");
@@ -93,7 +93,7 @@ TEST_F(InstanceTest, LocationTest) {
   ASSERT_NE(truckT, null);
   ASSERT_NE(boatT, null);
   ASSERT_NE(planeT, null);
-  ASSERT_NE(manager->instance("cust"), null);
+  ASSERT_NE(manager->instance("customer"), null);
   ASSERT_NE(manager->instance("port"), null);
   ASSERT_NE(manager->instance("truckT"), null);
   ASSERT_NE(manager->instance("boatT"), null);
@@ -116,4 +116,34 @@ TEST_F(InstanceTest, SegmentTest) {
   ASSERT_EQ(planeS->attribute("difficulty"), "3.20");
 }
 
+TEST_F(InstanceTest, Connectivity) {
+  // Test same-type connection
+  // tT --ts-->
+  //    <-ts2-- tT2
+  Ptr<Instance> truckT2 = manager->instanceNew("truckT2", "Truck terminal");
+  Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
+  truckS->attributeIs("source", "truckT");
+  truckS2->attributeIs("source", "truckT2");
+  truckS->attributeIs("return segment", "truckS2"); 
+  
+  ASSERT_EQ(truckS->attribute("return segment"), "truckS2");
+  ASSERT_EQ(truckS2->attribute("return segment"), "truckS");
+  ASSERT_EQ(truckS->attribute("source"), "truckT");
+  ASSERT_EQ(truckT->attribute("segment0"), "truckS");
 
+  // Test missing segment
+  ASSERT_EQ(truckT->attribute("segment1"), "");
+  ASSERT_EQ(boatS->attribute("return segment"), "");
+
+  // Test wrong-type connection
+  boatS->attributeIs("source", "truckT"); 
+  ASSERT_EQ(boatS->attribute("source"), "");
+  boatS->attributeIs("return segment", "planeS");
+  ASSERT_EQ(boatS->attribute("return segment"), "");
+
+  // Test port and customer connections
+  boatS->attributeIs("source", "customer");
+  ASSERT_EQ(customer->attribute("segment0"), "boatS");
+  planeS->attributeIs("source", "port");
+  ASSERT_EQ(port->attribute("segment0"), "planeS");
+}

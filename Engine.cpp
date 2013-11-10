@@ -561,16 +561,15 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     Fwk::Ptr<Path> path = pathQueue.front();
     pathQueue.pop();
 
-    std::vector<Fwk::Ptr<Segment> > segments = path->segments();
-    Ptr<Segment> currSegment = segments[segments.size()-1];
-    // If the source of the return segment (nextLoc) matches our end,
-    // then we found our path.
+    Fwk::Ptr<Location> currLoc = path->destination();
 
-    Fwk::Ptr<Location> currLoc = currSegment->returnSegment()->source();
+    // If reached end, add path to list of possible paths
     if (currLoc->name() == end->name()) {
-        // add path to list of possible paths
-        possiblePaths.push_back(path);
+      std::cout << currLoc->name() << std::endl;
+      possiblePaths.push_back(path);
+      continue;
     }
+
     visitedLocs.insert(currLoc->name());
 
     // Otherwise, we add all of the segments from the currLoc to copies of
@@ -578,7 +577,7 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     std::vector<Fwk::Ptr<Segment> > nextSegments = currLoc->segments();
     for (uint32_t i=0; i<nextSegments.size(); i++) {
       Ptr<Segment> nextSegment = nextSegments[i];
-      Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
+      Ptr<Location> nextLoc = nextSegment->destination();
       
       std::set<string>::iterator it = visitedLocs.find(nextLoc->name());
       if (it != visitedLocs.end()) {
@@ -593,8 +592,6 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
             nextSegment->expeditedSupport() == Segment::yes_) ||
             expedited == Segment::no_) {
         Fwk::Ptr<Path> newPath = Path::copy(path);
-        newPath->addSegment(nextSegment, 0, 0, 0);
-        Ptr<Segment> segment = segments[i];
         newPath->addSegment(nextSegment,
                             nextSegment->cost(this, expedited),
                             nextSegment->length(),
@@ -659,10 +656,8 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
       Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
 
       std::set<string>::iterator it = visitedLocs.find(nextLoc->name());
-      if (it != visitedLocs.end()) {
-        // if we have visited this location already, continue
-        continue;
-      }
+      // if we have visited this location already, continue
+      if (it != visitedLocs.end()) continue;
 
       Dollar segmentCost = nextSegment->cost(this, _expedited);
       Time segmentTime = nextSegment->time(this, _expedited);

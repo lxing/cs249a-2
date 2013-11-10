@@ -24,6 +24,12 @@ void Location::segmentDel(Ptr<Segment> s) {
   }
 }
 
+Ptr<Location> Segment::destination() {
+  Ptr<Location> dest = NULL;
+  if (returnSegment_ != NULL) dest = returnSegment_->source();
+  return dest;
+}
+
 void Segment::del() {
   // 1. dels itself from its source's list of segments
   Fwk::Ptr<Segment> seg = this;
@@ -523,7 +529,12 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
           expedited == Segment::no_) {
       Fwk::Ptr<Path> startPath = new Path();
       // don't care about segment cost, so we call addSegment with cost 0
-      startPath->addSegment(startSegments[i], 0, 0, 0);
+
+      Ptr<Segment> segment = startSegments[i];
+      startPath->addSegment(segment,
+                            segment->cost(this, expedited),
+                            segment->length(),
+                            segment->time(this, expedited));
       pathQueue.push(startPath);
     }
   }
@@ -566,6 +577,11 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
         Fwk::Ptr<Path> newPath = Path::copy(path);
         // don't care about segment cost, so we call addSegment with cost 0
         newPath->addSegment(nextSegment, 0, 0, 0);
+        Ptr<Segment> segment = segments[i];
+        newPath->addSegment(nextSegment,
+                            nextSegment->cost(this, expedited),
+                            nextSegment->length(),
+                            nextSegment->time(this, expedited));
         pathQueue.push(newPath);
       }
     }
@@ -603,7 +619,9 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
       visitedLocs.insert(nextLoc->name());
 
       startPath->addSegment(startSegments[i],
-          segmentCost, startSegment->length(), segmentTime);
+                            segmentCost,
+                            startSegment->length(),
+                            segmentTime);
       possiblePaths.push_back(startPath);
       pathQueue.push(startPath);
     }
@@ -641,7 +659,9 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
         Fwk::Ptr<Path> newPath = Path::copy(path);
         visitedLocs.insert(nextLoc->name());
         newPath->addSegment(nextSegment,
-            segmentCost, nextSegment->length(), segmentTime);
+                            segmentCost,
+                            nextSegment->length(),
+                            segmentTime);
         possiblePaths.push_back(newPath);
         pathQueue.push(newPath);
       }

@@ -622,7 +622,6 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
       if (segmentCost+path->cost() <= _cost &&
             segmentTime+path->time() <= _time &&
             nextSegment->length()+path->length() <= _distance &&
-            _expedited == nextSegment->expeditedSupport() &&
             (_expedited == Segment::no_ || 
               (_expedited == Segment::yes_ &&
                   nextSegment->expeditedSupport() == Segment::yes_))) {

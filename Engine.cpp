@@ -69,6 +69,7 @@ void Segment::expeditedSupportIs(ExpeditedSupport _expeditedSupport) {
   if (expeditedSupport_ == Segment::no_) {
     em_->stats()->onExpeditedSegmentIs();
   }
+
   expeditedSupport_ = _expeditedSupport;
 }
 

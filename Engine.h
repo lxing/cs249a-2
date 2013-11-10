@@ -560,7 +560,7 @@ public:
 
   double expeditedPercentage() {
     return (double)expeditedSegmentCount_ /
-        (boatTerminalCount_ + truckSegmentCount_ + planeSegmentCount_) * 100.0;
+        (boatSegmentCount_ + truckSegmentCount_ + planeSegmentCount_) * 100.0;
   }
 
 private:

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <limits>
 #include "gtest/gtest.h"
 #include "../Instance.h"
 
@@ -25,6 +26,9 @@ protected:
     fleet->attributeIs("Plane, capacity", "2");
     fleet->attributeIs("Plane, cost", "5.666");
 
+    stats = manager->instanceNew("stats", "Stats");
+    conn = manager->instanceNew("conn", "Conn");
+
     customer = manager->instanceNew("customer", "Customer");
     port = manager->instanceNew("port", "Port");
     truckT = manager->instanceNew("truckT", "Truck terminal");
@@ -41,13 +45,14 @@ protected:
     planeS->attributeIs("length", "1502");
     planeS->attributeIs("difficulty", "3.2");
 
-    stats = manager->instanceNew("stats", "Stats");
   }
 
   Ptr<Instance::Manager> manager;
   Ptr<Instance> null;
 
   Ptr<Instance> fleet;
+  Ptr<Instance> stats;
+  Ptr<Instance> conn;
 
   Ptr<Instance> customer;
   Ptr<Instance> port;
@@ -58,8 +63,6 @@ protected:
   Ptr<Instance> truckS;
   Ptr<Instance> boatS;
   Ptr<Instance> planeS;
-
-  Ptr<Instance> stats;
 };
 
 /*****************/
@@ -140,7 +143,7 @@ TEST_F(InstanceTest, SegmentTest) {
   ASSERT_EQ(planeS->attribute("difficulty"), "3.20");
 }
 
-TEST_F(InstanceTest, Connectivity) {
+TEST_F(InstanceTest, ConnectivityTest) {
   // Test same-type connection
   // tT --tS-->  <-tS2-- tT2
   Ptr<Instance> truckT2 = manager->instanceNew("truckT2", "Truck terminal");
@@ -234,5 +237,16 @@ TEST_F(InstanceTest, Explore) {
   truckS->attributeIs("source", "port");
   truckS2->attributeIs("source", "truckT");
   truckS->attributeIs("return segment", "truckS2"); 
+
+  Ptr<Instance> boatS2= manager->instanceNew("boatS2", "Boat segment"); 
+  boatS->attributeIs("source", "port");
+  boatS2->attributeIs("source", "boatT");
+  boatS->attributeIs("return segment", "boatS2"); 
+
+  Ptr<Instance> planeS2 = manager->instanceNew("planeS2", "Plane segment"); 
+  planeS->attributeIs("source", "port");
+  planeS2->attributeIs("source", "planeT");
+  planeS->attributeIs("return segment", "planeS2"); 
   
+  string explore = conn->attribute("explore port : distance 1600");
 }

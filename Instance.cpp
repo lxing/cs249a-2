@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <iomanip> // Output decimal precision
 #include <iostream>
+#include <limits> // Value limits
 #include <map>
 #include <sstream>
 #include <vector>
@@ -482,7 +483,7 @@ string ConnRep::attribute(const string& name) {
   vector<string> tokens;
   while (getline(iss, token, ' ')) { tokens.push_back(token); }
 
-  if (tokens.size() < 4 || tokens[2] != ":") {
+  if (tokens.size() < 3 || tokens[2] != ":") {
     cerr << "Invalid attribute for connectivity";
     return "";
   }
@@ -493,9 +494,11 @@ string ConnRep::attribute(const string& name) {
   oss << fixed << setprecision(PRECISION);
 
   if (src != NULL && tokens[0] == "explore") {
-    Mile maxDist(0);
-    Dollar maxCost(0);
-    Time maxTime(0);
+    // Initialize by default with no constraints
+    float infinity = numeric_limits<float>::infinity();
+    Mile maxDist(infinity);
+    Dollar maxCost(infinity);
+    Time maxTime(infinity);
 
     for (unsigned int attr = 3; attr < tokens.size(); attr++) {
       string attrName = tokens[attr];

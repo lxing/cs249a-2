@@ -549,6 +549,8 @@ string ConnRep::pathString(Ptr<Path> path) {
     ss << seg->source()->name();
     ss << "(" << seg->name() << ":" << seg->length().value();
     ss << ":" << seg->returnSegment()->name() << ")";
+    if (i == segments.size() - 1)
+      ss << " " << seg->destination()->name();
   }
   return ss.str();
 };

@@ -80,10 +80,13 @@ void Segment::expeditedSupportIs(ExpeditedSupport _expeditedSupport) {
 }
 
 Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
-  Fwk::Ptr<Path> copyPath = new Path();
-  copyPath->expeditedSupportIs(path->expeditedSupport());
-  copyPath->segment_ = path->segment_;
-  return copyPath;
+  Fwk::Ptr<Path> copy = new Path();
+  copy->expeditedSupport_ = path->expeditedSupport_;
+  copy->segment_ = path->segment_;
+  copy->pathCost_ = path->pathCost_;
+  copy->pathLength_ = path->pathLength_;
+  copy->pathTime_ = path->pathTime_;
+  return copy;
 }
 
 Ptr<Location> Path::location(string _name) {
@@ -565,7 +568,6 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
 
     // If reached end, add path to list of possible paths
     if (currLoc->name() == end->name()) {
-      std::cout << currLoc->name() << std::endl;
       possiblePaths.push_back(path);
       continue;
     }

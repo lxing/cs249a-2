@@ -91,8 +91,8 @@ Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
 
 Ptr<Location> Path::location(string _name) {
   for (uint32_t i=0; i<segment_.size(); i++) {
-    Ptr<Segment> seg = segment_[i];
-    if (seg->name() == _name) return seg->source();
+    Ptr<Location> source = segment_[i]->source(); 
+    if (source->name() == _name) return source;
   }
 
   Ptr<Location> loc = destination();
@@ -531,12 +531,10 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connect(
 std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     Fwk::Ptr<Location> start, Fwk::Ptr<Location> end,
     Segment::ExpeditedSupport expedited) {
-  std::set<string> visitedLocs;
   std::vector<Fwk::Ptr<Path> > possiblePaths;
 
   // case where the start and end are same location
   if (start->name() == end->name()) return possiblePaths;
-  visitedLocs.insert(start->name());
 
   std::queue<Fwk::Ptr<Path> > pathQueue;
   std::vector<Ptr<Segment> > startSegments = start->segments();
@@ -572,8 +570,6 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
       continue;
     }
 
-    visitedLocs.insert(currLoc->name());
-
     // Otherwise, we add all of the segments from the currLoc to copies of
     // the current path and continue our breadth first search.
     std::vector<Fwk::Ptr<Segment> > nextSegments = currLoc->segments();
@@ -581,11 +577,8 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
       Ptr<Segment> nextSegment = nextSegments[i];
       Ptr<Location> nextLoc = nextSegment->destination();
       
-      std::set<string>::iterator it = visitedLocs.find(nextLoc->name());
-      if (it != visitedLocs.end()) {
-        // if we have visited this location already, continue
-        continue;
-      }
+      // Don't loop
+      if (path->location(nextLoc->name()) != NULL) continue;
 
       // we want to add segment if:
       // 1. expeditedSupport is yes_ and our segment has expedited support
@@ -610,13 +603,11 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
     Fwk::Ptr<Location> start, Mile _distance, Dollar _cost, Time _time,
     Segment::ExpeditedSupport _expedited) {
   // BFS
-  std::set<string> visitedLocs;
   std::vector<Fwk::Ptr<Path> > possiblePaths;
   std::queue<Fwk::Ptr<Path> > pathQueue;
   std::vector<Ptr<Segment> > startSegments = start->segments();
 
   // populate the queue with the segments of the start location
-  visitedLocs.insert(start->name());
   for (uint32_t i=0; i<startSegments.size(); i++) {
     Fwk::Ptr<Path> startPath = new Path();
     startPath->expeditedSupportIs(_expedited);
@@ -633,7 +624,6 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
               (_expedited == Segment::yes_ &&
                   startSegment->expeditedSupport() == Segment::yes_))) {
       Fwk::Ptr<Location> nextLoc = startSegments[i]->returnSegment()->source();
-      visitedLocs.insert(nextLoc->name());
 
       startPath->addSegment(startSegments[i],
                             segmentCost,
@@ -657,9 +647,8 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
       Ptr<Segment> nextSegment = nextSegments[i];
       Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
 
-      std::set<string>::iterator it = visitedLocs.find(nextLoc->name());
-      // if we have visited this location already, continue
-      if (it != visitedLocs.end()) continue;
+      // Don't loop
+      if (path->location(nextLoc->name()) != NULL) continue;
 
       Dollar segmentCost = nextSegment->cost(this, _expedited);
       Time segmentTime = nextSegment->time(this, _expedited);
@@ -672,7 +661,6 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
               (_expedited == Segment::yes_ &&
                   nextSegment->expeditedSupport() == Segment::yes_))) {
         Fwk::Ptr<Path> newPath = Path::copy(path);
-        visitedLocs.insert(nextLoc->name());
         newPath->addSegment(nextSegment,
                             segmentCost,
                             nextSegment->length(),

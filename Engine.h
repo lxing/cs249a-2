@@ -299,13 +299,15 @@ private:
 
 class Path : public PtrInterface<Path> {
 public:
-  Path() : pathCost_(0), pathLength_(0), pathTime_(0) { }
+  Path() : pathCost_(0), pathLength_(0), pathTime_(0),
+    expeditedSupport_(Segment::no_) { }
   ~Path() { }
 
   Dollar cost() { return pathCost_; }
   Mile length() { return pathLength_; }
   Time time() { return pathTime_; }
   Segment::ExpeditedSupport expeditedSupport() { return expeditedSupport_; }
+  void expeditedSupportIs(Segment::ExpeditedSupport _es) { expeditedSupport_ = _es; }
 
   string tostring();
 
@@ -324,10 +326,10 @@ public:
   }
 
 private:
-  Segment::ExpeditedSupport expeditedSupport_;
   Dollar pathCost_;
   Mile pathLength_;
   Time pathTime_;
+  Segment::ExpeditedSupport expeditedSupport_;
   std::vector<Fwk::Ptr<Segment> > segment_;
 };
 

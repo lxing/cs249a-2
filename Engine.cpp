@@ -102,6 +102,7 @@ Dollar PlaneSegment::cost(EngineManager* manager, ExpeditedSupport expedited) {
 
 Fwk::Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
   Fwk::Ptr<Path> copyPath = new Path();
+  copyPath->expeditedSupportIs(path->expeditedSupport());
   copyPath->segment_ = path->segment_;
   return copyPath;
 }
@@ -528,7 +529,7 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
           startSegments[i]->expeditedSupport() == Segment::yes_) ||
           expedited == Segment::no_) {
       Fwk::Ptr<Path> startPath = new Path();
-      // don't care about segment cost, so we call addSegment with cost 0
+      startPath->expeditedSupportIs(expedited);
 
       Ptr<Segment> segment = startSegments[i];
       startPath->addSegment(segment,
@@ -575,7 +576,6 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
             nextSegment->expeditedSupport() == Segment::yes_) ||
             expedited == Segment::no_) {
         Fwk::Ptr<Path> newPath = Path::copy(path);
-        // don't care about segment cost, so we call addSegment with cost 0
         newPath->addSegment(nextSegment, 0, 0, 0);
         Ptr<Segment> segment = segments[i];
         newPath->addSegment(nextSegment,
@@ -603,6 +603,7 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
   visitedLocs.insert(start->name());
   for (uint32_t i=0; i<startSegments.size(); i++) {
     Fwk::Ptr<Path> startPath = new Path();
+    startPath->expeditedSupportIs(_expedited);
     Ptr<Segment> startSegment = startSegments[i];
 
     Dollar segmentCost = startSegment->cost(this, _expedited);

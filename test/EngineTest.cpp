@@ -218,7 +218,7 @@ TEST_F(EngineTest, SimpleExploreLineTest) {
   Ptr<Shipping::BoatTerminal> bta = em->boatTerminal("BoatTerminalA");
 
   Shipping::Mile distance(100);
-  Shipping::Dollar cost(100);
+  Shipping::Dollar cost(100000);
   Shipping::Time t(1);
   Shipping::Segment::ExpeditedSupport expedited =
       Shipping::Segment::no_;

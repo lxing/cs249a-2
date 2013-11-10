@@ -24,13 +24,14 @@ NamedInterface
         PlaneSegment
 Stats
 Path
+EngineManager
 
 All of the objects in our graph are represented as entities. All other objects 
-are represented as implementing the Fwk::Ptr Interface. 
+are represented as implementing the Fwk::PtrInterface. 
 
 There were some interesting issues that arose when coming up with the design. 
 The first is our choice to make stats and path non-entities. The reasoning is
-that these objects would never need names, and so they would not necessarily
+that these singletons would never need names, and so they would not necessarily
 need to be NamedInteraces, but simply some other class type.
 
 In terms of other design decisions, we tried to stick to the lecture material as
@@ -42,12 +43,48 @@ cost() of traversing a particular segment. In this case, a user would call the
 time() or cost() method on a segment interface, but the underlying segment impl
 would create a time or cost specific to that implementation type. 
 
-One other interesting design cosntraint is that most calls which change the
-engine state must go through our EngineManager. The reason for this is that
-our stats are tracked at the EngineManager level. Thus, all calls must be
-funneled through the manager in order for our stats class to be updated. For the
-most part, this is effective. However, for the cases where calls cannot be 
-funneled through the EngineManager, we designed our entity class to hold a Ptr<>
-to the manager class, so that some of the attributes can trigger the stats 
-update manually.
+The stats implementation constrained some of our design. Namely, we didn't want
+to dynamically register the stats object as a reactor to every single entity,
+so instead we register it as a reactor of the EngineManager. For relationship-
+changing operations mediated by the EngineManager, such as Entity creation and
+deletion, this is the natural channel to invoke stats updates. Instance-based
+attribute updates, such as expeditedSupportIs, call back to the EngineManager, 
+which in turn triggers a EngineReactor notification that is captured by the
+ stats object.
+
+When updating dependent attributes (when the value of a particular attribute
+depends on another), we set up our code such that the engine manager will try
+to resolve any state conflicts internally (so that the rep layer does not need 
+to manage the relationships between objects), and allow stats to be updated via 
+notifications. For example, when calling segmentdel(), the EngineManager will
+try to resolve the dependencies (by nulling the appropriate returnSegments), 
+rather than having the caller resolve these dependencies.
+
+To strengthen our type checking, we use custom defined ordinals and nominals for
+the attributes and prototypes of our methods. In this way, we guaranteed that, 
+at compile time, all of our methods were using the correct custom types, and
+that by using the correct custom types for method calls, the inputs to method 
+calls are within the correct range.
+
+In addition to using our custom ordinal/nominal classes for attributes, we
+also wanted to make sure that these attributes were intialized with correct
+starting values. For the Fleet class, for example, we initialize the defualt
+difficulty to be 1. (Since the difficulty is an input to the cost fuction,
+a difficulty of 1 is a no-op).
+
+Finally is our decision to create a type for each class rather than multiplexing
+within each of the classes and using an an attribute to distinguish between
+class types. We decided that it would be best to use a specifically designed 
+typefor each class--in Segment, Terminal, and Fleet types, we have a Boat, 
+Truck, and  Plane class for each of those types. This gives us several benefits:
+the first is that the compiler will do type checking for us in the rep layer,
+ensuring that each of the classes is used appropriately, rather than having
+run time checks ensure that the "type" attribute is correct. The second is that
+we can use inheritance and overloading to allow our specifically defined
+subclasses to return type specific values. For example, the Segment interface
+exposes a time() and cost() attribute, which are respectively the time and cost 
+to traverse a given segment. Since these two attributes vary depending on type,
+the Boat, Truck and PlaneSegments all implement these two attribute methods
+slightly differently. The benefit is that we see incorrectness exposed at
+compile rather than run time.
 

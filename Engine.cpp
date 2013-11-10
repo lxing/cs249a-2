@@ -79,6 +79,30 @@ void Segment::expeditedSupportIs(ExpeditedSupport _expeditedSupport) {
   expeditedSupport_ = _expeditedSupport;
 }
 
+Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
+  Fwk::Ptr<Path> copyPath = new Path();
+  copyPath->expeditedSupportIs(path->expeditedSupport());
+  copyPath->segment_ = path->segment_;
+  return copyPath;
+}
+
+Ptr<Location> Path::location(string _name) {
+  for (uint32_t i=0; i<segment_.size(); i++) {
+    Ptr<Segment> seg = segment_[i];
+    if (seg->name() == _name) return seg->source();
+  }
+
+  Ptr<Location> loc = destination();
+  if (loc->name() != _name) loc = NULL;
+  return loc;
+}
+
+Ptr<Location> Path::destination() {
+  Ptr<Location> dest = NULL;
+  if (segment_.size() > 0) dest = segment_[segment_.size() - 1]->destination();
+  return dest;
+}
+
 Dollar BoatSegment::cost(EngineManager* manager, ExpeditedSupport expedited) {
   Dollar cost(length().value() * difficulty().value() *
     manager->boatFleet()->cost().value());
@@ -98,13 +122,6 @@ Dollar PlaneSegment::cost(EngineManager* manager, ExpeditedSupport expedited) {
     manager->planeFleet()->cost().value());
   if (expedited == yes_) cost = cost.value() * expeditedCostMultiplier;
   return cost;
-}
-
-Fwk::Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
-  Fwk::Ptr<Path> copyPath = new Path();
-  copyPath->expeditedSupportIs(path->expeditedSupport());
-  copyPath->segment_ = path->segment_;
-  return copyPath;
 }
 
 Time BoatSegment::time(Shipping::EngineManager* manager, ExpeditedSupport expedited) {

@@ -91,7 +91,7 @@ public:
 protected:
   Fleet(const string& name, Fwk::Ptr<EngineManager> em) :
       Entity(name, em), speed_(1.0), // Init speed to 1 to avoid division errors
-      capacity_(0), cost_(0) { }
+      capacity_(1.0), cost_(1.0) { }
 
 private:
   MilesPerHour speed_;
@@ -308,8 +308,8 @@ public:
   Time time() { return pathTime_; }
   Segment::ExpeditedSupport expeditedSupport() { return expeditedSupport_; }
   void expeditedSupportIs(Segment::ExpeditedSupport _es) { expeditedSupport_ = _es; }
-
-  string tostring();
+  Ptr<Location> location(string _name);
+  Ptr<Location> destination();
 
   static Fwk::Ptr<Path> copy(Fwk::Ptr<Path> path);
 
@@ -320,6 +320,7 @@ public:
     pathTime_ = pathTime_.value() + time.value();
     segment_.push_back(segment);
   }
+
 
   std::vector<Fwk::Ptr<Segment> > segments() {
     return segment_;

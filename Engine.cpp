@@ -73,9 +73,24 @@ void Segment::expeditedSupportIs(ExpeditedSupport _expeditedSupport) {
   expeditedSupport_ = _expeditedSupport;
 }
 
-Dollar Segment::cost(EngineManager* manager, ExpeditedSupport expedited) {
-  Dollar cost(0);
-  cost = cost.value() * length().value() * difficulty().value();
+Dollar BoatSegment::cost(EngineManager* manager, ExpeditedSupport expedited) {
+  Dollar cost(length().value() * difficulty().value() *
+    manager->boatFleet()->cost().value());
+  if (expedited == yes_) cost = cost.value() * expeditedCostMultiplier;
+  return cost;
+}
+
+Dollar TruckSegment::cost(EngineManager* manager, ExpeditedSupport expedited) {
+  Dollar cost(length().value() * difficulty().value() *
+    manager->truckFleet()->cost().value());
+  if (expedited == yes_) cost = cost.value() * expeditedCostMultiplier;
+  return cost;
+}
+
+Dollar PlaneSegment::cost(EngineManager* manager, ExpeditedSupport expedited) {
+  Dollar cost(length().value() * difficulty().value() *
+    manager->planeFleet()->cost().value());
+  if (expedited == yes_) cost = cost.value() * expeditedCostMultiplier;
   return cost;
 }
 
@@ -85,24 +100,21 @@ Fwk::Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
   return copyPath;
 }
 
-Time BoatSegment::time(
-  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  Time t(0);
-  t = (double)length().value() / manager->boatFleet()->speed().value();
+Time BoatSegment::time(Shipping::EngineManager* manager, ExpeditedSupport expedited) {
+  Time t(length().value() / manager->boatFleet()->speed().value());
+  if (expedited == yes_) t = t.value() / expeditedSpeedMultiplier; 
   return t;
 }
 
-Time TruckSegment::time(
-  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  Time t(0);
-  t = (double)length().value() / manager->truckFleet()->speed().value();
+Time TruckSegment::time(Shipping::EngineManager* manager, ExpeditedSupport expedited) {
+  Time t(length().value() / manager->truckFleet()->speed().value());
+  if (expedited == yes_) t = t.value() / expeditedSpeedMultiplier; 
   return t;
 }
 
-Time PlaneSegment::time(
-  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  Time t(0);
-  t = (double)length().value() / manager->planeFleet()->speed().value();
+Time PlaneSegment::time(Shipping::EngineManager* manager, ExpeditedSupport expedited) {
+  Time t(length().value() / manager->planeFleet()->speed().value());
+  if (expedited == yes_) t = t.value() / expeditedSpeedMultiplier; 
   return t;
 }
 
@@ -576,6 +588,7 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
   for (uint32_t i=0; i<startSegments.size(); i++) {
     Fwk::Ptr<Path> startPath = new Path();
     Ptr<Segment> startSegment = startSegments[i];
+
     Dollar segmentCost = startSegment->cost(this, _expedited);
     Time segmentTime = startSegment->time(this, _expedited);
 

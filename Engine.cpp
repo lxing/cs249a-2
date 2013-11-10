@@ -24,6 +24,12 @@ void Location::segmentDel(Ptr<Segment> s) {
   }
 }
 
+Ptr<Location> Segment::destination() {
+  Ptr<Location> dest = NULL;
+  if (returnSegment_ != NULL) dest = returnSegment_->source();
+  return dest;
+}
+
 void Segment::del() {
   // 1. dels itself from its source's list of segments
   Fwk::Ptr<Segment> seg = this;
@@ -73,36 +79,69 @@ void Segment::expeditedSupportIs(ExpeditedSupport _expeditedSupport) {
   expeditedSupport_ = _expeditedSupport;
 }
 
-Dollar Segment::cost(EngineManager* manager, ExpeditedSupport expedited) {
-  Dollar cost(0);
-  cost = cost.value() * length().value() * difficulty().value();
+Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
+  Fwk::Ptr<Path> copy = new Path();
+  copy->expeditedSupport_ = path->expeditedSupport_;
+  copy->segment_ = path->segment_;
+  copy->pathCost_ = path->pathCost_;
+  copy->pathLength_ = path->pathLength_;
+  copy->pathTime_ = path->pathTime_;
+  return copy;
+}
+
+Ptr<Location> Path::location(string _name) {
+  for (uint32_t i=0; i<segment_.size(); i++) {
+    Ptr<Segment> seg = segment_[i];
+    if (seg->name() == _name) return seg->source();
+  }
+
+  Ptr<Location> loc = destination();
+  if (loc->name() != _name) loc = NULL;
+  return loc;
+}
+
+Ptr<Location> Path::destination() {
+  Ptr<Location> dest = NULL;
+  if (segment_.size() > 0) dest = segment_[segment_.size() - 1]->destination();
+  return dest;
+}
+
+Dollar BoatSegment::cost(EngineManager* manager, ExpeditedSupport expedited) {
+  Dollar cost(length().value() * difficulty().value() *
+    manager->boatFleet()->cost().value());
+  if (expedited == yes_) cost = cost.value() * expeditedCostMultiplier;
   return cost;
 }
 
-Fwk::Ptr<Path> Path::copy(Fwk::Ptr<Path> path) {
-  Fwk::Ptr<Path> copyPath = new Path();
-  copyPath->segment_ = path->segment_;
-  return copyPath;
+Dollar TruckSegment::cost(EngineManager* manager, ExpeditedSupport expedited) {
+  Dollar cost(length().value() * difficulty().value() *
+    manager->truckFleet()->cost().value());
+  if (expedited == yes_) cost = cost.value() * expeditedCostMultiplier;
+  return cost;
 }
 
-Time BoatSegment::time(
-  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  Time t(0);
-  t = (double)length().value() / manager->boatFleet()->speed().value();
+Dollar PlaneSegment::cost(EngineManager* manager, ExpeditedSupport expedited) {
+  Dollar cost(length().value() * difficulty().value() *
+    manager->planeFleet()->cost().value());
+  if (expedited == yes_) cost = cost.value() * expeditedCostMultiplier;
+  return cost;
+}
+
+Time BoatSegment::time(Shipping::EngineManager* manager, ExpeditedSupport expedited) {
+  Time t(length().value() / manager->boatFleet()->speed().value());
+  if (expedited == yes_) t = t.value() / expeditedSpeedMultiplier; 
   return t;
 }
 
-Time TruckSegment::time(
-  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  Time t(0);
-  t = (double)length().value() / manager->truckFleet()->speed().value();
+Time TruckSegment::time(Shipping::EngineManager* manager, ExpeditedSupport expedited) {
+  Time t(length().value() / manager->truckFleet()->speed().value());
+  if (expedited == yes_) t = t.value() / expeditedSpeedMultiplier; 
   return t;
 }
 
-Time PlaneSegment::time(
-  Shipping::EngineManager* manager, ExpeditedSupport expedited) {
-  Time t(0);
-  t = (double)length().value() / manager->planeFleet()->speed().value();
+Time PlaneSegment::time(Shipping::EngineManager* manager, ExpeditedSupport expedited) {
+  Time t(length().value() / manager->planeFleet()->speed().value());
+  if (expedited == yes_) t = t.value() / expeditedSpeedMultiplier; 
   return t;
 }
 
@@ -510,8 +549,13 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
           startSegments[i]->expeditedSupport() == Segment::yes_) ||
           expedited == Segment::no_) {
       Fwk::Ptr<Path> startPath = new Path();
-      // don't care about segment cost, so we call addSegment with cost 0
-      startPath->addSegment(startSegments[i], 0, 0, 0);
+      startPath->expeditedSupportIs(expedited);
+
+      Ptr<Segment> segment = startSegments[i];
+      startPath->addSegment(segment,
+                            segment->cost(this, expedited),
+                            segment->length(),
+                            segment->time(this, expedited));
       pathQueue.push(startPath);
     }
   }
@@ -520,16 +564,14 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     Fwk::Ptr<Path> path = pathQueue.front();
     pathQueue.pop();
 
-    std::vector<Fwk::Ptr<Segment> > segments = path->segments();
-    Ptr<Segment> currSegment = segments[segments.size()-1];
-    // If the source of the return segment (nextLoc) matches our end,
-    // then we found our path.
+    Fwk::Ptr<Location> currLoc = path->destination();
 
-    Fwk::Ptr<Location> currLoc = currSegment->returnSegment()->source();
+    // If reached end, add path to list of possible paths
     if (currLoc->name() == end->name()) {
-        // add path to list of possible paths
-        possiblePaths.push_back(path);
+      possiblePaths.push_back(path);
+      continue;
     }
+
     visitedLocs.insert(currLoc->name());
 
     // Otherwise, we add all of the segments from the currLoc to copies of
@@ -537,7 +579,7 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     std::vector<Fwk::Ptr<Segment> > nextSegments = currLoc->segments();
     for (uint32_t i=0; i<nextSegments.size(); i++) {
       Ptr<Segment> nextSegment = nextSegments[i];
-      Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
+      Ptr<Location> nextLoc = nextSegment->destination();
       
       std::set<string>::iterator it = visitedLocs.find(nextLoc->name());
       if (it != visitedLocs.end()) {
@@ -552,8 +594,10 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
             nextSegment->expeditedSupport() == Segment::yes_) ||
             expedited == Segment::no_) {
         Fwk::Ptr<Path> newPath = Path::copy(path);
-        // don't care about segment cost, so we call addSegment with cost 0
-        newPath->addSegment(nextSegment, 0, 0, 0);
+        newPath->addSegment(nextSegment,
+                            nextSegment->cost(this, expedited),
+                            nextSegment->length(),
+                            nextSegment->time(this, expedited));
         pathQueue.push(newPath);
       }
     }
@@ -575,7 +619,9 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
   visitedLocs.insert(start->name());
   for (uint32_t i=0; i<startSegments.size(); i++) {
     Fwk::Ptr<Path> startPath = new Path();
+    startPath->expeditedSupportIs(_expedited);
     Ptr<Segment> startSegment = startSegments[i];
+
     Dollar segmentCost = startSegment->cost(this, _expedited);
     Time segmentTime = startSegment->time(this, _expedited);
 
@@ -590,7 +636,9 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
       visitedLocs.insert(nextLoc->name());
 
       startPath->addSegment(startSegments[i],
-          segmentCost, startSegment->length(), segmentTime);
+                            segmentCost,
+                            startSegment->length(),
+                            segmentTime);
       possiblePaths.push_back(startPath);
       pathQueue.push(startPath);
     }
@@ -610,10 +658,8 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
       Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
 
       std::set<string>::iterator it = visitedLocs.find(nextLoc->name());
-      if (it != visitedLocs.end()) {
-        // if we have visited this location already, continue
-        continue;
-      }
+      // if we have visited this location already, continue
+      if (it != visitedLocs.end()) continue;
 
       Dollar segmentCost = nextSegment->cost(this, _expedited);
       Time segmentTime = nextSegment->time(this, _expedited);
@@ -622,14 +668,15 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
       if (segmentCost+path->cost() <= _cost &&
             segmentTime+path->time() <= _time &&
             nextSegment->length()+path->length() <= _distance &&
-            _expedited == nextSegment->expeditedSupport() &&
             (_expedited == Segment::no_ || 
               (_expedited == Segment::yes_ &&
                   nextSegment->expeditedSupport() == Segment::yes_))) {
         Fwk::Ptr<Path> newPath = Path::copy(path);
         visitedLocs.insert(nextLoc->name());
         newPath->addSegment(nextSegment,
-            segmentCost, nextSegment->length(), segmentTime);
+                            segmentCost,
+                            nextSegment->length(),
+                            segmentTime);
         possiblePaths.push_back(newPath);
         pathQueue.push(newPath);
       }

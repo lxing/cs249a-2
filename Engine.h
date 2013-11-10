@@ -90,8 +90,8 @@ public:
 
 protected:
   Fleet(const string& name, Fwk::Ptr<EngineManager> em) :
-      Entity(name, em), speed_(0),
-      capacity_(0), cost_(0) { }
+      Entity(name, em), speed_(1.0), // Init speed to 1 to avoid division errors
+      capacity_(1.0), cost_(1.0) { }
 
 private:
   MilesPerHour speed_;
@@ -276,7 +276,7 @@ public:
   ExpeditedSupport expeditedSupport() { return expeditedSupport_; };
   void expeditedSupportIs(ExpeditedSupport _expeditedSupport);
 
-  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
+  virtual Dollar cost(EngineManager* manager, ExpeditedSupport expedited) = 0;
   virtual Time time(EngineManager* manager, ExpeditedSupport expedited) = 0;
 
 protected:
@@ -285,6 +285,8 @@ protected:
       expeditedSupport_(no_) { }
   virtual ~Segment() {};
 
+  static const double expeditedSpeedMultiplier = 1.3;
+  static const double expeditedCostMultiplier = 1.5;
 
 private:
   string name_;
@@ -297,35 +299,38 @@ private:
 
 class Path : public PtrInterface<Path> {
 public:
-  Path() : pathCost_(0), pathLength_(0), pathTime_(0) { }
+  Path() : pathCost_(0), pathLength_(0), pathTime_(0),
+    expeditedSupport_(Segment::no_) { }
   ~Path() { }
 
   Dollar cost() { return pathCost_; }
   Mile length() { return pathLength_; }
   Time time() { return pathTime_; }
   Segment::ExpeditedSupport expeditedSupport() { return expeditedSupport_; }
-
-  string tostring();
+  void expeditedSupportIs(Segment::ExpeditedSupport _es) { expeditedSupport_ = _es; }
+  Ptr<Location> location(string _name);
+  Ptr<Location> destination();
 
   static Fwk::Ptr<Path> copy(Fwk::Ptr<Path> path);
 
-  void addSegment(Fwk::Ptr<Segment> segment, Dollar segmentCost, Mile length,
+  void addSegment(Fwk::Ptr<Segment> segment, Dollar cost, Mile length,
         Time time) {
-    pathCost_ = pathCost_.value() + segmentCost.value();
+    pathCost_ = pathCost_.value() + cost.value();
     pathLength_ = pathLength_.value() + length.value();
     pathTime_ = pathTime_.value() + time.value();
     segment_.push_back(segment);
   }
+
 
   std::vector<Fwk::Ptr<Segment> > segments() {
     return segment_;
   }
 
 private:
-  Segment::ExpeditedSupport expeditedSupport_;
   Dollar pathCost_;
   Mile pathLength_;
   Time pathTime_;
+  Segment::ExpeditedSupport expeditedSupport_;
   std::vector<Fwk::Ptr<Segment> > segment_;
 };
 
@@ -341,6 +346,7 @@ public:
   void sourceIs(Ptr<Customer> _loc) { Segment::sourceIs(_loc); }
   void sourceIs(Ptr<Port> _loc) { Segment::sourceIs(_loc); }
 
+  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
@@ -360,6 +366,7 @@ public:
   void sourceIs(Ptr<Customer> _loc) { Segment::sourceIs(_loc); }
   void sourceIs(Ptr<Port> _loc) { Segment::sourceIs(_loc); }
 
+  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:
@@ -379,6 +386,7 @@ public:
   void sourceIs(Ptr<Customer> _loc) { Segment::sourceIs(_loc); }
   void sourceIs(Ptr<Port> _loc) { Segment::sourceIs(_loc); }
 
+  Dollar cost(EngineManager* manager, ExpeditedSupport expedited);
   Time time(EngineManager* manager, ExpeditedSupport expedited);
 
 protected:

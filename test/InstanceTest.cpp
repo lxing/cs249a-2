@@ -233,6 +233,8 @@ TEST_F(InstanceTest, Explore) {
   //                   pS2
   //                    |
   //                 customer
+  //
+  // Only testing parsing; functionality should be in EngineTest
   Ptr<Instance> truckS2 = manager->instanceNew("truckS2", "Truck segment"); 
   truckS->attributeIs("source", "port");
   truckS2->attributeIs("source", "truckT");
@@ -249,4 +251,5 @@ TEST_F(InstanceTest, Explore) {
   planeS->attributeIs("return segment", "planeS2"); 
   
   string explore = conn->attribute("explore port : distance 1600");
+  ASSERT_EQ(explore, "port(boatS:300.50:boatS2) boatT\nport(planeS:1502.00:planeS2) planeT\n");
 }

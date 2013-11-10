@@ -1,0 +1,53 @@
+lxing
+rhau
+
+README
+
+Ouf class hierarchy can be generally described as:
+
+NamedInterface
+  Entity
+    Fleet
+      BoatFleet
+      PlaneFleet
+      TruckFleet
+    Location
+        Customer
+        Port
+        Terminal
+        BoatTerminal
+        TruckTerminal
+        PlaneTerminal
+    Segment
+        BoatSegment
+        TruckSegment
+        PlaneSegment
+Stats
+Path
+
+All of the objects in our graph are represented as entities. All other objects 
+are represented as implementing the Fwk::Ptr Interface. 
+
+There were some interesting issues that arose when coming up with the design. 
+The first is our choice to make stats and path non-entities. The reasoning is
+that these objects would never need names, and so they would not necessarily
+need to be NamedInteraces, but simply some other class type.
+
+In terms of other design decisions, we tried to stick to the lecture material as
+closely as possible. In other words, we used an attribute-based system, used
+the attribute based naming schemes, and inheritance to create type-specific
+implementations for eacch class type. You can see this pattern most clearly in 
+cost() or time() attribute methods on segments, which calculates the time() or
+cost() of traversing a particular segment. In this case, a user would call the 
+time() or cost() method on a segment interface, but the underlying segment impl
+would create a time or cost specific to that implementation type. 
+
+One other interesting design cosntraint is that most calls which change the
+engine state must go through our EngineManager. The reason for this is that
+our stats are tracked at the EngineManager level. Thus, all calls must be
+funneled through the manager in order for our stats class to be updated. For the
+most part, this is effective. However, for the cases where calls cannot be 
+funneled through the EngineManager, we designed our entity class to hold a Ptr<>
+to the manager class, so that some of the attributes can trigger the stats 
+update manually.
+

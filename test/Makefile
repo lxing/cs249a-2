@@ -35,8 +35,7 @@ COMPILER_FLAGS += -g -Wall
 
 # This is a list of tests. You would add the name of any new tests you add here
 # and define it below.
-FILES += EngineTest InstanceTest
-
+FILES +=  test-cases
 # This is a list of object files.
 OBJS = $(addsuffix .o, $(FILES))
 
@@ -50,6 +49,8 @@ EngineTest: EngineTest.cpp $(SRC_PATH)/Engine.cpp $(SRC_PATH)/Engine.h $(SRC_PAT
 	$(CXX) $(PREPROCESSOR_FLAGS) $(COMPILER_FLAGS) -c EngineTest.cpp
 InstanceTest: InstanceTest.cpp $(SRC_PATH)/Instance.cpp $(SRC_PATH)/Instance.h $(SRC_PATH)/Engine.o  $(LIBS)
 	$(CXX) $(PREPROCESSOR_FLAGS) $(COMPILER_FLAGS) -c InstanceTest.cpp
+test-cases: test-cases.cpp $(SRC_PATH)/Instance.cpp $(SRC_PATH)/Instance.h $(SRC_PATH)/Engine.o  $(LIBS)
+	$(CXX) $(PREPROCESSOR_FLAGS) $(COMPILER_FLAGS) -c test-cases.cpp
 
 # ##################
 # Main Suite
@@ -59,7 +60,7 @@ InstanceTest: InstanceTest.cpp $(SRC_PATH)/Instance.cpp $(SRC_PATH)/Instance.h $
 # above. It links the main google test library which has a main function that
 # pulls in our tests and runs them.
 main: $(FILES)
-	$(CXX) $(PREPROCESSOR_FLAGS) $(COMPILER_FLAGS) $(MAIN_OBJ_PATH) $(LIBS) $(GUNIT_BASE)/make/gtest_main.a -lpthread $(OBJS) -o UnitTest
+	$(CXX) $(PREPROCESSOR_FLAGS) $(COMPILER_FLAGS) $(MAIN_OBJ_PATH) $(LIBS)  -lpthread $(OBJS) -o UnitTest
 
 all: main
 

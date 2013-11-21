@@ -249,7 +249,7 @@ TEST_F(EngineTest, SimpleExploreGraphTest) {
   bsad->returnSegmentIs(bsda);
 
   Shipping::Mile distance(100);
-  Shipping::Dollar cost(100);
+  Shipping::Dollar cost(10000);
   Shipping::Time t(1);
   Shipping::Segment::ExpeditedSupport expedited =
       Shipping::Segment::no_;
@@ -281,7 +281,7 @@ TEST_F(EngineTest, SimpleExploreGraphOutOfBoundaryTest) {
   bsad->returnSegmentIs(bsda);
 
   Shipping::Mile distance(100);
-  Shipping::Dollar cost(100);
+  Shipping::Dollar cost(10000);
   Shipping::Time t(1);
   Shipping::Segment::ExpeditedSupport expedited =
       Shipping::Segment::no_;

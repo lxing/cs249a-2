@@ -3,6 +3,19 @@
 #include "gtest/gtest.h"
 #include "../Engine.h"
 
+#include <string>
+#include <set>
+#include <ostream>
+#include <iostream>
+#include <unistd.h>
+#include <cstdlib>
+#include <sys/wait.h>
+#include <sys/signal.h>
+#include <boost/lexical_cast.hpp>
+#include "Instance.h"
+
+using namespace std;
+
 /******************/
 /* Initialization */
 /******************/
@@ -357,3 +370,41 @@ TEST_F(EngineTest, StatsCountDownTest) {
   em->entityDel("BoatSegmentB");
   ASSERT_EQ(2, stats->expeditedSegmentCount());
 }
+
+class TestHarness : public ::testing::Test {
+
+};
+
+// TEST_F(TestHarness, TestStatsAttributes) {
+//     Ptr<Instance::Manager> m = shippingInstanceManager();
+//     Ptr<Instance> fleet = m->instanceNew("fleet", "Fleet");
+//     Ptr<Instance> stats = m->instanceNew("stats", "Stats");
+
+//     /* Make some instanes of varying types, then test stats */
+//     m->instanceNew("seg1", "Boat segment");
+//     m->instanceNew("seg2", "Plane segment");
+//     m->instanceNew("seg3", "Plane segment");
+//     m->instanceNew("seg4", "Truck segment");
+//     m->instanceNew("seg5", "Truck segment");
+//     m->instanceNew("seg6", "Truck segment");
+//     m->instanceNew("seg7", "Truck segment");
+//     m->instanceNew("seg8", "Truck segment");
+
+//     m->instanceNew("loc1", "Customer");
+//     m->instanceNew("loc2", "Port");
+//     m->instanceNew("loc3", "Truck terminal");
+//     m->instanceNew("loc4", "Boat terminal");
+//     m->instanceNew("loc5", "Plane terminal");
+//     m->instanceNew("loc6", "Truck terminal");
+//     m->instanceNew("loc7", "Truck terminal");
+//     m->instanceNew("loc8", "Truck terminal");
+
+//     EQUAL(stats->attribute("Boat segment"), "1");
+//     EQUAL(stats->attribute("Plane segment"), "2");
+//     EQUAL(stats->attribute("Truck segment"), "5");
+//     EQUAL(stats->attribute("Customer"), "1");
+//     EQUAL(stats->attribute("Port"), "1");
+//     EQUAL(stats->attribute("Truck terminal"), "4");
+//     EQUAL(stats->attribute("Plane terminal"), "1");
+//     EQUAL(stats->attribute("Boat terminal"), "1");
+// }

@@ -390,7 +390,7 @@ void TruckSegmentRep::sourceIs(const string& v) {
   if (customer) { segment_->sourceIs(customer); return; }
   Ptr<Port> port = engine_->port(v);
   if (port) { segment_->sourceIs(port); return; }
-  cerr << "Invalid source";
+  cerr << "Invalid source:" << v << endl;
 }
 
 void TruckSegmentRep::returnSegmentIs(const string& v) {
@@ -408,7 +408,7 @@ void BoatSegmentRep::sourceIs(const string& v) {
   if (customer) { segment_->sourceIs(customer); return; }
   Ptr<Port> port = engine_->port(v);
   if (port) { segment_->sourceIs(port); return; }
-  cerr << "Invalid source";
+  cerr << "Invalid source:" << v << endl;
 }
 
 void BoatSegmentRep::returnSegmentIs(const string& v) {
@@ -426,7 +426,7 @@ void PlaneSegmentRep::sourceIs(const string& v) {
   if (customer) { segment_->sourceIs(customer); return; }
   Ptr<Port> port = engine_->port(v);
   if (port) { segment_->sourceIs(port); return; }
-  cerr << "Invalid source";
+  cerr << "Invalid source:" << v << endl;
 }
 
 void PlaneSegmentRep::returnSegmentIs(const string& v) {

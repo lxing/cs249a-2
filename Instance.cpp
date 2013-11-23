@@ -366,6 +366,9 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
     Difficulty difficulty = atof(v.c_str());
     segment()->difficultyIs(difficulty);
   } else if (name == "return segment") {
+    if (v == "") {
+      segment()->returnSegmentIs(NULL);  
+    } else
     returnSegmentIs(v);
   } else if (name == "expedite support") {
     Segment::ExpeditedSupport support;

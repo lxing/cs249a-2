@@ -563,6 +563,7 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
     pathQueue.pop();
 
     Fwk::Ptr<Location> currLoc = path->destination();
+    if (currLoc == NULL) continue;
 
     // If reached end, add path to list of possible paths
     if (currLoc->name() == end->name()) {
@@ -578,7 +579,7 @@ std::vector<Fwk::Ptr<Path> > EngineManager::connectImpl(
       Ptr<Location> nextLoc = nextSegment->destination();
       
       // Don't loop
-      if (path->location(nextLoc->name()) != NULL) continue;
+      if (nextLoc == NULL || path->location(nextLoc->name()) != NULL) continue;
 
       // we want to add segment if:
       // 1. expeditedSupport is yes_ and our segment has expedited support
@@ -640,12 +641,14 @@ std::vector<Fwk::Ptr<Path> > EngineManager::explore(
 
     std::vector<Fwk::Ptr<Segment> > segments = path->segments();
     Ptr<Segment> currSegment = segments[segments.size()-1];
-    Fwk::Ptr<Location> currLoc = currSegment->returnSegment()->source();
+    Fwk::Ptr<Location> currLoc = currSegment->destination();
+    if (currLoc == NULL) continue;
 
     std::vector<Fwk::Ptr<Segment> > nextSegments = currLoc->segments();
     for (uint32_t i=0; i<nextSegments.size(); i++) {
       Ptr<Segment> nextSegment = nextSegments[i];
-      Ptr<Location> nextLoc = nextSegment->returnSegment()->source();
+      Ptr<Location> nextLoc = nextSegment->destination();
+      if (nextLoc == NULL) continue;
 
       // Don't loop
       if (path->location(nextLoc->name()) != NULL) continue;

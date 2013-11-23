@@ -358,7 +358,11 @@ string SegmentRep::attribute(const string& name) {
 
 void SegmentRep::attributeIs(const string& name, const string& v) {
   if (name == "source") {
-    sourceIs(v);
+    if (v == "") {
+      segment()->sourceIs(NULL);
+    } else {
+      sourceIs(v);
+    }
   } else if (name == "length") {
     Mile length = atof(v.c_str());
     segment()->lengthIs(length);
@@ -368,8 +372,9 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
   } else if (name == "return segment") {
     if (v == "") {
       segment()->returnSegmentIs(NULL);  
-    } else
-    returnSegmentIs(v);
+    } else {
+      returnSegmentIs(v);
+    }
   } else if (name == "expedite support") {
     Segment::ExpeditedSupport support;
     if (v == "yes") {

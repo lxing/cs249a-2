@@ -47,7 +47,7 @@ void test(void (*testfn)(), int points, const char *name) {
         /* Check the child's return value */
         int status = 0;
         wait(&status);
-        
+    
         /* Non-zero value = test failed */
         cout << name << " " << (status ? 0 : points) << endl;
     } else if (pid == 0) {
@@ -947,27 +947,27 @@ void sigsegv(int signal) {
 int main(int argc, char *argv[]) {
     signal(SIGSEGV, sigsegv);
 
-    TEST(testLocationAttributes, 1);
-    TEST(testSegmentAttributes, 1);
-    TEST(testStatsAttributes, 1);
-    TEST(testStatsAttributes2, 1);
-    TEST(testFleetAttributes, 1);
-    TEST(testConn1, 2);
-    TEST(testConn2, 2);
-    TEST(testConn3, 1);
-    TEST(testExplore1, 1);
-    TEST(testExplore2, 2);
-    TEST(testExplore3, 2);
+    //TEST(testLocationAttributes, 1);
+    //TEST(testSegmentAttributes, 1);
+    //TEST(testStatsAttributes, 1);
+    //TEST(testStatsAttributes2, 1);
+    //TEST(testFleetAttributes, 1);
+    //TEST(testConn1, 2);
+    //TEST(testConn2, 2);
+    //TEST(testConn3, 1);
+    //TEST(testExplore1, 1);
+    //TEST(testExplore2, 2);
+    //TEST(testExplore3, 2);
     TEST(testExploreNoFleet, 1);
-    TEST(testSegmentCompatibility, 1);
-    TEST(testSingletons, 1);
-    TEST(testSegmentSourceChange, 1);
-    TEST(testDeleteLocation, 1);
-    TEST(testDeleteSegment, 1);
-    TEST(testErrorInvalidAttribute, 1);
-    TEST(testErrorInvalidValues, 1);
-    TEST(testErrorExistingInstance, 1); 
-    TEST(testStressTest, 1);
+    //TEST(testSegmentCompatibility, 1);
+    //TEST(testSingletons, 1);
+    //TEST(testSegmentSourceChange, 1);
+    //TEST(testDeleteLocation, 1);
+    //TEST(testDeleteSegment, 1);
+    //TEST(testErrorInvalidAttribute, 1);
+    //TEST(testErrorInvalidValues, 1);
+    //TEST(testErrorExistingInstance, 1); 
+    //TEST(testStressTest, 1);
 
     return 0;
 }

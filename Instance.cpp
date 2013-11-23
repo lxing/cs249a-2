@@ -209,7 +209,7 @@ ManagerImpl::ManagerImpl() {
 Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
   Ptr<Instance> instance = ManagerImpl::instance(name);
   if (instance != NULL) {
-    cerr << "Attempt to instantiate existing instance";
+    cerr << "Attempt to instantiate existing instance" << endl;
     instance = NULL;
     return instance;
   }
@@ -278,7 +278,7 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
     rep->planeFleetIs(engine_->planeFleet());
     instance = rep;
   } else {
-    cerr << "Invalid instance type instantiation";
+    cerr << "Invalid instance type instantiation" << endl;
     instance = NULL;
     return instance;
   }
@@ -307,7 +307,7 @@ string LocationRep::attribute(const string& name) {
 
 void LocationRep::attributeIs(const string& name, const string& v) {
   // Locations are read-only
-  cerr << "Invalid attribue for location";
+  cerr << "Invalid attribue for location" << endl;
 }
 
 static const string segmentStr = "segment";
@@ -351,7 +351,7 @@ string SegmentRep::attribute(const string& name) {
       return "no";
     }
   } else {
-    cerr << "Invalid attribute for segment";
+    cerr << "Invalid attribute for segment" << endl;
     return "";
   }
 }
@@ -374,11 +374,11 @@ void SegmentRep::attributeIs(const string& name, const string& v) {
     } else if (v == "no") {
       support = Segment::no_;
     } else {
-      cerr << "Invalid value for expedited support";
+      cerr << "Invalid value for expedited support" << endl;
     }
     segment()->expeditedSupportIs(support);
   } else {
-    cerr << "Invalid attribute for segment";
+    cerr << "Invalid attribute for segment" << endl;
   }
 }
 
@@ -397,7 +397,7 @@ void TruckSegmentRep::returnSegmentIs(const string& v) {
   if (returnSegment)
     segment_->returnSegmentIs(returnSegment);
   else
-    cerr << "Invalid return segment";
+    cerr << "Invalid return segment" << endl;
 }
 
 void BoatSegmentRep::sourceIs(const string& v) {
@@ -415,7 +415,7 @@ void BoatSegmentRep::returnSegmentIs(const string& v) {
   if (returnSegment)
     segment_->returnSegmentIs(returnSegment);
   else
-    cerr << "Invalid return segment";
+    cerr << "Invalid return segment" << endl;
 }
 
 void PlaneSegmentRep::sourceIs(const string& v) {
@@ -433,7 +433,7 @@ void PlaneSegmentRep::returnSegmentIs(const string& v) {
   if (returnSegment)
     segment_->returnSegmentIs(returnSegment);
   else
-    cerr << "Invalid return segment";
+    cerr << "Invalid return segment" << endl;
 }
 
 
@@ -462,7 +462,7 @@ string StatsRep::attribute(const string& name) {
   } else if (name == "Plane segment") {
     ss << stats_->planeSegmentCount();
   } else {
-    cerr << "Invlaid attribute for stats";
+    cerr << "Invlaid attribute for stats" << endl;
     return "";
   }
 
@@ -471,7 +471,7 @@ string StatsRep::attribute(const string& name) {
 
 void StatsRep::attributeIs(const string& name, const string& v) {
   // Stats are read-only
-  cerr << "Invalid attribute for stats";
+  cerr << "Invalid attribute for stats" << endl;
 }
 
 
@@ -483,7 +483,7 @@ string ConnRep::attribute(const string& name) {
   while (getline(iss, token, ' ')) { tokens.push_back(token); }
 
   if (tokens.size() < 3 || tokens[2] != ":") {
-    cerr << "Invalid attribute for connectivity";
+    cerr << "Invalid attribute for connectivity" << endl;
     return "";
   }
 
@@ -535,7 +535,7 @@ string ConnRep::attribute(const string& name) {
 
 void ConnRep::attributeIs(const string& name, const string& v) {
   // Connections are read-only
-  cerr << "Invalid attribute for connection";
+  cerr << "Invalid attribute for connection" << endl;
 };
 
 string ConnRep::pathString(Ptr<Path> path) {
@@ -565,7 +565,7 @@ string FleetRep::attribute(const string& name) {
     case truck_: fleet = engine_->truckFleet(); break;
     case boat_: fleet = engine_->boatFleet(); break;
     case plane_: fleet = engine_->planeFleet(); break;
-    default: cerr << "Invalid attribute for fleet"; return "";
+    default: cerr << "Invalid attribute for fleet" << endl; return "";
   }
 
   stringstream ss;
@@ -575,7 +575,7 @@ string FleetRep::attribute(const string& name) {
     case speed_: ss << fleet->speed().value(); break;
     case capacity_: ss << fleet->capacity().value(); break;
     case cost_: ss << fleet->cost().value() ; break;
-    default: cerr << "Invalid attribute for fleet";
+    default: cerr << "Invalid attribute for fleet" << endl;
   }
 
   return ss.str();
@@ -591,7 +591,7 @@ void FleetRep::attributeIs(const string& name, const string& v) {
     case truck_: fleet = engine_->truckFleet(); break;
     case boat_: fleet = engine_->boatFleet(); break;
     case plane_: fleet = engine_->planeFleet(); break;
-    default: cerr << "Invalid attribute for fleet"; return;
+    default: cerr << "Invalid attribute for fleet" << endl; return;
   }
 
   MilesPerHour speed(atof(v.c_str()));
@@ -601,7 +601,7 @@ void FleetRep::attributeIs(const string& name, const string& v) {
     case speed_: fleet->speedIs(speed); break;
     case capacity_: fleet->capacityIs(capacity); break;
     case cost_: fleet->costIs(cost); break;
-    default: cerr << "Invalid attribute for fleet";
+    default: cerr << "Invalid attribute for fleet" << endl;
   }
 };
 

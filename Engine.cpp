@@ -33,7 +33,7 @@ Ptr<Location> Segment::destination() {
 void Segment::del() {
   // 1. dels itself from its source's list of segments
   Fwk::Ptr<Segment> seg = this;
-  source_->segmentDel(seg);
+  if (source_) source_->segmentDel(seg);
 
   // 2. dels itself from the returnSegment's returnSegment field
   seg = NULL;

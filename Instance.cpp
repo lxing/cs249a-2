@@ -195,6 +195,15 @@ protected:
 /* Manager */
 ManagerImpl::ManagerImpl() {
   engine_ = new EngineManager();
+
+  Ptr<TruckFleet> truckFleet = TruckFleet::TruckFleetNew("TruckFleet", engine_);
+  engine_->truckFleetIs(truckFleet);
+
+  Ptr<BoatFleet> boatFleet = BoatFleet::BoatFleetNew("BoatFleet", engine_);
+  engine_->boatFleetIs(boatFleet);
+
+  Ptr<PlaneFleet> planeFleet = PlaneFleet::PlaneFleetNew("PlaneFleet", engine_);
+  engine_->planeFleetIs(planeFleet);
 }
 
 Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
@@ -264,19 +273,9 @@ Ptr<Instance> ManagerImpl::instanceNew(const string& name, const string& type) {
     // is exposed via locations
   } else if (type == "Fleet") {
     Ptr<FleetRep> rep = new FleetRep(name, engine_);
-
-    Ptr<TruckFleet> truckFleet = TruckFleet::TruckFleetNew(name, engine_);
-    engine_->truckFleetIs(truckFleet);
-    rep->truckFleetIs(truckFleet);
-
-    Ptr<BoatFleet> boatFleet = BoatFleet::BoatFleetNew(name, engine_);
-    engine_->boatFleetIs(boatFleet);
-    rep->boatFleetIs(boatFleet);
-
-    Ptr<PlaneFleet> planeFleet = PlaneFleet::PlaneFleetNew(name, engine_);
-    engine_->planeFleetIs(planeFleet);
-    rep->planeFleetIs(planeFleet);
-
+    rep->truckFleetIs(engine_->truckFleet());
+    rep->boatFleetIs(engine_->boatFleet());
+    rep->planeFleetIs(engine_->planeFleet());
     instance = rep;
   } else {
     cerr << "Invalid instance type instantiation";
